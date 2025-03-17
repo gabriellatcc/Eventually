@@ -10,7 +10,7 @@
     <artifactId>frontend</artifactId>
 
     <properties>
-        <javafx.version>17.0.2</javafx.version>
+        <javafx.version>23</javafx.version>
     </properties>
 
     <dependencies>
@@ -24,6 +24,12 @@
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.eventually</groupId>
+            <artifactId>backend</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -33,8 +39,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>23</source>
+                    <target>23</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -46,5 +52,11 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
     </build>
 </project>
