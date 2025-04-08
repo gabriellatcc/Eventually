@@ -5,4 +5,5 @@ module com.eventually.frontend {
 
     opens com.eventually.frontend.controller to javafx.fxml;
     exports com.eventually.frontend;
+    exports com.eventually.frontend.view;
 }

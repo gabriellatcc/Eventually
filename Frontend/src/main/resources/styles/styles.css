@@ -1,0 +1,35 @@
+.logo {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E753D8;
+}
+
+.menu-button {
+    -fx-background-color: #E753D8;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-padding: 10 20;
+}
+
+.top-button {
+    -fx-background-color: #7A1E82;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-padding: 10 20;
+}
+
+.date-button {
+    -fx-background-color: #f1f1f1;
+    -fx-text-fill: #000;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-padding: 10 15;
+    -fx-min-width: 60px;
+}
+
+.date-button:selected {
+    -fx-background-color: #9B2DC9;
+    -fx-text-fill: white;
+}
