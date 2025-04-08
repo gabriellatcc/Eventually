@@ -1,5 +1,4 @@
 package com.eventually.backend.model;
-import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ import java.util.List;
  * para sua criação, exibição, edição e exclusão dentro de um sistema (CRUD de evento).
  * <p>Ela contém atributos como nome, descricão, datas de início e término, localização, entre outros.</p>
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.0
+ * @version 1.01
  * @since 2025-04-04
  */
 public class EventoModel {
