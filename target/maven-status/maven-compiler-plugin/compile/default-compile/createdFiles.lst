@@ -1,0 +1,10 @@
+com\eventually\interfaces\Identidade.class
+com\eventually\model\EventoModel.class
+com\eventually\repository\EventoRepository.class
+com\eventually\view\EventCard.class
+com\eventually\service\EventoService.class
+com\eventually\model\UsuarioModel.class
+com\eventually\service\UsuarioService.class
+com\eventually\Main.class
+com\eventually\repository\UsuarioRepository.class
+com\eventually\view\MainView.class
