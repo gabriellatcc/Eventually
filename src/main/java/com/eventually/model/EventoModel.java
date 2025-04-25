@@ -20,7 +20,6 @@ public class EventoModel implements Identidade {
     private String nomeEvento;
     private String fotoEvento;
     private String descricao;
-    private String formato;
     private float custo;
     private String localizacao;
     private Date dataInicial;
@@ -30,14 +29,12 @@ public class EventoModel implements Identidade {
     private boolean certificacao;
 
     public EventoModel(String organizador, String nomeEvento, String fotoEvento, String descricao,
-                       String formato, float custo, String localizacao,
-                       Date dataInicial, Date dataFinal, int qntDePessoas,
-                       int classificacao, boolean certificacao) {
+                       float custo, String localizacao, Date dataInicial, Date dataFinal,
+                       int qntDePessoas, int classificacao, boolean certificacao) {
         this.organizador = organizador;
         this.nomeEvento = nomeEvento;
         this.fotoEvento = fotoEvento;
         this.descricao = descricao;
-        this.formato = formato;
         this.custo = custo;
         this.localizacao = localizacao;
         this.dataInicial = dataInicial;
@@ -60,8 +57,6 @@ public class EventoModel implements Identidade {
     public void setFotoEvento(String fotoEvento) {this.fotoEvento = fotoEvento;}
     public String getDescricao() {return descricao;}
     public void setDescricao(String descricao) {this.descricao = descricao;}
-    public String getFormato() {return formato;}
-    public void setFormato(String formato) {this.formato = formato;}
     public float getCusto() {return custo;}
     public void setCusto(float custo) {this.custo = custo;}
     public String getLocalizacao() {return localizacao;}
@@ -86,7 +81,6 @@ public class EventoModel implements Identidade {
                 ", Data final: '" + dataFinal +
                 ", Localização: '" + localizacao + '\'' +
                 ", Custo: R$ " + custo +
-                ", Formato: '" + formato + '\'' +
                 ", Descrição: '" + descricao + '\'' +
                 '}';
     }

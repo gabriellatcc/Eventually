@@ -19,7 +19,7 @@ import javafx.scene.text.FontWeight;
  * @since 2025-04-22 (Revisão e documentação da classe)
  */
 public class EventCard extends HBox {
-
+//falta: puxar nome do evento e usar api para incluir classe geoposition e dar um location mais preciso, arrumar para exibir data atual com java date
     /**
      * Construtor da classe {@code EventCard}.
      * Inicializa e configura os elementos visuais do cartão de evento, incluindo:
@@ -54,7 +54,7 @@ public class EventCard extends HBox {
 
         Label day = new Label("SEX 14,");
         Label monthYear = new Label("MAR 2025");
-        Label hour = new Label("18:20");
+        Label hour = new Label("18:20");//
 
         day.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
         monthYear.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");

@@ -2,7 +2,6 @@ package com.eventually.view;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node; // Import Node
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
@@ -10,11 +9,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-
-// Remova os imports não utilizados de java.awt.event
-// import java.awt.event.ActionEvent;
-// import java.awt.event.ActionListener;
-
 /**
  * Classe que representa a visualização principal da aplicação Eventually.
  * Esta tela organiza os principais componentes da interface, incluindo a barra lateral de navegação,
@@ -27,7 +21,6 @@ import javafx.scene.shape.Circle;
  * @since 2025-04-22 (Revisão e documentação da classe)
  */
 public class MainView extends BorderPane {
-
     /**
      * Construtor da classe {@code MainView}.
      * Inicializa e organiza os elementos visuais da tela principal chamando métodos
