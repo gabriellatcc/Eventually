@@ -1,8 +1,8 @@
-package com.eventually.view;
+package com.eventually.view; // Pacote original restaurado
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node; // Import Node
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
@@ -11,175 +11,138 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-// Remova os imports não utilizados de java.awt.event
-// import java.awt.event.ActionEvent;
-// import java.awt.event.ActionListener;
-
-/**
- * Classe que representa a visualização principal da aplicação Eventually.
- * Esta tela organiza os principais componentes da interface, incluindo a barra lateral de navegação,
- * a barra superior com funcionalidades e a área central para exibição do conteúdo principal, como a lista de eventos.
- *
- * @author Yuri Garcia Maia
- * @version 1.01 - Refatorado para usar métodos de criação de containers
- * @since 2025-04-06
- * @author Gabriella Tavares Costa Corrêa
- * @since 2025-04-22 (Revisão e documentação da classe)
- */
+// Nome da classe restaurado
 public class MainView extends BorderPane {
 
-    /**
-     * Construtor da classe {@code MainView}.
-     * Inicializa e organiza os elementos visuais da tela principal chamando métodos
-     * auxiliares para criar cada seção (container) da interface:
-     * <ul>
-     * <li>Barra lateral ({@code VBox})</li>
-     * <li>Barra superior ({@code HBox})</li>
-     * <li>Conteúdo central ({@code VBox} contendo seletor de data e lista de eventos)</li>
-     * </ul>
-     * A disposição dos componentes é gerenciada pelo {@code BorderPane}.
-     */
+    // Construtor com nome restaurado
     public MainView() {
-        // Cria os containers (seções) usando métodos auxiliares
-        VBox sidebar = createSidebar();
-        HBox topBar = createTopBar();
-        VBox centerContent = createCenterContent(); // O conteúdo central agora é criado em seu próprio método
+        VBox barraLateral = criarBarraLateral();
+        HBox barraSuperior = criarBarraSuperior();
+        VBox conteudoCentral = criarConteudoCentral();
 
-        // Define a posição dos containers no BorderPane
-        setLeft(sidebar);
-        setTop(topBar);
-        setCenter(centerContent);
+        setLeft(barraLateral);
+        setTop(barraSuperior);
+        setCenter(conteudoCentral);
     }
 
-    /**
-     * Cria e retorna o container da barra lateral (sidebar).
-     * @return VBox configurado como sidebar.
-     */
-    private VBox createSidebar() {
-        VBox sidebar = new VBox(20);
-        sidebar.setPadding(new Insets(20));
-        sidebar.setStyle("-fx-background-color: #6D1A80;");
-        sidebar.setPrefWidth(200);
-        sidebar.setAlignment(Pos.TOP_CENTER);
+    private VBox criarBarraLateral() {
+        VBox barraLateral = new VBox(20);
+        barraLateral.setPadding(new Insets(20));
+        barraLateral.setStyle("-fx-background-color: #7A2074;");
+        barraLateral.setPrefWidth(200);
+        barraLateral.setAlignment(Pos.TOP_CENTER);
 
-        Button homeButton = new Button("Página inicial");
-        homeButton.setOnAction(event -> {
+        Button botaoInicio = new Button("Página inicial");
+        botaoInicio.setOnAction(evento -> {
             System.out.println("Botão JavaFX 'Página inicial' clicado! (Lambda)");
-            // Coloque aqui o código que você quer executar quando o botão for clicado
         });
-        Button myEventsButton = new Button("Meus eventos");
-        Button settingsButton = new Button("Configurações");
+        Button botaoMeusEventos = new Button("Meus eventos");
+        Button botaoConfiguracoes = new Button("Configurações");
 
-        homeButton.getStyleClass().add("menu-button");
-        myEventsButton.getStyleClass().add("menu-button");
-        settingsButton.getStyleClass().add("menu-button");
+        botaoInicio.getStyleClass().add("menu-button");
+        botaoMeusEventos.getStyleClass().add("menu-button");
+        botaoConfiguracoes.getStyleClass().add("menu-button");
 
-        // Espaçador para empurrar configurações para baixo
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
+        Region espacador = new Region();
+        VBox.setVgrow(espacador, Priority.ALWAYS);
 
-        sidebar.getChildren().addAll(homeButton, myEventsButton, spacer, settingsButton);
-        return sidebar;
+        barraLateral.getChildren().addAll(botaoInicio, botaoMeusEventos, espacador, botaoConfiguracoes);
+        return barraLateral;
     }
 
-    /**
-     * Cria e retorna o container da barra superior (top bar).
-     * @return HBox configurado como top bar.
-     */
-    private HBox createTopBar() {
-        HBox topBar = new HBox(40); // Aumentei o espaçamento para visualização
-        topBar.setPadding(new Insets(20));
-        topBar.setAlignment(Pos.CENTER_LEFT);
-        // Define a cor de fundo E a borda inferior
-        String desiredBackgroundColor = "#5F115A"; // Exemplo: Azul claro (Hex code)
-        // String desiredBackgroundColor = "lightblue"; // Exemplo: Azul claro (Nome da cor)
-        // String desiredBackgroundColor = "rgba(173, 216, 230, 0.8)"; // Exemplo: Azul claro com 80% de opacidade
-
-        topBar.setStyle(
-                "-fx-background-color: " + desiredBackgroundColor + "; " +
-                        "-fx-border-color: lightgray; " +
+    private HBox criarBarraSuperior() {
+        HBox barraSuperior = new HBox();
+        barraSuperior.setPadding(new Insets(20));
+        barraSuperior.setAlignment(Pos.CENTER_LEFT);
+        String corDeFundoDesejada = "#5F115A";
+        barraSuperior.setStyle(
+                "-fx-background-color: " + corDeFundoDesejada + "; " +
+                        "-fx-border-color: transparent; " +
                         "-fx-border-width: 0 0 1 0;"
         );
 
-        Label logo = new Label("Eventually");
-        logo.getStyleClass().add("logo");
+        Label rotuloLogo = new Label("Eventualmente");
+        rotuloLogo.getStyleClass().add("logo");
 
-        Button programBtn = new Button("Programação");
-        Button agendaBtn = new Button("Minha agenda");
-        Button userBtn = new Button("Usuário");
+        Region espacador = new Region();
+        HBox.setHgrow(espacador, Priority.ALWAYS);
 
+        barraSuperior.getChildren().addAll(rotuloLogo, espacador);
+        return barraSuperior;
+    }
+
+    private HBox criarBarraDeControles() {
+        HBox barraDeControles = new HBox(10);
+        barraDeControles.setAlignment(Pos.CENTER_LEFT);
+        barraDeControles.setPadding(new Insets(10, 20, 10, 20));
+        barraDeControles.setStyle("-fx-border-color: lightgray; -fx-border-width: 0 0 1 0;");
+
+        Button botaoProgramacao = new Button("Programação");
+        Button botaoMinhaAgenda = new Button("Minha agenda");
+        Label rotuloUsuario = new Label("Usuário");
         Circle avatar = new Circle(20, Color.LIGHTGRAY);
 
-        programBtn.getStyleClass().add("top-button");
-        agendaBtn.getStyleClass().add("top-button");
-        // userBtn também poderia ter um estilo 'top-button' ou similar
+        botaoProgramacao.getStyleClass().add("top-button");
+        botaoMinhaAgenda.getStyleClass().add("top-button");
 
-        // Container para o botão de usuário e avatar
-        HBox userBox = new HBox(10, userBtn, avatar);
-        userBox.setAlignment(Pos.CENTER); // Centraliza itens dentro do userBox
+        HBox caixaUsuario = new HBox(10, rotuloUsuario, avatar);
+        caixaUsuario.setAlignment(Pos.CENTER);
 
-        // Espaçador para empurrar userBox para a direita
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        caixaUsuario.setStyle(
+                "-fx-background-color: #EFEFEF; " +
+                        "-fx-background-radius: 15; " +
+                        "-fx-border-radius: 15;"
+        );
+        caixaUsuario.setMinWidth(200);
+        caixaUsuario.setMinHeight(75);
+        caixaUsuario.setMaxWidth(200);
+        caixaUsuario.setMaxHeight(75);
 
-        topBar.getChildren().addAll(logo, spacer, programBtn, agendaBtn, userBox);
-        return topBar;
+        Region espacador = new Region();
+        HBox.setHgrow(espacador, Priority.ALWAYS);
+
+        barraDeControles.getChildren().addAll(espacador, botaoProgramacao, botaoMinhaAgenda, caixaUsuario);
+
+        return barraDeControles;
     }
 
-    /**
-     * Cria e retorna o container do seletor de datas (date picker).
-     * @return HBox configurado como date picker.
-     */
-    private HBox createDatePicker() {
-        HBox datePicker = new HBox(10);
-        datePicker.setAlignment(Pos.CENTER);
-        datePicker.setPadding(new Insets(10, 20, 10, 20)); // Adicionado padding horizontal
-        datePicker.setStyle("-fx-border-color: lightgray; -fx-border-width: 0 0 1 0;"); // Adiciona uma borda inferior
+    private VBox criarAreaDeConteudoPrincipal() {
+        VBox areaPrincipal = new VBox(15);
+        areaPrincipal.setPadding(new Insets(0, 20, 20, 20));
 
-        ToggleGroup dateGroup = new ToggleGroup();
-        String[] dates = {"Ter\n01", "Qua\n02", "Qui\n03", "Sex\n04", "Sab\n05"};
+        HBox caixaBotoesData = new HBox(5);
+        caixaBotoesData.setAlignment(Pos.CENTER);
+        caixaBotoesData.setPadding(new Insets(10, 0, 15, 0));
 
-        for (int i = 0; i < dates.length; i++) {
-            ToggleButton btn = new ToggleButton(dates[i]);
-            btn.getStyleClass().add("date-button");
-            btn.setToggleGroup(dateGroup);
-            // Mantém a lógica de selecionar o primeiro por padrão
+        ToggleGroup grupoData = new ToggleGroup();
+        String[] diasTexto = {"Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"};
+
+        for (int i = 0; i < diasTexto.length; i++) {
+            ToggleButton botaoDia = new ToggleButton(diasTexto[i]);
+            botaoDia.getStyleClass().add("date-button");
+            botaoDia.setToggleGroup(grupoData);
             if (i == 0) {
-                btn.setSelected(true);
+                botaoDia.setSelected(true);
             }
-            datePicker.getChildren().add(btn);
+            caixaBotoesData.getChildren().add(botaoDia);
         }
-        return datePicker;
+
+        VBox listaEventos = new VBox(15);
+        VBox.setVgrow(listaEventos, Priority.ALWAYS);
+
+        areaPrincipal.getChildren().addAll(caixaBotoesData, listaEventos);
+
+        return areaPrincipal;
     }
 
-    /**
-     * Cria e retorna o container para a lista de eventos.
-     * (Atualmente, apenas cria o VBox; eventos seriam adicionados aqui posteriormente).
-     * @return VBox configurado para a lista de eventos.
-     */
-    private VBox createEventList() {
-        VBox eventList = new VBox(15);
-        // Container vazio
-        eventList.setPadding(new Insets(20));
-        // Exemplo: Adicionar um placeholder
-        // Label placeholder = new Label("Nenhum evento para exibir.");
-        // eventList.getChildren().add(placeholder);
-        return eventList;
-    }
+    private VBox criarConteudoCentral() {
+        VBox conteudoCentral = new VBox();
 
-    /**
-     * Cria e retorna o container principal da área central,
-     * agrupando o seletor de datas e a lista de eventos.
-     * @return VBox contendo o conteúdo central.
-     */
-    private VBox createCenterContent() {
-        HBox datePicker = createDatePicker();
-        VBox eventList = createEventList();
+        HBox barraDeControles = criarBarraDeControles();
+        VBox areaDeConteudoPrincipal = criarAreaDeConteudoPrincipal();
 
-        VBox centerContent = new VBox(); // Não precisa de espaçamento aqui se os filhos já têm padding
-        centerContent.getChildren().addAll(datePicker, eventList);
-        VBox.setVgrow(eventList, Priority.ALWAYS); // Faz a lista de eventos crescer para preencher o espaço
+        conteudoCentral.getChildren().addAll(barraDeControles, areaDeConteudoPrincipal);
 
-        return centerContent;
+        return conteudoCentral;
     }
 }
