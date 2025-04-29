@@ -63,7 +63,6 @@ public class EventoService {
             System.out.println("Nome: " + evento.getNomeEvento());
             System.out.println("Organizador: " + evento.getOrganizador());
             System.out.println("Descrição: " + evento.getDescricao());
-            System.out.println("Formato: " + evento.getFormato());
             System.out.println("Custo: " + evento.getCusto());
             System.out.println("Localização: " + evento.getLocalizacao());
             System.out.println("Data inicial: " + evento.getDataInicial());
@@ -85,7 +84,6 @@ public class EventoService {
      * @param novoNome O novo nome para o evento.
      * @param novaFotoEvento A nova foto do evento.
      * @param novaDescricao A nova descrição do evento.
-     * @param novoFormato O novo formato do evento.
      * @param novoCusto O novo custo do evento.
      * @param novaLocalizacao A nova localização do evento.
      * @param novaDataInicial A nova data inicial do evento.
@@ -95,7 +93,7 @@ public class EventoService {
      * @param novaCertificacao Indica se o evento oferece certificação.
      */
     public void editarEvento(int idEvento, String novoOrganizador, String novoNome, String novaFotoEvento,
-                             String novaDescricao, String novoFormato, float novoCusto, String novaLocalizacao,
+                             String novaDescricao, float novoCusto, String novaLocalizacao,
                              Date novaDataInicial, Date novaDataFinal, int novaQntDePessoas,
                              int novaClassificacao, boolean novaCertificacao) {
         Optional<EventoModel> eventoParaEditarOptional = eventoRepository.buscarEventoPorId(idEvento);
@@ -104,7 +102,6 @@ public class EventoService {
             evento.setNomeEvento(novoNome);
             evento.setFotoEvento(novaFotoEvento);
             evento.setDescricao(novaDescricao);
-            evento.setFormato(novoFormato);
             evento.setCusto(novoCusto);
             evento.setLocalizacao(novaLocalizacao);
             evento.setDataInicial(novaDataInicial);
