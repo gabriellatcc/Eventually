@@ -1,0 +1,146 @@
+.user-schedule-view {
+    -fx-background-color: white;
+}
+
+.sidebar {
+    -fx-background-color: #8E2392;
+    -fx-background-radius: 0;
+}
+
+.menu-button {
+    -fx-background-color: #C93ACD;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 12px 20px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 2);
+}
+
+.menu-button:hover {
+    -fx-background-color: #D54BD9;
+}
+
+.topbar {
+    -fx-background-color: #8E2392;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 3);
+}
+
+.logo {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.center-content-area {
+    -fx-background-color: white;
+}
+
+.sub-header-controls {
+    -fx-background-color: white;
+}
+
+.top-button {
+    -fx-background-color: #8E2392;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 12px 20px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-min-width: 150px;
+}
+
+.top-button:hover {
+    -fx-background-color: #9E339E;
+}
+
+.new-event-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 12px 20px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-min-width: 130px;
+}
+
+.new-event-button:hover {
+    -fx-background-color: #388E3C;
+}
+
+.user-display-box {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 25px;
+    -fx-padding: 5px 15px;
+}
+
+.user-display-label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+}
+
+.avatar-circle {
+    -fx-stroke: #cccccc;
+    -fx-stroke-width: 1px;
+}
+
+.date-picker-bar {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 25px;
+    -fx-padding: 5px;
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+    -fx-max-width: 600px;
+    -fx-min-width: 600px;
+}
+
+.date-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #333333;
+    -fx-font-size: 12px;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 15px;
+    -fx-alignment: center;
+    -fx-content-display: center;
+    -fx-text-alignment: center;
+    -fx-min-width: 70px;
+}
+
+.date-button:selected {
+    -fx-background-color: #8E2392;
+    -fx-text-fill: white;
+}
+
+.event-list-container {
+    -fx-background-color: white;
+}
+
+.event-card {
+    -fx-background-color: #8E2392;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 3);
+}
+
+.event-title {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.event-location {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-opacity: 0.9;
+}
+
+.event-date {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.event-time {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
