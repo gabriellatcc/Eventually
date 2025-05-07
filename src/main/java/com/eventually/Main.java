@@ -3,7 +3,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import com.eventually.view.MainView;
+import com.eventually.view.UserScheduleView;
 
 /**
  * Classe principal da aplicação Eventually.
@@ -28,9 +28,9 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        MainView mainView = new MainView();
-        Scene scene = new Scene(mainView, 1280, 720);
-        scene.getStylesheets().add(getClass().getResource("/styles/styles.css").toExternalForm());
+        UserScheduleView userScheduleView = new UserScheduleView();
+        Scene scene = new Scene(userScheduleView, 1280, 720);
+        scene.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
 
         // Adiciona ícone
         primaryStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
