@@ -9,43 +9,58 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 // representa a visualização principal da aplicação
 public class MainView extends BorderPane {
 
-    // --- campos para os componentes interativos ---
     private Button botaoInicio;
     private Button botaoMeusEventos;
     private Button botaoConfiguracoes;
     private Button programBtn;
     private Button agendaBtn;
-    private Button userBtn;
+    private Button newEventBtn;
+    private Circle avatar;
     private ToggleGroup dateGroup;
     private List<ToggleButton> dateButtons;
     private VBox eventList;
 
-    // construtor
+    private Label userNameLabel;
+    private Stage primaryStage;
+    private LocalDate selectedDate;
+
     public MainView() {
         this.dateButtons = new ArrayList<>();
+        this.getStyleClass().add("main-view");
+        this.selectedDate = LocalDate.now();
 
-        // Cria os containers (seções) usando métodos auxiliares
         VBox barraLateral = criarBarraLateral();
         HBox barraSuperior = criarBarraSuperior();
-        VBox conteudoCentral = createCenterContent(); // O conteúdo central agora é criado em seu próprio método (adaptado)
+        VBox conteudoCentral = createCenterContent();
 
-        // Define a posição dos containers no BorderPane
         setLeft(barraLateral);
         setTop(barraSuperior);
         setCenter(conteudoCentral);
+
+        setupEventHandlers();
     }
 
-    // cria a barra lateral
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+    }
+    // cria a classe do container da sidebar
     private VBox criarBarraLateral() {
         VBox barraLateral = new VBox(20);
         barraLateral.setPadding(new Insets(20));
-        barraLateral.setStyle("-fx-background-color: #7A2074;");
+        barraLateral.getStyleClass().add("sidebar");
         barraLateral.setPrefWidth(200);
         barraLateral.setAlignment(Pos.TOP_CENTER);
 
@@ -57,146 +72,197 @@ public class MainView extends BorderPane {
         this.botaoMeusEventos.getStyleClass().add("menu-button");
         this.botaoConfiguracoes.getStyleClass().add("menu-button");
 
-        // Espaçador para empurrar configurações para baixo
+        this.botaoInicio.setMaxWidth(Double.MAX_VALUE);
+        this.botaoMeusEventos.setMaxWidth(Double.MAX_VALUE);
+        this.botaoConfiguracoes.setMaxWidth(Double.MAX_VALUE);
+
         Region espacador = new Region();
         VBox.setVgrow(espacador, Priority.ALWAYS);
 
         barraLateral.getChildren().addAll(this.botaoInicio, this.botaoMeusEventos, espacador, this.botaoConfiguracoes);
         return barraLateral;
     }
-
-    // cria a barra superior
+    // cria a classe do container da topbar
     private HBox criarBarraSuperior() {
-        HBox barraSuperior = new HBox(40);
+        HBox barraSuperior = new HBox();
         barraSuperior.setPadding(new Insets(20));
-        barraSuperior.setAlignment(Pos.CENTER_LEFT);
-        // Define a cor de fundo E a borda inferior
-        String desiredBackgroundColor = "#5F115A";
-        barraSuperior.setStyle(
-                "-fx-background-color: " + desiredBackgroundColor + "; " +
-                        "-fx-border-color: lightgray; " +
-                        "-fx-border-width: 0 0 1 0;"
-        );
+        barraSuperior.setAlignment(Pos.CENTER);
+        barraSuperior.getStyleClass().add("topbar");
 
         Label logo = new Label("Eventually");
         logo.getStyleClass().add("logo");
+        barraSuperior.getChildren().add(logo);
+        return barraSuperior;
+    }
+    // cria a classe do container dos botões do cabeçalho
+    private HBox criarControlesSubCabecalho() {
+        HBox subCabecalho = new HBox(15);
+        subCabecalho.setPadding(new Insets(10, 20, 10, 20));
+        subCabecalho.setAlignment(Pos.CENTER_LEFT);
+        subCabecalho.getStyleClass().add("sub-header-controls");
 
         this.programBtn = new Button("Programação");
         this.agendaBtn = new Button("Minha agenda");
-        this.userBtn = new Button("Usuário");
+        this.newEventBtn = new Button("+ Novo Evento");
 
-        Circle avatar = new Circle(20, Color.LIGHTGRAY);
+        this.userNameLabel = new Label("Usuário");
+        this.userNameLabel.getStyleClass().add("user-display-label");
+
+        this.avatar = new Circle(18);
+        this.avatar.getStyleClass().add("avatar-circle");
+        this.avatar.setFill(Color.LIGHTGRAY);
+
+        HBox userDisplayBox = new HBox(8, this.userNameLabel, this.avatar);
+        userDisplayBox.setAlignment(Pos.CENTER);
+        userDisplayBox.getStyleClass().add("user-display-box");
 
         this.programBtn.getStyleClass().add("top-button");
         this.agendaBtn.getStyleClass().add("top-button");
-        // userBtn também poderia ter um estilo 'top-button' ou similar
+        this.newEventBtn.getStyleClass().add("new-event-button");
 
-        // Container para o botão de usuário e avatar
-        HBox userBox = new HBox(10, this.userBtn, avatar);
-        userBox.setAlignment(Pos.CENTER); // Centraliza itens dentro do userBox
-
-        // Espaçador para empurrar userBox para a direita
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        barraSuperior.getChildren().addAll(logo, spacer, this.programBtn, this.agendaBtn, userBox);
-        return barraSuperior;
-    }
+        subCabecalho.getChildren().addAll(this.programBtn, this.agendaBtn, this.newEventBtn, spacer, userDisplayBox);
 
-    // cria o seletor de datas
+        return subCabecalho;
+    }
+    // cria a classe do container das datas
     private HBox createDatePicker() {
+        HBox datePickerContainer = new HBox();
+        datePickerContainer.setAlignment(Pos.CENTER);
+        datePickerContainer.setPadding(new Insets(10, 20, 10, 20));
+
         HBox datePicker = new HBox(10);
         datePicker.setAlignment(Pos.CENTER);
-        datePicker.setPadding(new Insets(10, 20, 10, 20)); // Adicionado padding horizontal
-        datePicker.setStyle("-fx-border-color: lightgray; -fx-border-width: 0 0 1 0;"); // Adiciona uma borda inferior
+        datePicker.getStyleClass().add("date-picker-bar");
+        datePicker.setPadding(new Insets(5, 15, 5, 15));
 
         this.dateGroup = new ToggleGroup();
-        String[] dates = {"Ter\n01", "Qua\n02", "Qui\n03", "Sex\n04", "Sab\n05"};
-
         this.dateButtons.clear();
 
-        for (int i = 0; i < dates.length; i++) {
-            ToggleButton btn = new ToggleButton(dates[i]);
+        LocalDate today = LocalDate.now();
+        LocalDate monday = today.with(DayOfWeek.MONDAY);
+
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("dd");
+        Locale localeBR = new Locale("pt", "BR");
+
+        for (int i = 0; i < 7; i++) {
+            LocalDate date = monday.plusDays(i);
+            String dayOfWeek = date.getDayOfWeek().getDisplayName(TextStyle.SHORT, localeBR);
+            String dayNumber = date.format(dayFormatter);
+
+            ToggleButton btn = new ToggleButton(dayOfWeek + "\n" + dayNumber);
             btn.getStyleClass().add("date-button");
             btn.setToggleGroup(this.dateGroup);
-            // Mantém a lógica de selecionar o primeiro por padrão
-            if (i == 0) {
+            btn.setUserData(date);
+
+            if (date.equals(today)) {
                 btn.setSelected(true);
+                this.selectedDate = date;
             }
             this.dateButtons.add(btn);
             datePicker.getChildren().add(btn);
         }
-        return datePicker;
+        datePickerContainer.getChildren().add(datePicker);
+        return datePickerContainer;
     }
-
-    // cria a lista de eventos (atualmente apenas o container)
+    // cria a classe do container dos eventos
     private VBox createEventList() {
-        // Container vazio
         this.eventList = new VBox(15);
         this.eventList.setPadding(new Insets(20));
-        // Exemplo: Adicionar um placeholder
-        // Label placeholder = new Label("Nenhum evento para exibir.");
-        // eventList.getChildren().add(placeholder);
+        this.eventList.getStyleClass().add("event-list-container");
+
+        loadEventsForDate(selectedDate);
         return this.eventList;
     }
+    // cria a classe do container da lista de eventos
+    private void loadEventsForDate(LocalDate date) {
+        this.eventList.getChildren().clear();
 
-    // cria o conteúdo central (agrupando date picker e lista de eventos)
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEE dd,", new Locale("pt", "BR")).withLocale(new Locale("pt", "BR"));
+        DateTimeFormatter monthYearFormatter = DateTimeFormatter.ofPattern("MMM yy", new Locale("pt", "BR")).withLocale(new Locale("pt", "BR"));
+
+        String dayStr = date.format(dayFormatter).toUpperCase();
+        String monthYearStr = date.format(monthYearFormatter).toUpperCase();
+
+        Label placeholder = new Label("Eventos para " + dayStr + " " + monthYearStr + " seriam carregados aqui.");
+        this.eventList.getChildren().add(placeholder);
+    }
+    // cria a classe do container central
     private VBox createCenterContent() {
+        HBox controlesSubCabecalho = criarControlesSubCabecalho();
         HBox datePicker = createDatePicker();
-        createEventList(); // inicializa o campo this.eventList
+        createEventList();
 
-        // Não precisa de espaçamento aqui se os filhos já têm padding
-        VBox centerContent = new VBox();
-        centerContent.getChildren().addAll(datePicker, this.eventList);
-        // Faz a lista de eventos crescer para preencher o espaço
+        VBox centerContent = new VBox(0);
+        centerContent.getStyleClass().add("center-content-area");
+        centerContent.getChildren().addAll(controlesSubCabecalho, datePicker, this.eventList);
         VBox.setVgrow(this.eventList, Priority.ALWAYS);
 
         return centerContent;
     }
+    // cria a classe para o botão de criar novo evento
+    private void setupEventHandlers() {
+        this.dateGroup.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
+            if (newToggle != null) {
+                LocalDate date = (LocalDate) newToggle.getUserData();
+                this.selectedDate = date;
+                loadEventsForDate(date);
+            }
+        });
 
-    // --- getters para os componentes interativos ---
+        if (this.newEventBtn != null) {
+            this.newEventBtn.setOnAction(event -> {
+                openNewEventModal();
+            });
+        }
+    }
 
-    // retorna o botão "Página inicial"
+    private void openNewEventModal() {
+        System.out.println("Modal de novo evento seria aberto aqui.");
+    }
+
     public Button getHomeButton() {
         return botaoInicio;
     }
 
-    // retorna o botão "Meus eventos"
     public Button getMyEventsButton() {
         return botaoMeusEventos;
     }
 
-    // retorna o botão "Configurações"
     public Button getSettingsButton() {
         return botaoConfiguracoes;
     }
 
-    // retorna o botão "Programação"
     public Button getProgramButton() {
         return programBtn;
     }
 
-    // retorna o botão "Minha agenda"
     public Button getAgendaButton() {
         return agendaBtn;
     }
 
-    // retorna o botão "Usuário"
-    public Button getUserButton() {
-        return userBtn;
+    public Button getNewEventButton() {
+        return newEventBtn;
     }
 
-    // retorna o grupo de botões de data
+    public Label getUserNameLabel() {
+        return userNameLabel;
+    }
+
+    public Circle getAvatar() {
+        return avatar;
+    }
+
     public ToggleGroup getDateGroup() {
         return dateGroup;
     }
 
-    // retorna a lista de botões de data
     public List<ToggleButton> getDateButtons() {
         return dateButtons;
     }
 
-    // retorna o container da lista de eventos
     public VBox getEventList() {
         return eventList;
     }
