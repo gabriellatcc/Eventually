@@ -1,5 +1,4 @@
 package com.eventually.model;
-import com.eventually.interfaces.Identidade;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -14,7 +13,7 @@ import java.util.Date;
  * @version 1.02
  * @since 2025-04-04
  */
-public class EventoModel implements Identidade {
+public class EventoModel {
     private int idEvento;
     private String organizador;
     private String nomeEvento;
@@ -44,9 +43,7 @@ public class EventoModel implements Identidade {
         this.certificacao = certificacao;
     }
 
-    @Override
     public int getId() {return idEvento;}
-    @Override
     public void setId(int id){this.idEvento=id;}
 
     public String getOrganizador() {return organizador;}

@@ -1,7 +1,5 @@
 package com.eventually.model;
 
-import com.eventually.interfaces.Identidade;
-
 import java.util.Date;
 
 /**
@@ -11,7 +9,7 @@ import java.util.Date;
  * @version 1.01
  * @since 2025-04-08
  */
-public class UsuarioModel implements Identidade {
+public class UsuarioModel {
     private int idUsuario;
     private String nomePessoa;
     private String nomeUsuario;
@@ -33,12 +31,8 @@ public class UsuarioModel implements Identidade {
         this.dataNascimento = dataNascimento;
         this.fotoUsuario = fotoUsuario;
     }
-    @Override
-    public int getId() {
-        return idUsuario;
-    }
 
-    @Override
+    public int getId() {return idUsuario;}
     public void setId(int id) {this.idUsuario = id;}
     public String getNomePessoa() {return nomePessoa;}
     public void setNomePessoa(String nomePessoa) {this.nomePessoa = nomePessoa;}
