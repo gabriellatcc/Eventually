@@ -40,9 +40,7 @@ public class UserScheduleController {
     private void handleDateSelection(javafx.scene.control.Toggle toggle) {System.out.println("Controller: Data selecionada: " + toggle.getUserData());}
 
 
-    private void handleHomeButton() {
-        System.out.println("Controller: Página inicial clicada");
-    }
+    private void handleHomeButton() {System.out.println("Controller: Página inicial clicada");}
 
 
     private void handleMyEventsButton() {

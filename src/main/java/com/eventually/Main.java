@@ -1,9 +1,10 @@
 package com.eventually;
+import com.eventually.controller.UserController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import com.eventually.view.UserScheduleView;
+import com.eventually.view.LoginView;
 
 /**
  * Classe principal da aplicação Eventually.
@@ -21,21 +22,22 @@ public class Main extends Application {
     /**
      * O método principal para iniciar a aplicação JavaFX.
      * Este método é chamado pelo ambiente JavaFX quando a aplicação é lançada.
-     * Ele cria a view principal, define a cena, carrega os estilos CSS,
+     * Ele cria a view de login, define a cena, carrega os estilos CSS,
      * define o ícone da aplicação e, finalmente, exibe a janela principal
      * @param primaryStage O palco principal para esta aplicação, onde a cena será construída.
      * Este objeto é criado e passado pelo ambiente JavaFX.
      */
     @Override
     public void start(Stage primaryStage) {
-        UserScheduleView userScheduleView = new UserScheduleView();
-        Scene scene = new Scene(userScheduleView, 1280, 720);
-        scene.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
+        UserController userController = new UserController();
+        LoginView loginView = new LoginView(userController);
+        Scene scene = new Scene(loginView, 1280, 720);
+        scene.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
 
         // Adiciona ícone
         primaryStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
 
-        primaryStage.setTitle("Eventually");
+        primaryStage.setTitle("Eventually - Login");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
