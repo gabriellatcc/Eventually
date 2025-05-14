@@ -43,3 +43,13 @@
     -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-cursor: hand;
 }
+.error-label {
+    -fx-font-size: 0.9em;
+    /* -fx-text-fill: #FF6347; /* Tomate - ou use a cor do código */
+}
+.form-field { /* Se não tiver, para os campos de texto e datepicker */
+    /* seus estilos aqui */
+}
+.submit-button { /* Se não tiver, para o botão de registro */
+    /* seus estilos aqui */
+}

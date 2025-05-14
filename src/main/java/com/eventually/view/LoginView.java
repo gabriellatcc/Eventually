@@ -3,6 +3,7 @@ package com.eventually.view;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -29,17 +30,19 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 
 import com.eventually.controller.UserController;
-// Se UserScheduleView estiver em um pacote diferente, você precisará importá-la.
-// Exemplo: import com.eventually.view.UserScheduleView;
+import com.eventually.controller.RegisterController;
+import com.eventually.view.RegisterView;
 
 /**
- * Classe responsável pela tela de login da aplicação Eventually.
- * Esta classe cria a interface de login com campos para e-mail e senha,
- * além de botões para login e registro de novos usuários.
+ * Classe principal da aplicação Eventually.
+ * Esta classe estende {@code javafx.application.Application} e é responsável
+ * por inicializar e exibir a interface gráfica do usuário.
  *
- * @author [Seu Nome]
- * @version 1.01
- * @since 2025-05-07
+ * @author Yuri Garcia Maia
+ * @version 1.00
+ * @since 2025-04-06
+ * @author Gabriella Tavares
+ * @since 2025-04-22 (Documentação da classe)
  */
 public class LoginView extends BorderPane {
 
@@ -48,6 +51,7 @@ public class LoginView extends BorderPane {
     private Button loginButton;
     private Button registerButton;
     private UserController userController;
+    private Hyperlink forgotPasswordLink;
 
     /**
      * Construtor que inicializa a interface de login.
@@ -55,11 +59,7 @@ public class LoginView extends BorderPane {
      */
     public LoginView(UserController userController) {
         if (userController == null) {
-            // Lançar uma exceção ou lidar com o erro é importante na prática
             System.err.println("UserController não pode ser nulo na LoginView!");
-            // Poderia lançar: throw new IllegalArgumentException("UserController cannot be null");
-            // Por simplicidade no exemplo, apenas logamos o erro.
-            // Em uma aplicação real, a inicialização deveria falhar ou ter um fallback.
         }
         this.userController = userController;
         setupUI();
@@ -69,16 +69,9 @@ public class LoginView extends BorderPane {
      * Configura todos os elementos da interface de usuário para a tela de login.
      */
     private void setupUI() {
-        // Configuração do plano de fundo com uma imagem escurecida
         setupBackground();
-
-        // Criação do painel lateral direito em roxo
         StackPane rightPanel = createRightPanel();
-
-        // Criação do conteúdo do login (logotipo, campos, botões)
         VBox loginContent = createLoginContent();
-
-        // Adiciona os elementos ao layout principal
         setRight(rightPanel);
         setCenter(loginContent);
     }
@@ -98,7 +91,6 @@ public class LoginView extends BorderPane {
             );
             setBackground(new Background(background));
         } catch (Exception e) {
-            // Fallback para um fundo preto caso a imagem não seja encontrada
             setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
             System.err.println("Erro ao carregar imagem de fundo: " + e.getMessage());
         }
@@ -109,38 +101,25 @@ public class LoginView extends BorderPane {
      * @return O painel configurado
      */
     private StackPane createRightPanel() {
-        // Criamos um StackPane para conter o trapézio
         StackPane rightPanel = new StackPane();
         rightPanel.setPrefWidth(300);
         rightPanel.setPrefHeight(900);
-
-        // Criamos o trapézio
         javafx.scene.shape.Polygon trapezoid = new javafx.scene.shape.Polygon();
-
-        // Definimos as coordenadas do trapézio (x,y pontos no sentido horário)
-        // Começando do topo direito e movendo-se no sentido horário
         trapezoid.getPoints().addAll(new Double[]{
-                300.0, 0.0,    // topo direito
-                300.0, 720.0,  // base direita
-                0.0, 720.0,    // base esquerda
-                80.0, 0.0      // topo esquerdo (para criar o efeito de trapézio)
+                300.0, 0.0,
+                300.0, 720.0,
+                0.0, 720.0,
+                80.0, 0.0
         });
-
-        // Criamos um gradiente roxo com opacidade de 80%
         javafx.scene.paint.LinearGradient gradient = new javafx.scene.paint.LinearGradient(
                 0, 0, 1, 1, true, javafx.scene.paint.CycleMethod.NO_CYCLE,
                 new javafx.scene.paint.Stop[]{
-                        new javafx.scene.paint.Stop(0, Color.rgb(128, 0, 128, 0.8)),  // Roxo com 80% de opacidade
-                        new javafx.scene.paint.Stop(1, Color.rgb(180, 0, 180, 0.8))   // Roxo mais claro com 80% de opacidade
+                        new javafx.scene.paint.Stop(0, Color.rgb(128, 0, 128, 0.8)),
+                        new javafx.scene.paint.Stop(1, Color.rgb(180, 0, 180, 0.8))
                 }
         );
-
-        // Aplicamos o gradiente ao trapézio
         trapezoid.setFill(gradient);
-
-        // Adiciona o trapézio ao painel
         rightPanel.getChildren().add(trapezoid);
-
         return rightPanel;
     }
 
@@ -149,102 +128,78 @@ public class LoginView extends BorderPane {
      * @return VBox contendo todos os elementos do formulário
      */
     private VBox createLoginContent() {
-        VBox loginBox = new VBox(25);
+        VBox loginBox = new VBox(15);
         loginBox.setAlignment(Pos.CENTER_LEFT);
         loginBox.setPadding(new Insets(0, 0, 0, 100));
         loginBox.setMaxWidth(600);
-
-        // Logo "Eventually join the moment" como imagem
         ImageView logoImageView = new ImageView();
         try {
             Image logoImage = new Image(getClass().getResource("/images/eventually-logo.png").toExternalForm());
             logoImageView.setImage(logoImage);
-            logoImageView.setFitWidth(350); // Ajuste conforme o tamanho da sua imagem
+            logoImageView.setFitWidth(350);
             logoImageView.setPreserveRatio(true);
         } catch (Exception e) {
-            // Fallback caso a imagem não seja encontrada
             System.err.println("Erro ao carregar o logo: " + e.getMessage());
-
-            // Criação de texto como fallback
             HBox fallbackLogoBox = new HBox();
             Text eventText = new Text("Even");
             eventText.setFill(Color.web("#800080"));
             eventText.setFont(Font.font("Arial", FontWeight.BOLD, 48));
-
             Text tuallyText = new Text("tually");
             tuallyText.setFill(Color.WHITE);
             tuallyText.setFont(Font.font("Arial", FontWeight.BOLD, 48));
-
             fallbackLogoBox.getChildren().addAll(eventText, tuallyText);
-            logoImageView = null; // Define como null para usar o fallback abaixo
+            logoImageView = null;
         }
-
-        // Cria um container para o logo
         VBox logoContainer = new VBox(10);
-        if (logoImageView != null && logoImageView.getImage() != null) { // Verifica se a imagem foi carregada
+        if (logoImageView != null && logoImageView.getImage() != null) {
             logoContainer.getChildren().add(logoImageView);
         } else {
-            // Usa o fallback se a imagem não carregou
             HBox fallbackLogoBox = new HBox();
             Text eventText = new Text("Even");
             eventText.setFill(Color.web("#800080"));
             eventText.setFont(Font.font("Arial", FontWeight.BOLD, 48));
-
             Text tuallyText = new Text("tually");
             tuallyText.setFill(Color.WHITE);
             tuallyText.setFont(Font.font("Arial", FontWeight.BOLD, 48));
-
             fallbackLogoBox.getChildren().addAll(eventText, tuallyText);
-
             Text tagline = new Text("join the moment");
             tagline.setFill(Color.WHITE);
             tagline.setFont(Font.font("Arial", 18));
-
             HBox taglineBox = new HBox();
             taglineBox.getChildren().add(tagline);
             taglineBox.setPadding(new Insets(-20, 0, 20, 5));
-
             logoContainer.getChildren().addAll(fallbackLogoBox, taglineBox);
         }
-
         logoContainer.setPadding(new Insets(0, 0, 30, 0));
-
-        // Campo de email
         emailField = new TextField();
         emailField.setPromptText("E-mail");
         emailField.setPrefHeight(40);
         emailField.getStyleClass().add("login-field");
-
-        // Campo de senha
         passwordField = new PasswordField();
         passwordField.setPromptText("Senha");
         passwordField.setPrefHeight(40);
         passwordField.getStyleClass().add("login-field");
-
-        // Botão de login
+        forgotPasswordLink = new Hyperlink("Esqueceu sua senha? Clique aqui");
+        forgotPasswordLink.setTextFill(Color.WHITE);
+        forgotPasswordLink.setOnAction(e -> handleForgotPassword());
+        HBox forgotPasswordBox = new HBox(forgotPasswordLink);
+        forgotPasswordBox.setAlignment(Pos.CENTER_LEFT);
+        forgotPasswordBox.setPadding(new Insets(0, 0, 0, 2));
         loginButton = new Button("Login");
         loginButton.setPrefHeight(40);
         loginButton.setPrefWidth(400);
         loginButton.getStyleClass().add("login-button");
-        // A ação agora chama o método handleLogin refatorado
         loginButton.setOnAction(e -> handleLogin());
-
-        // Botão de registro
         registerButton = new Button("Register");
         registerButton.setPrefHeight(30);
         registerButton.setPrefWidth(120);
         registerButton.getStyleClass().add("register-button");
-        // A ação agora chama o método handleRegister refatorado
         registerButton.setOnAction(e -> handleRegister());
-
         HBox registerBox = new HBox();
         registerBox.setAlignment(Pos.CENTER);
         registerBox.getChildren().add(registerButton);
         registerBox.setPadding(new Insets(10, 0, 0, 0));
-
-        // Adiciona todos os elementos ao VBox principal
-        loginBox.getChildren().addAll(logoContainer, emailField, passwordField, loginButton, registerBox);
-
+        loginBox.getChildren().addAll(logoContainer, emailField, passwordField, forgotPasswordBox, loginButton, registerBox);
         return loginBox;
     }
 
@@ -253,28 +208,21 @@ public class LoginView extends BorderPane {
      * Delega a lógica para o UserController e lida com o resultado.
      */
     private void handleLogin() {
-        // Verifica se o controller foi injetado corretamente
         if (userController == null) {
             showError("Erro interno: UserController não inicializado.");
             return;
         }
-
         String email = emailField.getText();
         String password = passwordField.getText();
-
-        // Chama o método do controller que contém a lógica
         String result = userController.handleLoginRequest(email, password);
-
         if (result == null) {
-            // Se o resultado for null, o login foi bem-sucedido
             try {
-                openUserScheduleView(); // Navega para a próxima tela
+                openUserScheduleView();
             } catch (Exception e) {
                 showError("Erro ao abrir a tela principal: " + e.getMessage());
-                e.printStackTrace(); // Adicionado para depuração
+                e.printStackTrace();
             }
         } else {
-            // Se houver uma string de resultado, é uma mensagem de erro
             showError(result);
         }
     }
@@ -284,64 +232,69 @@ public class LoginView extends BorderPane {
      * Notifica o UserController e inicia a navegação.
      */
     private void handleRegister() {
-        // Verifica se o controller foi injetado corretamente
         if (userController == null) {
             showError("Erro interno: UserController não inicializado.");
             return;
         }
-        // Notifica o controller sobre a intenção (pode fazer algo no futuro)
         userController.handleRegistrationRequest();
-
-        // Inicia a navegação para a tela de registro (ainda acionado pela View)
         try {
             openRegisterView();
         } catch (Exception e) {
             showError("Erro ao abrir a tela de registro: " + e.getMessage());
-            e.printStackTrace(); // Adicionado para depuração
+            e.printStackTrace();
         }
+    }
+
+    /**
+     * Manipula o evento de clique no link "Esqueceu sua senha".
+     * Delega a ação para o UserController.
+     */
+    private void handleForgotPassword() {
+        if (userController == null) {
+            showError("Erro interno: UserController não inicializado.");
+            return;
+        }
+        userController.handleForgotPasswordRequest();
     }
 
     /**
      * Abre a tela de agendamento do usuário
      */
-    private void openUserScheduleView() { // Nome do método alterado
+    private void openUserScheduleView() {
         Stage currentStage = (Stage) this.getScene().getWindow();
-
-        // Altere MainView para UserScheduleView
-        UserScheduleView userScheduleView = new UserScheduleView(); // << ALTERAÇÃO AQUI
-        Scene scene = new Scene(userScheduleView, 1280, 720); // << ALTERAÇÃO AQUI
-        // Certifique-se de que UserScheduleView é um Pane ou um de seus subtipos.
-
-        // Adiciona a folha de estilos, se aplicável à nova view
+        UserScheduleView userScheduleView = new UserScheduleView();
+        Scene scene = new Scene(userScheduleView, 1280, 720);
+        scene.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
         try {
-            scene.getStylesheets().add(getClass().getResource("/styles/styles.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
         } catch (NullPointerException e) {
             System.err.println("Erro ao carregar styles.css: Arquivo não encontrado. " + e.getMessage());
-            // Considere ter um estilo padrão ou lidar com isso de outra forma
         }
-
-
         currentStage.setScene(scene);
-        currentStage.setTitle("Eventually - Agenda do Usuário"); // Título pode ser atualizado
+        currentStage.setTitle("Eventually - Agenda do Usuário");
     }
 
     /**
      * Abre a tela de registro.
      */
     private void openRegisterView() {
-        // Implementar navegação para a tela de registro
-        // Exemplo:
-        // RegisterView registerView = new RegisterView();
-        // Scene scene = new Scene(registerView, 1280, 720);
-        // Stage currentStage = (Stage) this.getScene().getWindow();
-        // try {
-        //    scene.getStylesheets().add(getClass().getResource("/styles/styles.css").toExternalForm());
-        // } catch (NullPointerException e) {
-        //    System.err.println("Erro ao carregar styles.css para RegisterView: " + e.getMessage());
-        // }
-        // currentStage.setScene(scene);
-        // currentStage.setTitle("Eventually - Registro");
-        showError("Funcionalidade de registro ainda não implementada."); // Placeholder
+        try {
+            Stage currentStage = (Stage) this.getScene().getWindow();
+            RegisterController registerController = new RegisterController();
+            RegisterView registerView = new RegisterView(registerController);
+            Scene registerScene = new Scene(registerView, 1280, 900);
+            try {
+                registerScene.getStylesheets().add(getClass().getResource("/styles/register-styles.css").toExternalForm());
+            } catch (Exception e) {
+                System.err.println("Erro ao carregar CSS para RegisterView: " + e.getMessage());
+            }
+            currentStage.setScene(registerScene);
+            currentStage.setTitle("Eventually - Novo Cadastro");
+            currentStage.setMaximized(true);
+        } catch (Exception e) {
+            showError("Erro crítico ao tentar abrir a tela de registro: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -349,17 +302,6 @@ public class LoginView extends BorderPane {
      * @param message A mensagem de erro a ser exibida
      */
     private void showError(String message) {
-        // Idealmente, isso seria um Alert ou um Label na UI.
-        // Por enquanto, apenas imprimindo no console de erro.
         System.err.println("ERRO: " + message);
-
-        // Exemplo de como exibir um Alert:
-        /*
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
-        alert.setTitle("Erro");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-        */
     }
 }

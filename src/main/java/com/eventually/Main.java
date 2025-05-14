@@ -40,6 +40,7 @@ public class Main extends Application {
         primaryStage.setTitle("Eventually - Login");
         primaryStage.setScene(scene);
         primaryStage.show();
+        primaryStage.setMaximized(true);
     }
 
     /**

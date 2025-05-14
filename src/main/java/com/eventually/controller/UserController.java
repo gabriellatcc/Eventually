@@ -39,6 +39,7 @@ public class UserController {
      * @return true se o login for bem-sucedido, false caso contrário
      */
     private boolean performLogin(String email, String password) {
+        // Implementação temporária para teste
 
         // Considera qualquer email com "@" válido
         // e qualquer senha com pelo menos 4 caracteres
@@ -47,6 +48,10 @@ public class UserController {
         }
         return false;
     }
+
+    /**
+     * Lida com a solicitação de navegação para a tela de registro.
+     */
     public void handleRegistrationRequest() {
     }
 
@@ -60,13 +65,16 @@ public class UserController {
      * @return true se o registro for bem-sucedido, false caso contrário
      */
     public boolean register(String email, String password, String name) {
-        // Implementação temporária
-        // É pra verificar se o email já existe
-        // e salvar o novo usuário na memória
+        // Verifica se o email já existe
+        // e salva o novo usuário
 
         if (email.contains("@") && password.length() >= 6 && !name.isEmpty()) {
             return true;
         }
         return false;
+    }
+
+    public void handleForgotPasswordRequest() {
+        System.out.println("UserController: Solicitacao para tela 'Esqueceu Senha' recebida. Logica para modal aqui.");
     }
 }
