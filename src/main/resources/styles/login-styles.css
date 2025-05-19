@@ -1,6 +1,3 @@
-/* Estilos para a tela de login
-   Atualizado para suportar o novo layout com trapézio e logo */
-
 .login-field {
     -fx-background-color: white;
     -fx-background-radius: 5px;
@@ -12,12 +9,12 @@
 }
 
 .login-field:focused {
-    -fx-border-color: #800080; /* Cor roxa quando focado */
+    -fx-border-color: #800080;
     -fx-border-width: 2px;
 }
 
 .login-button {
-    -fx-background-color: #800080; /* Cor roxa */
+    -fx-background-color: #800080;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
@@ -25,7 +22,7 @@
 }
 
 .login-button:hover {
-    -fx-background-color: #9a009a; /* Cor roxa mais clara ao passar o mouse */
+    -fx-background-color: #9a009a;
     -fx-cursor: hand;
 }
 
@@ -45,11 +42,8 @@
 }
 .error-label {
     -fx-font-size: 0.9em;
-    /* -fx-text-fill: #FF6347; /* Tomate - ou use a cor do código */
 }
-.form-field { /* Se não tiver, para os campos de texto e datepicker */
-    /* seus estilos aqui */
+.form-field {
 }
-.submit-button { /* Se não tiver, para o botão de registro */
-    /* seus estilos aqui */
+.submit-button {
 }

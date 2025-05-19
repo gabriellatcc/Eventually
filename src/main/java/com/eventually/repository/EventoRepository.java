@@ -1,8 +1,7 @@
 package com.eventually.repository;
 import com.eventually.model.EventoModel;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 /**
  * Esta classe {@code EventoRepository} é para gerenciar a coleção de eventos em memória,
@@ -12,17 +11,11 @@ import java.util.Optional;
  * @since 2025-04-22
  */
 public class EventoRepository {
-
-    private List<EventoModel> listaEventos = new ArrayList<>();
-
     /**
      * Retorna a lista de todos os eventos armazenados.
-     *
      * @return Uma lista de objetos {@code EventoModel}.
      */
-    public List<EventoModel> getAllEventos() {
-        return listaEventos;
-    }
+    private List<EventoModel> listaEventos = new ArrayList<>(50);
 
     /**
      * Adiciona um novo evento à lista de eventos.
@@ -30,6 +23,8 @@ public class EventoRepository {
      * @param evento O objeto {@code EventoModel} a ser adicionado.
      */
     public void adicionarEvento(EventoModel evento) {
+        int id = System.identityHashCode(evento);
+        evento.setId(id);
         listaEventos.add(evento);
     }
 
@@ -54,5 +49,13 @@ public class EventoRepository {
         return listaEventos.stream()
                 .filter(evento -> evento.getId() == id)
                 .findFirst();
+    }
+
+    /**
+     * Método de encapsulamento getter para a lista de eventos.
+     * @return Uma lista de objetos {@code EventoModel}.
+     */
+    public List<EventoModel> getAllEventos() {
+        return listaEventos;
     }
 }

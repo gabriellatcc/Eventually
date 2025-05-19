@@ -1,24 +1,21 @@
 package com.eventually.view;
 
 import com.eventually.controller.RegisterController;
-import com.eventually.controller.UserController; // Adicionado
-import com.eventually.view.LoginView;           // Adicionado
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene; // Adicionado
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
+import javafx.scene.image.Image;
 import java.util.List;
 import java.util.Map;
+
 /**
  * Classe da tela de registro.
  * Esta classe é responsável
@@ -27,82 +24,99 @@ import java.util.Map;
  * @author Yuri Garcia Maia
  * @version 1.00
  * @since 2025-05-13
+ * @author Gabriella Tavares Costa Corrêa (Documentação e revisão da classe)
+ * @since 2025-05-14
  */
 public class RegisterView extends BorderPane {
+    private TextField fldNome;
+    private TextField fldEmail;
+    private PasswordField fldSenha;
+    private DatePicker fldDataNascimento;
+    private TextField fldCidade;
+
+    private Label lbNameErro;
+    private Label lbEmailErro;
+    private Label lbSenhaErro;
+    private Label dobErrorLabel;
+    private Label lbCidadeErro;
+    private Label lbTemasErros;
+    private Label lbErroGeral;
+
+    private Label lbRegraNome;
+    private Label lbIntroRegra;
+    private Label lbRegraEspecial;
+    private Label lbRegraDigito;
+    private Label lbRegraLetra;
+
+    private CheckBox cbCorporativo;
+    private CheckBox cbBeneficente;
+    private CheckBox cbEducacional;
+    private CheckBox cbCultural;
+    private CheckBox cbEsportivo;
+    private CheckBox cbReligioso;
+    private CheckBox cbSocial;
+
+    private Button btnRegistrar;
+    private Hyperlink voltarLoginLink;
 
     private RegisterController registerController;
 
-    private TextField nameField;
-    private TextField emailField;
-    private PasswordField passwordField;
-    private DatePicker dobPicker;
-    private TextField cityField;
-
-    private Label nameErrorLabel;
-    private Label emailErrorLabel;
-    private Label passwordErrorLabel;
-    private Label dobErrorLabel;
-    private Label cityErrorLabel;
-    private Label themesErrorLabel;
-    private Label generalErrorLabel;
-
-    private Label nameRuleLabel;
-    private Label passwordIntroRuleLabel;
-    private Label passwordRuleSpecialChar;
-    private Label passwordRuleDigit;
-    private Label passwordRuleLetter;
-
-    private CheckBox corporateCb;
-    private CheckBox charitableCb;
-    private CheckBox educationalCb;
-    private CheckBox culturalCb;
-    private CheckBox sportsCb;
-    private CheckBox religiousCb;
-    private CheckBox socialCb;
-
-    private Button registerButton;
-    private Hyperlink backToLoginLink;
-
-
-    public RegisterView(RegisterController registerController) {
-        if (registerController == null) {
-            System.err.println("RegisterController não pode ser nulo na RegisterView!");
-        }
-        this.registerController = registerController;
-        setupUI();
-        setupDynamicValidation();
+    public RegisterView() {
+        setupUIRegisterView();
     }
 
-    private void setupUI() {
+    public void setRegisterController(RegisterController registerController) {this.registerController = registerController;}
+
+    /**
+     * Configura a interface da tela de registro, define o
+     * plano de fundo, chama o método de criação do painel direito com seleção de temas,
+     * o do formulário central de registro e os de validações de interface dinâmicas.
+     */
+    private void setupUIRegisterView() {
+        setupBackgroundRegister();
+
+        StackPane paneDireitoRegister = criarBasePainelDireito();
+        VBox conteudoPainelDireito = criarConteudoPainelDireito();
+        paneDireitoRegister.getChildren().add(conteudoPainelDireito);
+
+        VBox formularioRegistro = criarFormularioRegistro();
+
+        setRight(paneDireitoRegister);
+        setCenter(formularioRegistro);
+
+        configurarValidacaoDinamica();
+    }
+
+    /**
+     * Configura o plano de fundo da tela de registro.
+     */
+    private void setupBackgroundRegister() {
         try {
-            setBackground(new LoginView(null).getBackground());
-        } catch(Exception e) {
-            setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-            System.err.println("Fallback de fundo para RegisterView: " + e.getMessage());
-        }
-
-        StackPane rightPanelContainer = createRightPanelBase();
-        VBox rightPanelContent = createRightPanelContent();
-        rightPanelContainer.getChildren().add(rightPanelContent);
-
-        VBox registrationForm = createRegistrationForm();
-
-        setRight(rightPanelContainer);
-        setCenter(registrationForm);
-
-        try {
-            this.getStylesheets().add(getClass().getResource("/styles/register-styles.css").toExternalForm());
+            Image backgroundImage = new Image(getClass().getResource("/images/crowd-background.jpg").toExternalForm());
+            BackgroundImage background = new BackgroundImage(
+                    backgroundImage,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundRepeat.NO_REPEAT,
+                    BackgroundPosition.CENTER,
+                    new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true)
+            );
+            setBackground(new Background(background));
         } catch (Exception e) {
-            System.err.println("Erro ao carregar /styles/styles.css para RegisterView: " + e.getMessage());
+            setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+            System.err.println("RegisterView: Erro ao carregar imagem de fundo: " + e.getMessage());
         }
     }
 
-    private StackPane createRightPanelBase() {
-        StackPane rightPanel = new StackPane();
-        rightPanel.setPrefWidth(300);
-        rightPanel.setPrefHeight(900);
-
-        Polygon trapezoid = new Polygon();
+    /**
+     * Cria o PAINEL direito com formato trapezoidal e gradiente de cor,
+     * é a base visual do lado direito da tela.
+     * @return o painel configurado.
+     */
+    private StackPane criarBasePainelDireito() {
+        StackPane paneDireitoRegistro = new StackPane();
+        paneDireitoRegistro.setPrefWidth(300);
+        paneDireitoRegistro.setPrefHeight(900);
+        javafx.scene.shape.Polygon trapezoid = new javafx.scene.shape.Polygon();
         trapezoid.getPoints().addAll(new Double[]{
                 300.0, 0.0,
                 300.0, 900.0,
@@ -118,312 +132,262 @@ public class RegisterView extends BorderPane {
                 }
         );
         trapezoid.setFill(gradient);
-        rightPanel.getChildren().add(trapezoid);
-        return rightPanel;
+        paneDireitoRegistro.getChildren().add(trapezoid);
+        return paneDireitoRegistro;
     }
 
+    /**
+     * Cria o CONTEÚDO do painel direito com os checkboxes de seleção de temas.
+     * @return o título e a lista de seleção de temas dentro de uma VBox.
+     */
+    private VBox criarConteudoPainelDireito() {
+        VBox boxSelecaoTema = new VBox(15);
+        boxSelecaoTema.alignmentProperty().set(Pos.CENTER_LEFT);
+        boxSelecaoTema.setAlignment(Pos.CENTER_LEFT);
+        boxSelecaoTema.setPadding(new Insets(0, 0, 0, 0));
+        boxSelecaoTema.setMaxWidth(580);
+        boxSelecaoTema.setMaxHeight(580);
+        boxSelecaoTema.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
 
-    private VBox createRightPanelContent() {
-        VBox themesSelectionBox = new VBox(15);
-        themesSelectionBox.setAlignment(Pos.CENTER_LEFT);
-        themesSelectionBox.setPadding(new Insets(40, 20, 20, 40));
+        Text tituloTemas = new Text("Selecione temas de eventos\nque te interessam:");
+        tituloTemas.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        tituloTemas.setFill(Color.WHITE);
 
-        Text themesTitle = new Text("Selecione temas desejados:");
-        themesTitle.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        themesTitle.setFill(Color.WHITE);
+        HBox titleBox = new HBox(tituloTemas);
+        titleBox.setAlignment(Pos.CENTER);
+        titleBox.setPadding(new Insets(0,0,30,0));
 
-        corporateCb = new CheckBox("Corporativo");
-        charitableCb = new CheckBox("Beneficente");
-        educationalCb = new CheckBox("Educacional");
-        culturalCb = new CheckBox("Cultural");
-        sportsCb = new CheckBox("Esportivo");
-        religiousCb = new CheckBox("Religioso");
-        socialCb = new CheckBox("Social");
+        cbCorporativo = new CheckBox("Corporativo");
+        cbCorporativo.setPrefHeight(25);
 
-        for (CheckBox cb : List.of(corporateCb, charitableCb, educationalCb, culturalCb, sportsCb, religiousCb, socialCb)) {
+        cbBeneficente = new CheckBox("Beneficente");
+        cbBeneficente.setPrefHeight(25);
+
+        cbEducacional = new CheckBox("Educacional");
+        cbEducacional.setPrefHeight(25);
+
+        cbCultural = new CheckBox("Cultural");
+        cbCultural.setPrefHeight(25);
+
+        cbEsportivo = new CheckBox("Esportivo");
+        cbEsportivo.setPrefHeight(25);
+
+        cbReligioso = new CheckBox("Religioso");
+        cbReligioso.setPrefHeight(25);
+
+        cbSocial = new CheckBox("Social");
+        cbSocial.setPrefHeight(25);
+
+        for (CheckBox cb : List.of(
+                cbCorporativo,
+                cbBeneficente,
+                cbEducacional,
+                cbCultural,
+                cbEsportivo,
+                cbReligioso,
+                cbSocial)) {
             cb.setTextFill(Color.WHITE);
         }
 
-        themesErrorLabel = new Label();
-        themesErrorLabel.setTextFill(Color.SALMON);
-        themesErrorLabel.setVisible(false);
+        lbTemasErros = new Label();
+        lbTemasErros.setTextFill(Color.SALMON);
+        lbTemasErros.setVisible(false);
 
-        themesSelectionBox.getChildren().addAll(
-                themesTitle,
-                corporateCb, charitableCb, educationalCb,
-                culturalCb, sportsCb, religiousCb, socialCb,
-                themesErrorLabel
+        boxSelecaoTema.getChildren().addAll(
+                tituloTemas,
+                cbCorporativo, cbBeneficente, cbEducacional,
+                cbCultural, cbEsportivo, cbReligioso, cbSocial,
+                lbTemasErros
         );
-        return themesSelectionBox;
+        return boxSelecaoTema;
     }
 
-
-    private VBox createRegistrationForm() {
+    /**
+     * Cria o FORMULÁRIO de registro com campos de nome, email, senha,
+     * data de nascimento, cidade e botão de registro.
+     * @return os campos a serem preenchidos no registro dentro de uma VBox.
+     */
+    private VBox criarFormularioRegistro() {
         VBox formBox = new VBox(10);
-        formBox.setAlignment(Pos.CENTER_LEFT);
-        formBox.setPadding(new Insets(40, 50, 40, 100));
-        formBox.setMaxWidth(600);
+        formBox.alignmentProperty().set(Pos.CENTER_LEFT);
+        formBox.setPadding(new Insets(0, 0, 0, 0));
+        formBox.setMaxWidth(580);
+        formBox.setMaxHeight(580);
+        formBox.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
 
-        Text title = new Text("Criar Nova Conta");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 32));
-        title.setFill(Color.WHITE);
-        HBox titleBox = new HBox(title);
-        titleBox.setAlignment(Pos.CENTER_LEFT);
+        Text titulo = new Text("Criar Nova Conta");
+        titulo.setFont(Font.font("Arial", FontWeight.BOLD, 32));
+        titulo.setFill(Color.WHITE);
+        HBox titleBox = new HBox(titulo);
+        titleBox.setAlignment(Pos.CENTER);
         titleBox.setPadding(new Insets(0,0,20,0));
 
-        nameField = new TextField();
-        nameField.setPromptText("Nome Completo");
-        nameField.getStyleClass().add("form-field");
-        nameRuleLabel = new Label("* O nome deve conter pelo menos nome e sobrenome.");
-        nameRuleLabel.setTextFill(Color.LIGHTGRAY);
-        nameErrorLabel = new Label();
-        nameErrorLabel.getStyleClass().add("error-label");
-        nameErrorLabel.setTextFill(Color.SALMON);
-        nameErrorLabel.setVisible(false);
-        VBox nameBox = new VBox(3, nameField, nameRuleLabel, nameErrorLabel);
+        fldNome = new TextField();
+        fldNome.setPromptText("Nome Completo");
+        fldNome.setPrefHeight(40);
+        fldNome.getStyleClass().add("form-field");
 
-        emailField = new TextField();
-        emailField.setPromptText("E-mail");
-        emailField.getStyleClass().add("form-field");
-        emailErrorLabel = new Label();
-        emailErrorLabel.getStyleClass().add("error-label");
-        emailErrorLabel.setTextFill(Color.SALMON);
-        emailErrorLabel.setVisible(false);
-        VBox emailBox = new VBox(3, emailField, emailErrorLabel);
+        lbRegraNome = new Label("* O nome deve conter pelo menos nome e sobrenome.");
+        lbRegraNome.setTextFill(Color.LIGHTGRAY);
 
-        passwordField = new PasswordField();
-        passwordField.setPromptText("Senha");
-        passwordField.getStyleClass().add("form-field");
+        lbNameErro = new Label();
+        lbNameErro.getStyleClass().add("error-label");
+        lbNameErro.setTextFill(Color.SALMON);
+        lbNameErro.setVisible(false);
+        VBox nameBox = new VBox(3, fldNome, lbRegraNome, lbNameErro);
 
-        passwordIntroRuleLabel = new Label("* A senha deve conter, no mínimo:");
-        passwordIntroRuleLabel.setTextFill(Color.LIGHTGRAY);
-        passwordRuleSpecialChar = new Label("- 1 caractere especial");
-        passwordRuleSpecialChar.setTextFill(Color.LIGHTGRAY);
-        passwordRuleDigit = new Label("- 1 dígito");
-        passwordRuleDigit.setTextFill(Color.LIGHTGRAY);
-        passwordRuleLetter = new Label("- 1 letra");
-        passwordRuleLetter.setTextFill(Color.LIGHTGRAY);
+        fldEmail = new TextField();
+        fldEmail.setPromptText("E-mail");
+        fldEmail.setPrefHeight(40);
+        fldEmail.getStyleClass().add("form-field");
 
-        VBox passwordRulesBox = new VBox(1, passwordIntroRuleLabel, passwordRuleSpecialChar, passwordRuleDigit, passwordRuleLetter);
+        lbEmailErro = new Label();
+        lbEmailErro.getStyleClass().add("error-label");
+        lbEmailErro.setTextFill(Color.SALMON);
+        lbEmailErro.setVisible(false);
+        VBox emailBox = new VBox(3, fldEmail, lbEmailErro);
+
+        fldSenha = new PasswordField();
+        fldSenha.setPromptText("Senha");
+        fldSenha.setPrefHeight(40);
+        fldSenha.getStyleClass().add("form-field");
+
+        lbIntroRegra = new Label("* A senha deve conter, no mínimo:");
+        lbIntroRegra.setTextFill(Color.LIGHTGRAY);
+        lbRegraEspecial = new Label("- 1 caractere especial");
+        lbRegraEspecial.setTextFill(Color.LIGHTGRAY);
+        lbRegraDigito = new Label("- 1 dígito");
+        lbRegraDigito.setTextFill(Color.LIGHTGRAY);
+        lbRegraLetra = new Label("- 1 letra");
+        lbRegraLetra.setTextFill(Color.LIGHTGRAY);
+
+        VBox passwordRulesBox = new VBox(1, lbIntroRegra, lbRegraEspecial, lbRegraDigito, lbRegraLetra);
         passwordRulesBox.setPadding(new Insets(2,0,2,0));
 
-        passwordErrorLabel = new Label();
-        passwordErrorLabel.getStyleClass().add("error-label");
-        passwordErrorLabel.setTextFill(Color.SALMON);
-        passwordErrorLabel.setVisible(false);
-        VBox passwordBox = new VBox(3, passwordField, passwordRulesBox, passwordErrorLabel);
+        lbSenhaErro = new Label();
+        lbSenhaErro.getStyleClass().add("error-label");
+        lbSenhaErro.setTextFill(Color.SALMON);
+        lbSenhaErro.setVisible(false);
+        VBox passwordBox = new VBox(3, fldSenha, passwordRulesBox, lbSenhaErro);
 
-        dobPicker = new DatePicker();
-        dobPicker.setPromptText("Data de Nascimento");
-        dobPicker.getStyleClass().add("form-field");
-        dobPicker.setPrefWidth(Double.MAX_VALUE);
+        fldDataNascimento = new DatePicker();
+        fldDataNascimento.setPromptText("Data de Nascimento");
+        fldDataNascimento.setPrefHeight(40);
+        fldDataNascimento.getStyleClass().add("form-field");
+
         dobErrorLabel = new Label();
         dobErrorLabel.getStyleClass().add("error-label");
         dobErrorLabel.setTextFill(Color.SALMON);
         dobErrorLabel.setVisible(false);
-        VBox dobBox = new VBox(3, dobPicker, dobErrorLabel);
+        VBox dobBox = new VBox(3, fldDataNascimento, dobErrorLabel);
 
-        cityField = new TextField();
-        cityField.setPromptText("Cidade");
-        cityField.getStyleClass().add("form-field");
-        cityErrorLabel = new Label();
-        cityErrorLabel.getStyleClass().add("error-label");
-        cityErrorLabel.setTextFill(Color.SALMON);
-        cityErrorLabel.setVisible(false);
-        VBox cityBox = new VBox(3, cityField, cityErrorLabel);
+        fldCidade = new TextField();
+        fldCidade.setPromptText("Cidade");
+        fldCidade.setPrefHeight(40);
+        fldCidade.getStyleClass().add("form-field");
 
-        registerButton = new Button("Registrar");
-        registerButton.getStyleClass().add("submit-button");
-        registerButton.setPrefHeight(40);
-        registerButton.setPrefWidth(Double.MAX_VALUE);
-        registerButton.setOnAction(e -> handleRegisterSubmit());
+        lbCidadeErro = new Label();
+        lbCidadeErro.getStyleClass().add("error-label");
+        lbCidadeErro.setTextFill(Color.SALMON);
+        lbCidadeErro.setVisible(false);
+        VBox cityBox = new VBox(3, fldCidade, lbCidadeErro);
 
-        backToLoginLink = new Hyperlink("Já tem uma conta? Faça login");
-        backToLoginLink.setTextFill(Color.LIGHTBLUE);
-        backToLoginLink.setOnAction(e -> {
-            if(registerController != null) {
-                registerController.handleNavigateToLogin();
-            }
-            navigateToLoginScreen();
-        });
-        HBox backLinkBox = new HBox(backToLoginLink);
+        btnRegistrar = new Button("Registrar");
+        btnRegistrar.setPrefHeight(40);
+        btnRegistrar.setPrefWidth(400);
+        btnRegistrar.getStyleClass().add("register-button");
+
+        voltarLoginLink = new Hyperlink("Já tem uma conta? Faça login");
+        voltarLoginLink.setTextFill(Color.rgb(221,1,245));
+        HBox backLinkBox = new HBox(voltarLoginLink);
         backLinkBox.setAlignment(Pos.CENTER);
         backLinkBox.setPadding(new Insets(10,0,0,0));
 
-        generalErrorLabel = new Label();
-        generalErrorLabel.setTextFill(Color.SALMON);
-        generalErrorLabel.getStyleClass().add("error-label");
-        generalErrorLabel.setVisible(false);
-        HBox generalErrorBox = new HBox(generalErrorLabel);
+        lbErroGeral = new Label();
+        lbErroGeral.setTextFill(Color.SALMON);
+        lbErroGeral.getStyleClass().add("error-label");
+        lbErroGeral.setVisible(false);
+        HBox generalErrorBox = new HBox(lbErroGeral);
         generalErrorBox.setAlignment(Pos.CENTER);
 
         formBox.getChildren().addAll(
                 titleBox, nameBox, emailBox, passwordBox, dobBox, cityBox,
-                registerButton, generalErrorBox, backLinkBox
+                btnRegistrar, generalErrorBox, backLinkBox
         );
-
         return formBox;
     }
 
-    private void setupDynamicValidation() {
-        nameField.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (registerController.isNameRuleMet(newVal)) {
-                nameRuleLabel.setTextFill(Color.LIGHTGREEN);
+    /**
+     * Neste método os campos do formulário, passam por validações que atualizam cores dos rótulos
+     * visuais, chamando o método {@code atualizarRegraSenhaUI()} e esconde mensagens de erro
+     * conforme o usuário digita ou altera valores na interface.
+     */
+    private void configurarValidacaoDinamica() {
+        fldNome.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (registerController.conferirNome(newVal)) {
+                lbRegraNome.setTextFill(Color.LIGHTGREEN);
             } else {
-                nameRuleLabel.setTextFill(Color.LIGHTGRAY);
+                lbRegraNome.setTextFill(Color.LIGHTGRAY);
             }
-            nameErrorLabel.setVisible(false);
-            generalErrorLabel.setVisible(false);
+            lbNameErro.setVisible(false);
+            lbErroGeral.setVisible(false);
         });
 
-        passwordField.textProperty().addListener((obs, oldVal, newVal) -> {
-            Map<String, Boolean> rulesStatus = registerController.checkPasswordRules(newVal);
-            updatePasswordRuleUI(passwordRuleSpecialChar, rulesStatus.getOrDefault("hasSpecial", false));
-            updatePasswordRuleUI(passwordRuleDigit, rulesStatus.getOrDefault("hasDigit", false));
-            updatePasswordRuleUI(passwordRuleLetter, rulesStatus.getOrDefault("hasLetter", false));
-            passwordErrorLabel.setVisible(false);
-            generalErrorLabel.setVisible(false);
+        fldSenha.textProperty().addListener((obs, oldVal, newVal) -> {
+            Map<String, Boolean> rulesStatus = registerController.conferirSenha(newVal);
+            atualizarRegraSenhaUI(lbRegraEspecial, rulesStatus.getOrDefault("hasSpecial", false));
+            atualizarRegraSenhaUI(lbRegraDigito, rulesStatus.getOrDefault("hasDigit", false));
+            atualizarRegraSenhaUI(lbRegraLetra, rulesStatus.getOrDefault("hasLetter", false));
+            lbSenhaErro.setVisible(false);
+            lbErroGeral.setVisible(false);
         });
 
-        emailField.textProperty().addListener( (obs,ov,nv) -> { emailErrorLabel.setVisible(false); generalErrorLabel.setVisible(false); });
-        dobPicker.valueProperty().addListener( (obs,ov,nv) -> { dobErrorLabel.setVisible(false); generalErrorLabel.setVisible(false); });
-        cityField.textProperty().addListener( (obs,ov,nv) -> { cityErrorLabel.setVisible(false); generalErrorLabel.setVisible(false); });
+        fldEmail.textProperty().addListener( (obs,ov,nv) -> { lbEmailErro.setVisible(false); lbErroGeral.setVisible(false); });
+        fldDataNascimento.valueProperty().addListener( (obs, ov, nv) -> { dobErrorLabel.setVisible(false); lbErroGeral.setVisible(false); });
+        fldCidade.textProperty().addListener( (obs,ov,nv) -> { lbCidadeErro.setVisible(false); lbErroGeral.setVisible(false); });
 
-        List.of(corporateCb, charitableCb, educationalCb, culturalCb, sportsCb, religiousCb, socialCb).forEach(cb ->
+        List.of(cbCorporativo, cbBeneficente, cbEducacional, cbCultural, cbEsportivo, cbReligioso, cbSocial).forEach(cb ->
                 cb.selectedProperty().addListener((obs, ov, nv) -> {
-                    themesErrorLabel.setVisible(false);
-                    generalErrorLabel.setVisible(false);
+                    lbTemasErros.setVisible(false);
+                    lbErroGeral.setVisible(false);
                 })
         );
     }
 
-    private void updatePasswordRuleUI(Label ruleLabel, boolean isMet) {
-        if (isMet) {
-            ruleLabel.setTextFill(Color.LIGHTGREEN);
+    /**
+     * Este método faz a mudança de cor do texto da regra de senha com base se ela foi cumprida ou não.
+     *
+     * @param lbRegra o label da regra.
+     * @param isCumprida true se a regra foi cumprida, false caso contrário.
+     */
+    private void atualizarRegraSenhaUI(Label lbRegra, boolean isCumprida) {
+        if (isCumprida) {
+            lbRegra.setTextFill(Color.LIGHTGREEN);
         } else {
-            ruleLabel.setTextFill(Color.LIGHTGRAY);
+            lbRegra.setTextFill(Color.LIGHTGRAY);
         }
     }
 
-    private void handleRegisterSubmit() {
-        if (registerController == null) {
-            generalErrorLabel.setText("Erro interno: Controller não configurado.");
-            generalErrorLabel.setVisible(true);
-            return;
-        }
-        clearAllErrors();
+    /**
+     * Métodos de encapsulamento getters e setter
+     */
+    public TextField getFldNome() {return fldNome;}
+    public TextField getFldEmail() {return fldEmail;}
+    public PasswordField getFldSenha() {return fldSenha;}
+    public DatePicker getFldDataNascimento() {return fldDataNascimento;}
+    public TextField getFldCidade() {return fldCidade;}
 
-        String name = nameField.getText();
-        String email = emailField.getText();
-        String password = passwordField.getText();
-        LocalDate dob = dobPicker.getValue();
-        String city = cityField.getText();
-        List<String> selectedThemes = getSelectedThemes();
+    public CheckBox getCbCorporativo() {return cbCorporativo;}
+    public CheckBox getCbBeneficente() {return cbBeneficente;}
+    public CheckBox getCbEducacional() {return cbEducacional;}
+    public CheckBox getCbCultural() {return cbCultural;}
+    public CheckBox getCbEsportivo() {return cbEsportivo;}
+    public CheckBox getCbReligioso() {return cbReligioso;}
+    public CheckBox getCbSocial() {return cbSocial;}
 
-        boolean allFieldsValid = true;
+    public Label getLbErroGeral() {return lbErroGeral;}
+    public void setLbErroGeral(Label lbErroGeral) {this.lbErroGeral = lbErroGeral;}
 
-        String nameValidationError = registerController.validateNameForSubmit(name);
-        if (nameValidationError != null) {
-            nameErrorLabel.setText(nameValidationError);
-            nameErrorLabel.setVisible(true);
-            allFieldsValid = false;
-        }
-
-        String emailValidationError = registerController.validateEmailForSubmit(email);
-        if (emailValidationError != null) {
-            emailErrorLabel.setText(emailValidationError);
-            emailErrorLabel.setVisible(true);
-            allFieldsValid = false;
-        }
-
-        String passwordValidationError = registerController.validatePasswordForSubmit(password);
-        if (passwordValidationError != null) {
-            passwordErrorLabel.setText(passwordValidationError);
-            passwordErrorLabel.setVisible(true);
-            allFieldsValid = false;
-        }
-
-        String dobValidationError = registerController.validateDobForSubmit(dob);
-        if (dobValidationError != null) {
-            dobErrorLabel.setText(dobValidationError);
-            dobErrorLabel.setVisible(true);
-            allFieldsValid = false;
-        }
-
-        String cityValidationError = registerController.validateCityForSubmit(city);
-        if (cityValidationError != null) {
-            cityErrorLabel.setText(cityValidationError);
-            cityErrorLabel.setVisible(true);
-            allFieldsValid = false;
-        }
-
-        String themesValidationError = registerController.validateThemesForSubmit(selectedThemes);
-        if (themesValidationError != null) {
-            themesErrorLabel.setText(themesValidationError);
-            themesErrorLabel.setVisible(true);
-            allFieldsValid = false;
-        }
-
-        if (allFieldsValid) {
-            boolean success = registerController.processRegistration(name, email, password, dob, city, selectedThemes);
-            if (success) {
-                generalErrorLabel.setText("Registro realizado com sucesso!");
-                generalErrorLabel.setTextFill(Color.LIGHTGREEN);
-                generalErrorLabel.setVisible(true);
-                registerButton.setDisable(true);
-            } else {
-                generalErrorLabel.setText("Falha no registro. Verifique os dados.");
-                generalErrorLabel.setVisible(true);
-            }
-        } else {
-            generalErrorLabel.setText("Alguns campos contêm erros. Verifique.");
-            generalErrorLabel.setVisible(true);
-        }
-    }
-
-    private void clearAllErrors() {
-        nameErrorLabel.setVisible(false);
-        emailErrorLabel.setVisible(false);
-        passwordErrorLabel.setVisible(false);
-        dobErrorLabel.setVisible(false);
-        cityErrorLabel.setVisible(false);
-        themesErrorLabel.setVisible(false);
-        generalErrorLabel.setVisible(false);
-    }
-
-    private List<String> getSelectedThemes() {
-        List<String> themes = new ArrayList<>();
-        if (corporateCb.isSelected()) themes.add(corporateCb.getText());
-        if (charitableCb.isSelected()) themes.add(charitableCb.getText());
-        if (educationalCb.isSelected()) themes.add(educationalCb.getText());
-        if (culturalCb.isSelected()) themes.add(culturalCb.getText());
-        if (sportsCb.isSelected()) themes.add(sportsCb.getText());
-        if (religiousCb.isSelected()) themes.add(religiousCb.getText());
-        if (socialCb.isSelected()) themes.add(socialCb.getText());
-        return themes;
-    }
-
-    private void navigateToLoginScreen() {
-        try {
-            Stage currentStage = (Stage) this.getScene().getWindow();
-            UserController userController = new UserController();
-            LoginView loginView = new LoginView(userController);
-            Scene loginScene = new Scene(loginView, 1280, 720);
-            try {
-                loginScene.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
-            } catch (Exception cssEx) {
-                System.err.println("Erro ao carregar CSS para LoginView: " + cssEx.getMessage());
-            }
-            currentStage.setScene(loginScene);
-            currentStage.setTitle("Eventually - Login");
-            currentStage.setMaximized(true);
-        } catch (Exception ex) {
-            System.err.println("Erro ao navegar para a tela de Login: " + ex.getMessage());
-            ex.printStackTrace();
-            if (generalErrorLabel != null) {
-                generalErrorLabel.setText("Erro ao tentar voltar para tela de login.");
-                generalErrorLabel.setVisible(true);
-            }
-        }
-    }
+    public Hyperlink getVoltarLoginLink() {return voltarLoginLink;}
+    public Button getBtnRegistrar() {return btnRegistrar;}
 }
