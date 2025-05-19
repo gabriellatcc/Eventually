@@ -19,17 +19,13 @@ import javafx.scene.text.FontWeight;
  * @since 2025-04-22 (Revisão e documentação da classe)
  */
 public class EventCard extends HBox {
-//falta: puxar nome do evento e usar api para incluir classe geoposition e dar um location mais preciso, arrumar para exibir data atual com java date
-    /**
+//falta: controller: dto do evento
+     /**
      * Construtor da classe {@code EventCard}.
-     * Inicializa e configura os elementos visuais do cartão de evento, incluindo:
-     * <ul>
-     * <li>Padding e espaçamento interno do cartão.</li>
-     * <li>Estilo de fundo com um gradiente linear e bordas arredondadas.</li>
-     * <li>Altura preferencial do cartão.</li>
-     * <li>Um {@code VBox} para o título e a localização do evento.</li>
-     * <li>Um {@code VBox} para exibir a data (dia, mês/ano) e a hora do evento, alinhado à direita.</li>
-     * </ul>
+     * Inicializa e configura os elementos visuais do cartão de evento, incluindo: padding e
+     * espaçamento interno do cartão, estilo de fundo com um gradiente linear e bordas arredondadas,
+     * altura preferencial do cartão, {@code VBox} para o título e a localização do evento e um
+     * para exibir a data (dia, mês/ano) e a hora do evento, alinhado à direita.
      * Os rótulos de texto são estilizados com cores brancas e, no caso da data e hora, com negrito.
      */
     public EventCard() {
@@ -54,7 +50,7 @@ public class EventCard extends HBox {
 
         Label day = new Label("SEX 14,");
         Label monthYear = new Label("MAR 2025");
-        Label hour = new Label("18:20");//
+        Label hour = new Label("18:20");
 
         day.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
         monthYear.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
