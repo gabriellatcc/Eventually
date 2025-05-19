@@ -1,147 +1,168 @@
 package com.eventually.controller;
+import com.eventually.dto.CadastrarUsuarioDto;
+import com.eventually.dto.PreferenciasUsuarioDto;
+import com.eventually.service.UsuarioCadastroService;
+import com.eventually.service.TelaService;
+import com.eventually.view.LoginView;
+import com.eventually.view.RegisterView;
+import com.eventually.view.UserScheduleView;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.regex.Pattern;
+
 /**
  * Classe controller da tela de registro.
  * Esta classe é responsável pela comunicação
- * da tela de cadastro com o backend.
- *
+ * da tela de registro com o backend.
  * @author Yuri Garcia Maia
  * @version 1.00
  * @since 2025-05-13
+ * @author Gabriella Tavares Costa Corrêa (Documentação, revisão da estrutura e lógica da classe)
+ * @since 2025-05-14
  */
 public class RegisterController {
+    private final RegisterView registerView;
+    private final Stage primaryStage;
 
-    // Padrões para validação
-    private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[^a-zA-Z0-9]");
-    private static final Pattern DIGIT_PATTERN = Pattern.compile("[0-9]");
-    private static final Pattern LETTER_PATTERN = Pattern.compile("[a-zA-Z]");
-    private static final Pattern EMAIL_DOMAIN_PATTERN = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
+    UsuarioCadastroService usuarioCadastroService = new UsuarioCadastroService();
 
-    // Estrutura para armazenar os dados após o registro
-    private Map<String, Object> registeredUserData;
-
-    public RegisterController() {
-        this.registeredUserData = new HashMap<>();
+    /**
+     * Construtor do {@code RegisterController}, inicializa a view de registro e define os manipuladores de eventos.
+     * @param registerView a interface de registro associada
+     * @param primaryStage o palco principal da aplicação
+     */
+    public RegisterController(RegisterView registerView, Stage primaryStage) {
+        this.registerView = registerView;
+        this.primaryStage = primaryStage;
+        this.registerView.setRegisterController(this);
+        setupEventHandlersRegister();
     }
 
-    // --- Métodos de validação de regras ao vivo ---
-
-    public boolean isNameRuleMet(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            return false;
-        }
-        // Pelo menos duas palavras (simples) ou nome composto
-        String[] parts = name.trim().split("\\s+");
-        return parts.length >= 2;
+    /**
+     * Este método configura os manipuladores de eventos para os botões da tela de registro.
+     */
+    public void setupEventHandlersRegister() {
+        registerView.getBtnRegistrar().setOnAction(e -> handleCadastro());
+        registerView.getVoltarLoginLink().setOnAction(e -> handleVoltarParaSessao());
     }
 
-    public Map<String, Boolean> checkPasswordRules(String password) {
-        Map<String, Boolean> ruleStatus = new HashMap<>();
-        if (password == null) password = "";
+    /**
+     * Neste método é manipulado o clique no link "Voltar" da tela de registro, retornando para a tela de login.
+     */
+    private void handleVoltarParaSessao() {
+        System.out.println("RegisterController: hyperLink de voltar sessão clicado");
+        try {
+            LoginView loginView = new LoginView();
+            LoginController loginController = new LoginController(loginView, primaryStage);
+            loginView.setLoginController(loginController);
 
-        ruleStatus.put("hasSpecial", SPECIAL_CHAR_PATTERN.matcher(password).find());
-        ruleStatus.put("hasDigit", DIGIT_PATTERN.matcher(password).find());
-        ruleStatus.put("hasLetter", LETTER_PATTERN.matcher(password).find());
+            TelaService service = new TelaService();
+            Scene loginScene = new Scene(loginView,service.medirWidth(),service.medirHeight());
 
-        return ruleStatus;
-    }
-
-    // --- Métodos de validação para submissão ---
-
-    public String validateNameForSubmit(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            return "Mensagem de erro: O campo nome é obrigatório.";
-        }
-        if (!isNameRuleMet(name)) {
-            return "Mensagem de erro: O nome não segue os padrões (deve ter nome e sobrenome).";
-        }
-        return null; // Sem erro
-    }
-
-    public String validateEmailForSubmit(String email) {
-        if (email == null || email.trim().isEmpty()) {
-            return "Mensagem de erro: O campo email é obrigatório.";
-        }
-        if (!EMAIL_DOMAIN_PATTERN.matcher(email).matches()) {
-            return "Mensagem de erro: O email não tem domínio válido.";
-        }
-        return null; // Sem erro
-    }
-
-    public String validatePasswordForSubmit(String password) {
-        if (password == null || password.isEmpty()) {
-            return "Mensagem de erro: O campo senha é obrigatório.";
-        }
-        Map<String, Boolean> rules = checkPasswordRules(password);
-        if (!rules.get("hasSpecial") || !rules.get("hasDigit") || !rules.get("hasLetter")) {
-            return "Mensagem de erro: A senha não segue os padrões.";
-        }
-        return null; // Sem erro
-    }
-
-    public String validateDobForSubmit(LocalDate dob) {
-        if (dob == null) {
-            return "Mensagem de erro: Data de nascimento é obrigatória.";
-        }
-        return null; // Sem erro
-    }
-
-    public String validateCityForSubmit(String city) {
-        if (city == null || city.trim().isEmpty()) {
-            return "Mensagem de erro: Cidade é obrigatória.";
-        }
-        return null; // Sem erro
-    }
-
-    public String validateThemesForSubmit(List<String> selectedThemes) {
-        if (selectedThemes == null || selectedThemes.isEmpty()) {
-            return "Mensagem de erro: Selecione ao menos um tema de interesse.";
-        }
-        return null;
-    }
-
-
-    public boolean processRegistration(String name, String email, String password,
-                                       LocalDate dob, String city, List<String> selectedThemes) {
-
-        // Revalidar tudo para garantir
-        boolean isValid = true;
-        if (validateNameForSubmit(name) != null) isValid = false;
-        if (validateEmailForSubmit(email) != null) isValid = false;
-        if (validatePasswordForSubmit(password) != null) isValid = false;
-        if (validateDobForSubmit(dob) != null) isValid = false;
-        if (validateCityForSubmit(city) != null) isValid = false;
-        if (validateThemesForSubmit(selectedThemes) != null) isValid = false;
-
-
-        if (isValid) {
-            registeredUserData.put("name", name);
-            registeredUserData.put("email", email);
-            registeredUserData.put("password", "******"); // Não armazene senha em texto plano
-            registeredUserData.put("dateOfBirth", dob);
-            registeredUserData.put("city", city);
-            registeredUserData.put("themes", selectedThemes);
-
-            System.out.println("--- REGISTRO REALIZADO (simulação) ---");
-            System.out.println("Dados coletados para backend e armazenados em memória (controller):");
-            registeredUserData.forEach((key, value) -> System.out.println(key + ": " + value));
-            System.out.println("-------------------------------------");
-            // Aqui você normalmente navegaria para uma tela de sucesso ou login
-            return true;
-        } else {
-            System.out.println("Falha no registro. Verifique os campos.");
-            return false;
+            loginScene.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
+            primaryStage.setTitle("Eventually - Login");
+            primaryStage.setScene(loginScene);
+        } catch (Exception ex) {
+            System.err.println("RegisterController: Erro ao navegar para a tela de Login: " + ex.getMessage());
+            ex.printStackTrace();
+            if (registerView.getLbErroGeral() != null) {
+                Label erroLabel = registerView.getLbErroGeral();
+                erroLabel.setText("RegisterController: Erro ao tentar voltar para tela de login.");
+                erroLabel.setVisible(true);
+            }
         }
     }
 
-    public void handleNavigateToLogin() {
-        System.out.println("RegisterController: Solicitacao para navegar para a tela de Login.");
-        // Lógica de navegação para a tela de login viria aqui
+    /**
+     * Este método manipula o clique no botão de cadastro, redirecionando o usuário à tela de programação após cadastro.
+     */
+    private void handleCadastro() {
+        System.out.println("RegisterController: botão de registro clicado");
+        handleCamposPreenchidos();
+
+        UserScheduleView userScheduleView = new UserScheduleView();
+        UserScheduleController userScheduleController = new UserScheduleController(userScheduleView, primaryStage);
+        userScheduleView.setUserScheduleController(userScheduleController);
+
+        TelaService service = new TelaService();
+        Scene sceneUserSchedule = new Scene(userScheduleView,service.medirWidth(),service.medirHeight());
+
+        sceneUserSchedule.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
+        primaryStage.setTitle("Eventually - Progamação do Usuário");
+        primaryStage.setScene(sceneUserSchedule);
+
+        //falta: trow runtime exception se da erro
+    }
+
+    /**
+     * Esté método lê os campos da interface de registro e envia os dados para cadastro via {@link UsuarioCadastroService}.
+     */
+    private void handleCamposPreenchidos() {
+        String nome = registerView.getFldNome().getText();
+        String email = registerView.getFldEmail().getText();
+        String senha = registerView.getFldSenha().getText();
+        String cidade = registerView.getFldCidade().getText();
+        LocalDate dataInformada = registerView.getFldDataNascimento().getValue();
+        String data= dataInformada.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+
+        CadastrarUsuarioDto cadastroUsuarioDto = new CadastrarUsuarioDto(
+                nome,
+                email,
+                senha,
+                cidade,
+                data,
+                handlePreferenciasSelecionadas()
+        );
+
+        try {
+            usuarioCadastroService.cadastrarNovoUsuario(cadastroUsuarioDto);
+            System.out.println("RegisterController: usuário cadastrado com sucesso!");
+            //falta: exibir mensagem de sucesso na interface
+        } catch (RuntimeException e) {
+            System.err.println("RegisterController: Erro ao cadastrar usuário: " + e.getMessage());
+            registerView.getLbErroGeral().setText(e.getMessage());
+            registerView.getLbErroGeral().setVisible(true);
+        }
+
+        //falta trow runtime exception se da erro
+    }
+
+    /**
+     * Neste método as preferências selecionadas pelo usuário na interface são lidas e empacotadas em um DTO.
+     * @return um objeto {@link PreferenciasUsuarioDto} contendo as preferências selecionadas.
+     */
+    private PreferenciasUsuarioDto handlePreferenciasSelecionadas() {
+        PreferenciasUsuarioDto preferenciasUsuarioDto = new PreferenciasUsuarioDto(
+                registerView.getCbCorporativo().isSelected(),
+                registerView.getCbBeneficente().isSelected(),
+                registerView.getCbEducacional().isSelected(),
+                registerView.getCbCultural().isSelected(),
+                registerView.getCbEsportivo().isSelected(),
+                registerView.getCbReligioso().isSelected(),
+                registerView.getCbSocial().isSelected()
+        );
+        return preferenciasUsuarioDto;
+    }
+
+    /**
+     * Este método valida se o nome inserido atende às regras do sistema.
+     * @param newVal o nome a ser validado
+     * @return true se válido, false caso contrário
+     */
+    public boolean conferirNome(String newVal) {
+        return usuarioCadastroService.isRegraNomeCumprida(newVal);
+    }
+
+    /**
+     * Este método valida se a senha inserida atende às regras do sistema.
+     * @param newVal a senha a ser validada
+     * @return um {@code Map} com cada regra e o resultado booleano da validação
+     */
+    public Map<String, Boolean> conferirSenha(String newVal) {
+        return usuarioCadastroService.validarRegrasSenha(newVal);
     }
 }
