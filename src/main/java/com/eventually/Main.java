@@ -1,5 +1,6 @@
 package com.eventually;
-import com.eventually.controller.UserController;
+import com.eventually.controller.LoginController;
+import com.eventually.service.TelaService;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -12,13 +13,13 @@ import com.eventually.view.LoginView;
  * por inicializar e exibir a interface gráfica do usuário.
  *
  * @author Yuri Garcia Maia
- * @version 1.00
+ * @version 1.01
  * @since 2025-04-06
  * @author Gabriella Tavares
  * @since 2025-04-22 (Documentação da classe)
  */
 public class Main extends Application {
-
+    private Stage primaryStage;
     /**
      * O método principal para iniciar a aplicação JavaFX.
      * Este método é chamado pelo ambiente JavaFX quando a aplicação é lançada.
@@ -29,18 +30,27 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        UserController userController = new UserController();
-        LoginView loginView = new LoginView(userController);
-        Scene scene = new Scene(loginView, 1280, 720);
-        scene.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
+        this.primaryStage = primaryStage;
 
-        // Adiciona ícone
+        LoginView loginView = new LoginView();
+        LoginController loginController = new LoginController(loginView, primaryStage);
+
+        Scene sceneLogin = new Scene(loginView);
+        sceneLogin.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
+
         primaryStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
 
         primaryStage.setTitle("Eventually - Login");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        primaryStage.setScene(sceneLogin);
+        primaryStage.setResizable(true);
         primaryStage.setMaximized(true);
+        primaryStage.centerOnScreen();
+
+        TelaService telaService = new TelaService();
+        telaService.aplicarTamanhoRestaurar(primaryStage, 1000, 600);
+
+        primaryStage.show();
+
     }
 
     /**
