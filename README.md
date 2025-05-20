@@ -9,7 +9,7 @@ A modelagem dos dados foi feita utilizando as bibliotecas `ArrayList` e `Set<>`,
 
 - **Java** (linguagem principal da aplicação)
 - **JavaFx** (framework para interface gráfica)
-- css para o java fx personalizado
+- **CSS** (personalização visual da interface JavaFX)
 - **Maven** (ferramenta de build)
 - **Intellij** (IDE)
 
@@ -99,7 +99,7 @@ Essas classes (`EventoRepository` e `UsuarioRepository`) são responsáveis por 
 ## 👥 Equipe
 
 - **Gabriella Tavares Costa Corrêa** - [@gabriellatcc](https://github.com/gabriellatcc) (Estruturação, desenvolvimento backend, integração com frontend, documentação de código e revisão de boas práticas)
-- **Yuri Garcia Mai** - [@yurigmaia](https://github.com/yurigmaia) (Desenvolvimento frontend de código, padronização e criação de design, desenvolvimento de protótipos de telas, revisão da construção de telas)
+- **Yuri Garcia Maia** - [@yurigmaia](https://github.com/yurigmaia) (Desenvolvimento frontend de código, padronização e criação de design, desenvolvimento de protótipos de telas, revisão da construção de telas)
 - **Maria Auxilidora da Cunha Pereira** - [@maripereira55](https://github.com/maripereira55) (Padronização e criação de design, desenvolvimento de protótipos de telas, revisão da construção de telas)
 - **Lívia Elisei Neves Machado** - [@liviaelisei](https://github.com/liviaelisei) (Consolidação de ideias e documentação)
 - **Lucas Lopes de Oliveira** - [@LucasLopes2003](https://github.com/LucasLopes2003) (Consolidação de ideias)
