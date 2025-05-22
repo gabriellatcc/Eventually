@@ -1,23 +1,17 @@
 package com.eventually.view;
 
 import com.eventually.controller.SettingsController;
-import com.eventually.controller.UserController; // Para navegação de volta ao login
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -32,23 +26,22 @@ import java.util.Optional;
 /**
  * Classe para a tela de Configurações.
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
+ * @author Yuri Garcia Maia (Criação e revisão)
+ * @since 22-05-2025
+ * @version 1.0
  */
 public class SettingsView extends BorderPane {
 
     private SettingsController controller;
 
-    // Componentes da estrutura principal (similares a UserScheduleView)
     private Button btnInicio, btnMeusEventos, btnConfiguracoesSidebar;
     private Button btnProgramacao, btnAgenda, btnNovoEventoHeader;
     private Label lbNomeUsuarioHeader;
     private Circle avatarHeader;
 
-    // Componentes específicos de Configurações
-    // Preferências de Conteúdo
     private List<CheckBox> themeCheckBoxes = new ArrayList<>();
     private Button btnSaveChangesContentPrefs;
 
-    // Preferências de Usuário
     private Label nameDisplay, emailDisplay, phoneDisplay, passwordDisplay, cityDisplay, dobDisplay;
     private ImageView profilePhotoView;
     private Label profilePhotoErrorLabel;
@@ -60,32 +53,29 @@ public class SettingsView extends BorderPane {
      * Construtor da SettingsView.
      */
     public SettingsView() {
-        this.getStyleClass().add("settings-view"); // Para CSS específico se necessário
-        // O controller será setado externamente
+        this.getStyleClass().add("settings-view");
     }
 
     /**
      * Define o controller para esta view.
      * @param controller O controller a ser usado.
      */
-    public void setController(SettingsController controller) {
+    public void setSettingsController(SettingsController controller) {
         this.controller = controller;
-        setupUI(); // Configura a UI após o controller estar disponível
-        setupActionHandlers(); // Configura os handlers de evento
+        setupUI();
+        setupActionHandlers();
     }
 
     /**
      * Configura a interface gráfica principal da tela de configurações.
      */
     private void setupUI() {
-        // Recria a estrutura visual similar a UserScheduleView
         VBox barraLateral = createSidebar();
         HBox barraSuperior = createTopbar();
-        VBox conteudoCentral = createCenterContent(); // Conteúdo específico de configurações
+        VBox conteudoCentral = createCenterContent();
 
-        // Simula o sub-cabeçalho da UserScheduleView para consistência
         HBox subHeader = createSubHeaderControls();
-        VBox mainContentWrapper = new VBox(conteudoCentral); // Envolve o conteúdo específico
+        VBox mainContentWrapper = new VBox(conteudoCentral);
         VBox.setVgrow(mainContentWrapper, Priority.ALWAYS);
 
         VBox centerAreaWithSubHeader = new VBox(subHeader, mainContentWrapper);
@@ -95,7 +85,6 @@ public class SettingsView extends BorderPane {
         setTop(barraSuperior);
         setCenter(centerAreaWithSubHeader);
 
-        // Carrega o CSS (assumindo /styles/styles.css)
         try {
             this.getStylesheets().add(getClass().getResource("/styles/settings-styles.css").toExternalForm());
         } catch (Exception e) {
@@ -111,10 +100,6 @@ public class SettingsView extends BorderPane {
         return appDateFormatter;
     }
 
-    // --- Métodos para recriar a estrutura da UserScheduleView ---
-    // Estes métodos são simplificações/cópias adaptadas de UserScheduleView
-    // Idealmente, UserScheduleView seria refatorada para ter um MainLayoutView reutilizável.
-
     /**
      * Este método cria a barra lateral de navegação.
      * @return A VBox da barra lateral.
@@ -129,12 +114,12 @@ public class SettingsView extends BorderPane {
         btnInicio = new Button("Página inicial");
         btnMeusEventos = new Button("Meus eventos");
         btnConfiguracoesSidebar = new Button("Configurações");
-        Button btnSair = new Button("Sair"); // Adicionado para exemplo
+        Button btnSair = new Button("Sair");
 
         btnInicio.getStyleClass().add("menu-button");
         btnMeusEventos.getStyleClass().add("menu-button");
         btnConfiguracoesSidebar.getStyleClass().add("menu-button");
-        btnConfiguracoesSidebar.setStyle("-fx-background-color: #D54BD9;"); // Destaca botão atual
+        btnConfiguracoesSidebar.setStyle("-fx-background-color: #D54BD9;");
         btnSair.getStyleClass().add("menu-button");
 
 
@@ -180,12 +165,12 @@ public class SettingsView extends BorderPane {
         btnAgenda = new Button("Minha agenda");
         btnNovoEventoHeader = new Button("+ Novo Evento");
 
-        lbNomeUsuarioHeader = new Label("Usuário Exemplo"); // Dados viriam do controller
+        lbNomeUsuarioHeader = new Label("Usuário Exemplo");
         lbNomeUsuarioHeader.getStyleClass().add("user-display-label");
 
         avatarHeader = new Circle(18);
         avatarHeader.getStyleClass().add("avatar-circle");
-        avatarHeader.setFill(Color.LIGHTGRAY); // Placeholder
+        avatarHeader.setFill(Color.LIGHTGRAY);
 
         HBox userDisplayBox = new HBox(8, lbNomeUsuarioHeader, avatarHeader);
         userDisplayBox.setAlignment(Pos.CENTER);
@@ -202,8 +187,6 @@ public class SettingsView extends BorderPane {
         return subHeader;
     }
 
-
-    // --- Conteúdo Específico de Configurações ---
     /**
      * Este método cria o container central da tela de configurações.
      * @return A VBox com o conteúdo de configurações.
@@ -211,19 +194,18 @@ public class SettingsView extends BorderPane {
     private VBox createCenterContent() {
         VBox centerContent = new VBox(30);
         centerContent.setPadding(new Insets(20));
-        centerContent.getStyleClass().add("center-content-area"); // Reutiliza estilo se aplicável
+        centerContent.getStyleClass().add("center-content-area");
         centerContent.setAlignment(Pos.TOP_CENTER);
 
         Label title = new Label("Configurações");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 28));
-        title.getStyleClass().add("settings-title"); // Estilizar se necessário
+        title.getStyleClass().add("settings-title");
 
         VBox contentPrefsSection = createContentPreferencesSection();
         VBox userPrefsSection = createUserPreferencesSection();
 
         btnDeleteAccount = new Button("Excluir conta");
-        btnDeleteAccount.getStyleClass().add("delete-account-button"); // Estilo específico no CSS
-        // Exemplo de estilo direto se não tiver no CSS (idealmente no CSS):
+        btnDeleteAccount.getStyleClass().add("delete-account-button");
         btnDeleteAccount.setStyle("-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-font-weight: bold;");
         btnDeleteAccount.setPrefWidth(150);
 
@@ -244,7 +226,6 @@ public class SettingsView extends BorderPane {
     private VBox createContentPreferencesSection() {
         VBox section = new VBox(15);
         section.setPadding(new Insets(10));
-        // section.setStyle("-fx-border-color: lightgray; -fx-border-width: 1; -fx-border-radius: 5;"); // Estilo exemplo
 
         Label title = new Label("Preferências de conteúdo");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 20));
@@ -276,20 +257,17 @@ public class SettingsView extends BorderPane {
             themeCheckBoxes.add(cb);
             themesGrid.add(themeEntry, col, row);
             col++;
-            if (col > 0 && (i+1) < themeNames.length) { // Ajuste para 2 colunas, exceto talvez o último
+            if (col > 0 && (i+1) < themeNames.length) {
                 col = 0;
                 row++;
-            } else if (col > 1) { // Garante no máximo 2 colunas se for ímpar
+            } else if (col > 1) {
                 col = 0;
                 row++;
             }
         }
-        // Ajuste manual se a grade não ficou como esperado para 7 itens em 2 colunas
-        // (A lógica acima tenta colocar 2 por linha, o último pode ficar sozinho ou ajustar)
-
 
         btnSaveChangesContentPrefs = new Button("Salvar Preferências de Conteúdo");
-        btnSaveChangesContentPrefs.getStyleClass().add("save-prefs-button"); // Estilizar no CSS
+        btnSaveChangesContentPrefs.getStyleClass().add("save-prefs-button");
         HBox buttonBox = new HBox(btnSaveChangesContentPrefs);
         buttonBox.setAlignment(Pos.CENTER_LEFT);
         buttonBox.setPadding(new Insets(10,0,0,0));
@@ -305,7 +283,6 @@ public class SettingsView extends BorderPane {
     private VBox createUserPreferencesSection() {
         VBox section = new VBox(15);
         section.setPadding(new Insets(10));
-        // section.setStyle("-fx-border-color: lightgray; -fx-border-width: 1; -fx-border-radius: 5;"); // Estilo exemplo
 
         Label title = new Label("Preferências de usuário");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 20));
@@ -318,50 +295,39 @@ public class SettingsView extends BorderPane {
         userDetailsGrid.setVgap(10);
         userDetailsGrid.setPadding(new Insets(10, 0, 10, 0));
 
-        // Nome
         nameDisplay = new Label();
         StackPane nameFieldContainer = createEditableField("name", "Nome:", nameDisplay, "Exemplo Nome");
         userDetailsGrid.add(new Label("Nome:"), 0, 0);
         userDetailsGrid.add(nameFieldContainer, 1, 0);
 
-        // Email (geralmente não editável ou com processo de verificação)
         emailDisplay = new Label();
         Label emailLabelForDisplay = new Label("Email:");
-        // StackPane emailFieldContainer = createEditableField("email", "Email:", emailDisplay, "exemplo@email.com", false); // Exemplo não editável
-        // Para o exemplo da imagem, o email não tem "alterar" explícito, então exibimos como Label.
-        // Se precisar ser editável, usar createEditableField.
         userDetailsGrid.add(emailLabelForDisplay, 0, 1);
         userDetailsGrid.add(emailDisplay, 1, 1);
 
 
-        // Telefone
         phoneDisplay = new Label();
         StackPane phoneFieldContainer = createEditableField("phone", "Telefone:", phoneDisplay, "(xx) xxxxx-xxxx");
         userDetailsGrid.add(new Label("Telefone:"), 0, 2);
         userDetailsGrid.add(phoneFieldContainer, 1, 2);
 
-        // Senha
         passwordDisplay = new Label("********");
         StackPane passwordFieldContainer = createEditableField("password", "Senha:", passwordDisplay, "", true); // isPassword = true
         userDetailsGrid.add(new Label("Senha:"), 0, 3);
         userDetailsGrid.add(passwordFieldContainer, 1, 3);
 
-        // Cidade
         cityDisplay = new Label();
         StackPane cityFieldContainer = createEditableField("city", "Cidade:", cityDisplay, "Cidade Exemplo");
         userDetailsGrid.add(new Label("Cidade:"), 0, 4);
         userDetailsGrid.add(cityFieldContainer, 1, 4);
 
-        // Data de Nascimento
         dobDisplay = new Label();
         StackPane dobFieldContainer = createEditableField("dateOfBirth", "Data de Nasc.:", dobDisplay, "dd/mm/yyyy");
         userDetailsGrid.add(new Label("Data de Nascimento:"), 0, 5);
         userDetailsGrid.add(dobFieldContainer, 1, 5);
 
-        // Foto de Perfil
         VBox photoSection = createProfilePhotoSection();
 
-        // Layout Principal de Preferências de Usuário
         HBox userPrefsMainLayout = new HBox(30, userDetailsGrid, photoSection);
         HBox.setHgrow(userDetailsGrid, Priority.ALWAYS);
 
@@ -385,20 +351,20 @@ public class SettingsView extends BorderPane {
         profilePhotoView.setFitHeight(100);
         profilePhotoView.setFitWidth(100);
         profilePhotoView.setPreserveRatio(true);
-        // Placeholder visual para a foto
+
         StackPane photoPlaceholder = new StackPane(profilePhotoView);
         photoPlaceholder.setPrefSize(100,100);
         photoPlaceholder.setMinSize(100,100);
         photoPlaceholder.setMaxSize(100,100);
 
         photoPlaceholder.setStyle("-fx-border-color: lightgray; -fx-border-width: 1; -fx-background-color: #f0f0f0;");
-        // Carregar imagem default ou do usuário aqui se houver
+
+
         // try {
         //     Image defaultImg = new Image(getClass().getResourceAsStream("/images/default-avatar.png"));
         //     profilePhotoView.setImage(defaultImg);
         // } catch (Exception e) {
         //     System.err.println("Erro ao carregar avatar padrão: " + e.getMessage());
-        //     // Se não houver imagem, o placeholder já tem um fundo
         // }
 
 
@@ -409,7 +375,7 @@ public class SettingsView extends BorderPane {
 
 
         Hyperlink changePhotoLink = new Hyperlink("(alterar)");
-        changePhotoLink.setOnAction(e -> controller.handleChangeProfilePhoto()); // A view notifica o controller
+/*        changePhotoLink.setOnAction(e -> controller.handleChangeProfilePhoto()); */
 
         profilePhotoErrorLabel = new Label();
         profilePhotoErrorLabel.setTextFill(Color.SALMON);
@@ -442,16 +408,14 @@ public class SettingsView extends BorderPane {
     private StackPane createEditableField(String fieldKey, String labelTextUnused, Label displayLabel, String promptText, boolean isPassword) {
         StackPane stack = new StackPane();
 
-        // Modo de Visualização
         HBox viewMode = new HBox(10);
         viewMode.setAlignment(Pos.CENTER_LEFT);
         Hyperlink alterLink = new Hyperlink("(alterar)");
         viewMode.getChildren().addAll(displayLabel, alterLink);
 
-        // Modo de Edição
         HBox editMode = new HBox(5);
         editMode.setAlignment(Pos.CENTER_LEFT);
-        Node editField; // TextField, PasswordField ou DatePicker
+        Node editField;
 
         if ("dateOfBirth".equals(fieldKey)) {
             DatePicker picker = new DatePicker();
@@ -460,7 +424,7 @@ public class SettingsView extends BorderPane {
             editField = picker;
         } else if (isPassword) {
             PasswordField passField = new PasswordField();
-            passField.setPromptText("Nova Senha"); // Prompt específico para senha
+            passField.setPromptText("Nova Senha");
             passField.setPrefWidth(150);
             editField = passField;
         } else {
@@ -473,9 +437,9 @@ public class SettingsView extends BorderPane {
         Button saveButton = new Button("Salvar");
         Button cancelButton = new Button("Cancelar");
         editMode.getChildren().addAll(editField, saveButton, cancelButton);
-        editMode.setVisible(false); // Começa invisível
+        editMode.setVisible(false);
 
-        Label fieldErrorLabel = new Label(); // Label de erro específico para este campo
+        Label fieldErrorLabel = new Label();
         fieldErrorLabel.setTextFill(Color.SALMON);
         fieldErrorLabel.setFont(Font.font("Arial", 10));
         fieldErrorLabel.setVisible(false);
@@ -486,9 +450,8 @@ public class SettingsView extends BorderPane {
         alterLink.setOnAction(e -> {
             viewMode.setVisible(false);
             fieldContainer.setVisible(true);
-            editMode.setVisible(true); // Garante que o editMode dentro do VBox esteja visível
-            fieldErrorLabel.setVisible(false); // Limpa erro ao abrir edição
-            // Preenche o campo de edição com o valor atual do displayLabel (exceto senha)
+            editMode.setVisible(true);
+            fieldErrorLabel.setVisible(false);
             if (editField instanceof TextField && !isPassword) {
                 ((TextField) editField).setText(displayLabel.getText());
             } else if (editField instanceof DatePicker) {
@@ -499,7 +462,7 @@ public class SettingsView extends BorderPane {
                         ((DatePicker) editField).setValue(null);
                     }
                 } catch (DateTimeParseException ex) {
-                    ((DatePicker) editField).setValue(null); // Se parse falhar
+                    ((DatePicker) editField).setValue(null);
                 }
             }
         });
@@ -507,11 +470,11 @@ public class SettingsView extends BorderPane {
         cancelButton.setOnAction(e -> {
             viewMode.setVisible(true);
             fieldContainer.setVisible(false);
-            editMode.setVisible(false); // Esconde modo de edição
+            editMode.setVisible(false);
         });
 
         saveButton.setOnAction(e -> {
-            fieldErrorLabel.setVisible(false); // Limpa erro antes de salvar
+            fieldErrorLabel.setVisible(false);
             if (controller != null) {
                 String newValue = "";
                 LocalDate newDate = null;
@@ -523,7 +486,7 @@ public class SettingsView extends BorderPane {
                 } else if (editField instanceof DatePicker) {
                     newDate = ((DatePicker) editField).getValue();
                 }
-
+/*
                 // Chamar o método apropriado do controller
                 switch (fieldKey) {
                     case "name": controller.handleUpdateName(newValue); break;
@@ -533,17 +496,16 @@ public class SettingsView extends BorderPane {
                     case "city": controller.handleUpdateCity(newValue); break;
                     case "dateOfBirth": controller.handleUpdateDateOfBirth(newDate); break;
                 }
+
+ */
             }
-            // A lógica de reverter para viewMode (ou manter editMode se houver erro)
-            // será tratada pelo controller chamando updateDisplayField ou showFieldError
         });
 
         stack.getChildren().addAll(viewMode, fieldContainer);
-        GridPane.setHgrow(stack, Priority.ALWAYS); // Para o StackPane preencher o espaço na grade
+        GridPane.setHgrow(stack, Priority.ALWAYS);
         return stack;
     }
 
-    // --- Métodos para atualizar a UI a partir do Controller ---
     /**
      * Este método exibe os dados do usuário na interface.
      * @param userData Mapa contendo os dados do usuário.
@@ -552,27 +514,24 @@ public class SettingsView extends BorderPane {
         nameDisplay.setText((String) userData.getOrDefault("name", "N/A"));
         emailDisplay.setText((String) userData.getOrDefault("email", "N/A"));
         phoneDisplay.setText((String) userData.getOrDefault("phone", "N/A"));
-        passwordDisplay.setText("********"); // Sempre mostrar asteriscos
+        passwordDisplay.setText("********");
         cityDisplay.setText((String) userData.getOrDefault("city", "N/A"));
         LocalDate dob = (LocalDate) userData.get("dateOfBirth");
         dobDisplay.setText(dob != null ? dob.format(appDateFormatter) : "N/A");
 
-        // Atualiza nome do usuário no header também (se existir)
         if (lbNomeUsuarioHeader != null) {
             lbNomeUsuarioHeader.setText((String) userData.getOrDefault("name", "Usuário"));
         }
 
-        // Lógica para foto de perfil (exemplo)
+
         String photoPath = (String) userData.get("profilePhotoPath");
         if (photoPath != null && !photoPath.isEmpty()) {
             try {
                 profilePhotoView.setImage(new Image(new File(photoPath).toURI().toString()));
             } catch (Exception e) {
                 System.err.println("Erro ao carregar foto de perfil: " + photoPath + " - " + e.getMessage());
-                // profilePhotoView.setImage(null); // ou imagem padrão
             }
         } else {
-            // profilePhotoView.setImage(null); // ou imagem padrão
         }
     }
 
@@ -598,33 +557,30 @@ public class SettingsView extends BorderPane {
             case "name": displayLabel = nameDisplay; break;
             case "email": displayLabel = emailDisplay; break;
             case "phone": displayLabel = phoneDisplay; break;
-            case "password": displayLabel = passwordDisplay; newValue = "********"; break; // Sempre mostra asteriscos
+            case "password": displayLabel = passwordDisplay; newValue = "********"; break;
             case "city": displayLabel = cityDisplay; break;
-            case "dateOfBirth": displayLabel = dobDisplay; break; // newValue já formatado pelo controller
+            case "dateOfBirth": displayLabel = dobDisplay; break;
             case "profilePhotoPath":
-                // A view precisa decidir como exibir a foto, aqui apenas um exemplo
                 System.out.println("View: Foto de perfil atualizada para " + newValue);
                 if (newValue != null && !newValue.isEmpty()) {
                     try { profilePhotoView.setImage(new Image(new File(newValue).toURI().toString())); }
                     catch (Exception e) { System.err.println("Erro ao recarregar foto: " + e.getMessage());}
                 } else {
-                    // profilePhotoView.setImage(null); // Limpa ou define imagem padrão
+                    // profilePhotoView.setImage(null);
                 }
                 break;
         }
 
         if (displayLabel != null) {
             displayLabel.setText(newValue);
-            // Reverte para modo de visualização
-            Node fieldContainer = displayLabel.getParent().getParent(); // HBox -> StackPane
+            Node fieldContainer = displayLabel.getParent().getParent();
             if (fieldContainer instanceof StackPane) {
                 Node viewMode = ((StackPane) fieldContainer).getChildren().get(0);
-                Node editVBox = ((StackPane) fieldContainer).getChildren().get(1); // O VBox que contém editMode e fieldErrorLabel
+                Node editVBox = ((StackPane) fieldContainer).getChildren().get(1);
                 viewMode.setVisible(true);
                 editVBox.setVisible(false);
             }
         }
-        // Atualiza nome do usuário no header também se for o campo 'name'
         if ("name".equals(fieldKey) && lbNomeUsuarioHeader != null) {
             lbNomeUsuarioHeader.setText(newValue);
         }
@@ -637,7 +593,6 @@ public class SettingsView extends BorderPane {
      * @param message A mensagem de erro.
      */
     public void showFieldError(String fieldKey, String message) {
-        // Encontra o StackPane do campo
         Node fieldUIElement = null;
         switch (fieldKey) {
             case "name": fieldUIElement = nameDisplay; break;
@@ -646,34 +601,32 @@ public class SettingsView extends BorderPane {
             case "password": fieldUIElement = passwordDisplay; break;
             case "city": fieldUIElement = cityDisplay; break;
             case "dateOfBirth": fieldUIElement = dobDisplay; break;
-            case "profilePhotoPath": fieldUIElement = profilePhotoErrorLabel; break; // Usa o label de erro da foto
+            case "profilePhotoPath": fieldUIElement = profilePhotoErrorLabel; break;
         }
 
         if (fieldUIElement == profilePhotoErrorLabel) {
             profilePhotoErrorLabel.setText(message);
             profilePhotoErrorLabel.setVisible(true);
         } else if (fieldUIElement instanceof Label) {
-            Node container = ((Label)fieldUIElement).getParent().getParent(); // Label -> HBox(viewMode) -> StackPane
+            Node container = ((Label)fieldUIElement).getParent().getParent();
             if (container instanceof StackPane) {
                 StackPane stack = (StackPane) container;
                 if (stack.getChildren().size() > 1 && stack.getChildren().get(1) instanceof VBox) {
-                    VBox editVBox = (VBox) stack.getChildren().get(1); // O VBox que contém editMode e fieldErrorLabel
+                    VBox editVBox = (VBox) stack.getChildren().get(1);
                     if (editVBox.getChildren().size() > 1 && editVBox.getChildren().get(1) instanceof Label) {
                         Label errorLabel = (Label) editVBox.getChildren().get(1);
                         errorLabel.setText(message);
                         errorLabel.setVisible(true);
-                        // Mantém no modo de edição
-                        stack.getChildren().get(0).setVisible(false); // viewMode
-                        editVBox.setVisible(true);    // editVBox (que contém editMode e errorLabel)
-                        if (editVBox.getChildren().get(0) instanceof HBox) { // Garante que o editMode (HBox) esteja visível dentro do VBox
+                        stack.getChildren().get(0).setVisible(false);
+                        editVBox.setVisible(true);
+                        if (editVBox.getChildren().get(0) instanceof HBox) {
                             editVBox.getChildren().get(0).setVisible(true);
                         }
                     }
                 }
             }
         }
-        // Poderia mostrar um Alert genérico também ou um local para erros não associados a campos.
-        showErrorMessage("Verifique o campo: " + message); // Reutiliza showErrorMessage para um alerta rápido
+        showErrorMessage("Verifique o campo: " + message);
     }
 
 
@@ -720,19 +673,18 @@ public class SettingsView extends BorderPane {
     private void setupActionHandlers() {
         if (controller == null) return;
 
-        // Sidebar
+        /*
         btnInicio.setOnAction(e -> controller.navigateToHome());
         btnMeusEventos.setOnAction(e -> controller.navigateToMyEvents());
         // btnConfiguracoesSidebar já é a tela atual, pode não ter ação ou recarregar
-        btnConfiguracoesSidebar.setOnAction(e -> controller.loadInitialData()); // Ex: Recarrega dados
+        btnConfiguracoesSidebar.setOnAction(e -> controller.loadInitialData());
 
-        // SubHeader (se forem diferentes da sidebar)
+
         btnProgramacao.setOnAction(e -> controller.navigateToProgramacao());
         btnAgenda.setOnAction(e -> controller.navigateToMinhaAgenda());
         btnNovoEventoHeader.setOnAction(e -> controller.navigateToNovoEvento());
+*/
 
-
-        // Ações específicas da tela de Configurações
         btnSaveChangesContentPrefs.setOnAction(e -> {
             List<String> selected = new ArrayList<>();
             for (CheckBox cb : themeCheckBoxes) {
@@ -740,69 +692,17 @@ public class SettingsView extends BorderPane {
                     selected.add(cb.getText());
                 }
             }
-            controller.handleUpdateContentPreferences(selected);
+          /*  controller.handleUpdateContentPreferences(selected); */
         });
 
-        btnDeleteAccount.setOnAction(e -> controller.handleDeleteAccount());
-    }
-
-    /**
-     * Este método navega para a tela de login.
-     * (Chamado pelo controller após exclusão de conta, por exemplo)
-     */
-    public void navigateToLoginScreen() {
-        try {
-            Stage currentStage = (Stage) this.getScene().getWindow();
-            UserController userController = new UserController(); // Assume construtor padrão
-            LoginView loginView = new LoginView(userController);
-            Scene loginScene = new Scene(loginView, 1280, 720); // Dimensões da tela de login
-            try {
-                loginScene.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
-            } catch (Exception e) {
-                System.err.println("Erro ao carregar CSS para LoginView ao retornar: " + e.getMessage());
-            }
-            currentStage.setScene(loginScene);
-            currentStage.setTitle("Eventually - Login");
-            Platform.runLater(() -> currentStage.setMaximized(true)); // Garante maximização
-        } catch (Exception e) {
-            System.err.println("Erro ao navegar para a tela de Login: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-    /**
-     * Este método navega para a tela principal/Home (UserScheduleView).
-     */
-    public void navigateToHome() {
-        try {
-            Stage currentStage = (Stage) this.getScene().getWindow();
-            UserScheduleView userScheduleView = new UserScheduleView();
-            // O UserScheduleController é normalmente injetado ou criado aqui
-            // com.eventually.controller.UserScheduleController scheduleController = new com.eventually.controller.UserScheduleController(userScheduleView);
-            // userScheduleView.setController(scheduleController); // Se UserScheduleView precisar do controller imediatamente
-
-            Scene homeScene = new Scene(userScheduleView, 1280, 720);
-            try {
-                homeScene.getStylesheets().add(getClass().getResource("/styles/styles.css").toExternalForm());
-            } catch (Exception e) {
-                System.err.println("Erro ao carregar CSS para Home: " + e.getMessage());
-            }
-            currentStage.setScene(homeScene);
-            currentStage.setTitle("Eventually - Página Inicial");
-            Platform.runLater(() -> currentStage.setMaximized(true));
-        } catch (Exception e) {
-            System.err.println("Erro ao navegar para Home: " + e.getMessage());
-            e.printStackTrace();
-        }
+/*        btnDeleteAccount.setOnAction(e -> controller.handleDeleteAccount());*/
     }
     /**
      * Este método navega para a tela de "Meus Eventos".
      * (Pode ser a mesma UserScheduleView com um filtro ou uma view diferente)
      */
     public void navigateToMyEvents() {
-        // Por enquanto, redireciona para a Home como exemplo
         System.out.println("View: Navegando para Meus Eventos (implementação pendente, usando Home).");
-        navigateToHome();
+        controller.navigateToSchedule();
     }
-
-
 }

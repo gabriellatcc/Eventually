@@ -92,7 +92,7 @@ public class RegisterController {
         Scene sceneUserSchedule = new Scene(userScheduleView,service.medirWidth(),service.medirHeight());
 
         sceneUserSchedule.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
-        primaryStage.setTitle("Eventually - Progamação do Usuário");
+        primaryStage.setTitle("Eventually - Programação do Usuário");
         primaryStage.setScene(sceneUserSchedule);
 
         //falta: trow runtime exception se da erro
