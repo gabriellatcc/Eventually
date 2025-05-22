@@ -44,7 +44,7 @@ public class UserScheduleView extends BorderPane {
     private Stage primaryStage;
     private LocalDate dataSelecionada;
 
-    private UserScheduleController controller;
+    private UserScheduleController userScheduleController;
 
     /**
      *Construtor da classe {@code UserScheduleView}.
@@ -67,11 +67,7 @@ public class UserScheduleView extends BorderPane {
         setCenter(conteudoCentral);
     }
 
-    public void setController(UserScheduleController controller) {this.controller = controller;}
-
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
-    }
+    public void setUserScheduleController(UserScheduleController userScheduleController) {this.userScheduleController = userScheduleController;}
 
     /**
      * Este método criarBarraLateral() cria uma barra lateral de navegação vertical da interface.
@@ -258,37 +254,16 @@ public class UserScheduleView extends BorderPane {
         return centerContent;
     }
 
-    public Button getBtnInicio() {
-        return btnInicio;
-    }
-    public Button getBtnMeusEventos() {
-        return btnMeusEventos;
-    }
-    public Button getBtnConfiguracoes() {
-        return btnConfiguracoes;
-    }
-    public Button getBtnProgramacao() {
-        return btnProgramacao;
-    }
-    public Button getBtnAgenda() {
-        return btnAgenda;
-    }
-    public Button getBtnNovoEvento() {
-        return btnNovoEvento;
-    }
-    public Label getLbNomeUsuario() {
-        return lbNomeUsuario;
-    }
-    public Circle getAvatar() {
-        return avatar;
-    }
-    public ToggleGroup getGrupoDatas() {
-        return grupoDatas;
-    }
-    public List<ToggleButton> getBtnsData() {
-        return btnsData;
-    }
-    public VBox getListaEventos() {
-        return listaEventos;
-    }
+    public Button getBtnInicio() {return btnInicio;}
+    public Button getBtnMeusEventos() {return btnMeusEventos;}
+    public Button getBtnConfiguracoes() {return btnConfiguracoes;}
+    public Button getBtnProgramacao() {return btnProgramacao;}
+    public Button getBtnAgenda() {return btnAgenda;}
+    public Button getBtnNovoEvento() {return btnNovoEvento;}
+    public Label getLbNomeUsuario() {return lbNomeUsuario;}
+    public Circle getAvatar() {return avatar;}
+    public ToggleGroup getGrupoDatas() {return grupoDatas;}
+    public List<ToggleButton> getBtnsData() {return btnsData;}
+    public VBox getListaEventos() {return listaEventos;}
+
 }

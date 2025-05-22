@@ -1,35 +1,38 @@
 package com.eventually.controller;
 
 import com.eventually.view.UserScheduleView;
+import javafx.stage.Stage;
 
 /**
  * Esta classe {@code UserScheduleController} é responsável por gerenciar as interações da interface principal da aplicação
  * Eventually, ela conecta os botões da {@link UserScheduleView} às ações correspondentes, garantindo a
  * separação entre a lógica de interface e a lógica de negócio.
  * @author Gabriella Tavares Costa Corrêa
+ * @version 1.01
  * @since 2025-04-25 (Construção da documentação da classe e revisão)
  */
 public class UserScheduleController {
 
-    private final UserScheduleView view;
+    private final UserScheduleView userScheduleView;
+    private final Stage primaryStage;
 
-    public UserScheduleController(UserScheduleView view) {
-        this.view = view;
-        this.view.setController(this);
-        setupEventHandlers();
+    public UserScheduleController(UserScheduleView userScheduleView, Stage primaryStage) {
+        this.userScheduleView = userScheduleView;
+        this.primaryStage = primaryStage;
+        this.userScheduleView.setUserScheduleController(this);
+        setupEventHandlersUserSchedule();
     }
 
-    public void setupEventHandlers() {
-        view.getBtnInicio().setOnAction(e -> handleHomeButton());
-        view.getBtnMeusEventos().setOnAction(e -> handleMyEventsButton());
-        view.getBtnConfiguracoes().setOnAction(e -> handleSettingsButton());
+    public void setupEventHandlersUserSchedule() {
+        userScheduleView.getBtnInicio().setOnAction(e -> handleHomeButton());
+        userScheduleView.getBtnMeusEventos().setOnAction(e -> handleMyEventsButton());
+        userScheduleView.getBtnConfiguracoes().setOnAction(e -> handleSettingsButton());
 
-        view.getBtnProgramacao().setOnAction(e -> handleProgramacaoButton());
-        view.getBtnAgenda().setOnAction(e -> handleAgendaButton());
-        view.getBtnNovoEvento().setOnAction(e -> abrirNovoModal());
+        userScheduleView.getBtnProgramacao().setOnAction(e -> handleProgramacaoButton());
+        userScheduleView.getBtnAgenda().setOnAction(e -> handleAgendaButton());
+        userScheduleView.getBtnNovoEvento().setOnAction(e -> abrirNovoModal());
 
-        // Configurar evento para seleção de data
-        view.getGrupoDatas().selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+        userScheduleView.getGrupoDatas().selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
             if (newToggle != null) {
                 handleDateSelection(newToggle);
             }
