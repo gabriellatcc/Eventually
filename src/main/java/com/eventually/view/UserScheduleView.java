@@ -33,8 +33,9 @@ public class UserScheduleView extends BorderPane {
     private Button btnMeusEventos;
     private Button btnConfiguracoes;
     private Button btnProgramacao;
-    private Button btnAgenda;
     private Button btnNovoEvento;
+    private Button btnSair;
+
     private Circle avatar;
     private ToggleGroup grupoDatas;
     private List<ToggleButton> btnsData;
@@ -84,21 +85,25 @@ public class UserScheduleView extends BorderPane {
         barraLateral.setAlignment(Pos.TOP_CENTER);
 
         this.btnInicio = new Button("Página inicial");
-        this.btnMeusEventos = new Button("Meus eventos");
-        this.btnConfiguracoes = new Button("Configurações");
-
         this.btnInicio.getStyleClass().add("menu-button");
-        this.btnMeusEventos.getStyleClass().add("menu-button");
-        this.btnConfiguracoes.getStyleClass().add("menu-button");
-
         this.btnInicio.setMaxWidth(Double.MAX_VALUE);
+
+        this.btnMeusEventos = new Button("Meus eventos");
+        this.btnMeusEventos.getStyleClass().add("menu-button");
         this.btnMeusEventos.setMaxWidth(Double.MAX_VALUE);
+
+        this.btnConfiguracoes = new Button("Configurações");
+        this.btnConfiguracoes.getStyleClass().add("menu-button");
         this.btnConfiguracoes.setMaxWidth(Double.MAX_VALUE);
+
+        this.btnSair = new Button("Sair");
+        this.btnSair.getStyleClass().add("menu-button");
+        this.btnSair.setMaxWidth(Double.MAX_VALUE);
 
         Region espacador = new Region();
         VBox.setVgrow(espacador, Priority.ALWAYS);
 
-        barraLateral.getChildren().addAll(this.btnInicio, this.btnMeusEventos, espacador, this.btnConfiguracoes);
+        barraLateral.getChildren().addAll(this.btnInicio, this.btnMeusEventos, espacador, this.btnConfiguracoes,this.btnSair);
         return barraLateral;
     }
 
@@ -131,8 +136,10 @@ public class UserScheduleView extends BorderPane {
         subCabecalho.getStyleClass().add("sub-header-controls");
 
         this.btnProgramacao = new Button("Programação");
-        this.btnAgenda = new Button("Minha agenda");
+        this.btnProgramacao.getStyleClass().add("top-button");
+
         this.btnNovoEvento = new Button("+ Novo Evento");
+        this.btnNovoEvento.getStyleClass().add("new-event-button");
 
         this.lbNomeUsuario = new Label("Usuário");
         this.lbNomeUsuario.getStyleClass().add("user-display-label");
@@ -145,14 +152,10 @@ public class UserScheduleView extends BorderPane {
         userDisplayBox.setAlignment(Pos.CENTER);
         userDisplayBox.getStyleClass().add("user-display-box");
 
-        this.btnProgramacao.getStyleClass().add("top-button");
-        this.btnAgenda.getStyleClass().add("top-button");
-        this.btnNovoEvento.getStyleClass().add("new-event-button");
-
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        subCabecalho.getChildren().addAll(this.btnProgramacao, this.btnAgenda, this.btnNovoEvento, spacer, userDisplayBox);
+        subCabecalho.getChildren().addAll(this.btnProgramacao, this.btnNovoEvento, spacer, userDisplayBox);
 
         return subCabecalho;
     }
@@ -258,12 +261,11 @@ public class UserScheduleView extends BorderPane {
     public Button getBtnMeusEventos() {return btnMeusEventos;}
     public Button getBtnConfiguracoes() {return btnConfiguracoes;}
     public Button getBtnProgramacao() {return btnProgramacao;}
-    public Button getBtnAgenda() {return btnAgenda;}
     public Button getBtnNovoEvento() {return btnNovoEvento;}
+    public Button getBtnSair() {return btnSair;}
     public Label getLbNomeUsuario() {return lbNomeUsuario;}
     public Circle getAvatar() {return avatar;}
     public ToggleGroup getGrupoDatas() {return grupoDatas;}
     public List<ToggleButton> getBtnsData() {return btnsData;}
     public VBox getListaEventos() {return listaEventos;}
-
 }
