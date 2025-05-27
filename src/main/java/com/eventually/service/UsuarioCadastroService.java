@@ -43,16 +43,22 @@ public class UsuarioCadastroService {
         String erro;
         erro = validarNomeParaEnvio(usuarioDto.nomePessoa());
         if (erro != null) throw new RuntimeException("Nome inválido: " + erro);
+
         erro = validarEmailParaEnvio(usuarioDto.email());
         if (erro != null) throw new RuntimeException("Email inválido: " + erro);
+
         erro = validarSenhaParaEnvio(usuarioDto.senha());
         if (erro != null) throw new RuntimeException("Senha inválida: " + erro);
+
         erro = validarDataParaEnvio(usuarioDto.data());
         if (erro != null) throw new RuntimeException("Data de nascimento inválida: " + erro);
+
         erro = validarCidadeParaEnvio(usuarioDto.localizacaoUsuario());
         if (erro != null) throw new RuntimeException("Cidade inválida: " + erro);
+
         erro = validarTemasParaEnvio(usuarioDto.preferencias());
         if (erro != null) throw new RuntimeException("Tema(s) inválido(s): " + erro);
+
         criarUsuario(usuarioDto);
     }
 
@@ -109,7 +115,7 @@ public class UsuarioCadastroService {
             return "UsuarioCadastroService: erro: O campo senha é obrigatório.";
         }
         Map<String, Boolean> rules = validarRegrasSenha(password);
-        if (!rules.get("hasSpecial") || !rules.get("hasDigit") || !rules.get("hasLetter")) {
+        if (!rules.get("hasSpecial") || !rules.get("hasDigit") || !rules.get("hasLetter") || !rules.get("hasSixChar")) {
             return "UsuarioCadastroService: erro: A senha não segue os padrões.";
         }
         return null;
@@ -127,6 +133,7 @@ public class UsuarioCadastroService {
         ruleStatus.put("hasSpecial", SPECIAL_CHAR_PATTERN.matcher(password).find());
         ruleStatus.put("hasDigit", DIGIT_PATTERN.matcher(password).find());
         ruleStatus.put("hasLetter", LETTER_PATTERN.matcher(password).find());
+        ruleStatus.put("hasSixChar", password.length() >= 6);
 
         return ruleStatus;
     }
