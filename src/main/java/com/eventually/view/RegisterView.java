@@ -13,6 +13,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.image.Image;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +49,7 @@ public class RegisterView extends BorderPane {
     private Label lbRegraEspecial;
     private Label lbRegraDigito;
     private Label lbRegraLetra;
+    private Label lbRegraTamanho;
 
     private CheckBox cbCorporativo;
     private CheckBox cbBeneficente;
@@ -68,21 +71,32 @@ public class RegisterView extends BorderPane {
     public void setRegisterController(RegisterController registerController) {this.registerController = registerController;}
 
     /**
-     * Configura a interface da tela de registro, define o
-     * plano de fundo, chama o método de criação do painel direito com seleção de temas,
-     * o do formulário central de registro e os de validações de interface dinâmicas.
+     * Configura a interface da tela de registro dividida em duas áreas, define o
+     * plano de fundo e chama os métodos de validações de interface dinâmicas.
      */
     private void setupUIRegisterView() {
         setupBackgroundRegister();
 
+        VBox formularioRegistro = criarFormularioRegistro();
+        StackPane stackFormulario = new StackPane(formularioRegistro);
+        stackFormulario.setAlignment(Pos.CENTER);
+        stackFormulario.setMaxWidth(Double.MAX_VALUE);
+        StackPane.setMargin(formularioRegistro, new Insets(-80, 20, 0, 20));
+
         StackPane paneDireitoRegister = criarBasePainelDireito();
+
         VBox conteudoPainelDireito = criarConteudoPainelDireito();
         paneDireitoRegister.getChildren().add(conteudoPainelDireito);
+        paneDireitoRegister.setAlignment(Pos.CENTER_RIGHT);
+        StackPane.setMargin(conteudoPainelDireito, new Insets(-60, 20, 0, 20));
+        HBox layoutPrincipal = new HBox();
+        layoutPrincipal.setPrefSize(1200, 900);
+        layoutPrincipal.getChildren().addAll(stackFormulario, paneDireitoRegister);
 
-        VBox formularioRegistro = criarFormularioRegistro();
+        HBox.setHgrow(stackFormulario, Priority.ALWAYS);
+        HBox.setHgrow(paneDireitoRegister, Priority.ALWAYS);
 
-        setRight(paneDireitoRegister);
-        setCenter(formularioRegistro);
+        setCenter(layoutPrincipal);
 
         configurarValidacaoDinamica();
     }
@@ -146,8 +160,7 @@ public class RegisterView extends BorderPane {
         boxSelecaoTema.setAlignment(Pos.CENTER_LEFT);
         boxSelecaoTema.setPadding(new Insets(0, 0, 0, 0));
         boxSelecaoTema.setMaxWidth(580);
-        boxSelecaoTema.setMaxHeight(580);
-        boxSelecaoTema.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+        boxSelecaoTema.setMaxHeight(310);
 
         Text tituloTemas = new Text("Selecione temas de eventos\nque te interessam:");
         tituloTemas.setFont(Font.font("Arial", FontWeight.BOLD, 18));
@@ -158,25 +171,39 @@ public class RegisterView extends BorderPane {
         titleBox.setPadding(new Insets(0,0,30,0));
 
         cbCorporativo = new CheckBox("Corporativo");
+        cbCorporativo.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
         cbCorporativo.setPrefHeight(25);
+        cbCorporativo.getStyleClass().add("purple-checkbox");
 
         cbBeneficente = new CheckBox("Beneficente");
+        cbBeneficente.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
         cbBeneficente.setPrefHeight(25);
+        cbBeneficente.getStyleClass().add("purple-checkbox");
 
         cbEducacional = new CheckBox("Educacional");
+        cbEducacional.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
         cbEducacional.setPrefHeight(25);
+        cbEducacional.getStyleClass().add("purple-checkbox");
 
         cbCultural = new CheckBox("Cultural");
+        cbCultural.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
         cbCultural.setPrefHeight(25);
+        cbCultural.getStyleClass().add("purple-checkbox");
 
         cbEsportivo = new CheckBox("Esportivo");
+        cbEsportivo.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
         cbEsportivo.setPrefHeight(25);
+        cbEsportivo.getStyleClass().add("purple-checkbox");
 
         cbReligioso = new CheckBox("Religioso");
+        cbReligioso.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
         cbReligioso.setPrefHeight(25);
+        cbReligioso.getStyleClass().add("purple-checkbox");
 
         cbSocial = new CheckBox("Social");
+        cbSocial.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
         cbSocial.setPrefHeight(25);
+        cbSocial.getStyleClass().add("purple-checkbox");
 
         for (CheckBox cb : List.of(
                 cbCorporativo,
@@ -209,26 +236,27 @@ public class RegisterView extends BorderPane {
      */
     private VBox criarFormularioRegistro() {
         VBox formBox = new VBox(10);
-        formBox.alignmentProperty().set(Pos.CENTER_LEFT);
-        formBox.setPadding(new Insets(0, 0, 0, 0));
-        formBox.setMaxWidth(580);
-        formBox.setMaxHeight(580);
-        formBox.setStyle("-fx-border-color: green; -fx-border-width: 2px;");
+        formBox.alignmentProperty().set(Pos.CENTER);
+        formBox.setPadding(new Insets(0, 0, 0, 100));
+        formBox.setMaxWidth(550);
 
         Text titulo = new Text("Criar Nova Conta");
-        titulo.setFont(Font.font("Arial", FontWeight.BOLD, 32));
+        titulo.setFont(Font.font("Arial", FontWeight.BOLD, 40));
         titulo.setFill(Color.WHITE);
         HBox titleBox = new HBox(titulo);
         titleBox.setAlignment(Pos.CENTER);
-        titleBox.setPadding(new Insets(0,0,20,0));
+        titleBox.setPadding(new Insets(4,0,4,0));
 
         fldNome = new TextField();
         fldNome.setPromptText("Nome Completo");
         fldNome.setPrefHeight(40);
-        fldNome.getStyleClass().add("form-field");
+        fldNome.getStyleClass().add("register-field");
 
         lbRegraNome = new Label("* O nome deve conter pelo menos nome e sobrenome.");
         lbRegraNome.setTextFill(Color.LIGHTGRAY);
+        lbRegraNome.setFont(Font.font("System", FontWeight.NORMAL, 14));
+        lbRegraNome.setWrapText(true);
+        lbRegraNome.setPadding(new Insets(1, 0, 0, 0));
 
         lbNameErro = new Label();
         lbNameErro.getStyleClass().add("error-label");
@@ -239,7 +267,7 @@ public class RegisterView extends BorderPane {
         fldEmail = new TextField();
         fldEmail.setPromptText("E-mail");
         fldEmail.setPrefHeight(40);
-        fldEmail.getStyleClass().add("form-field");
+        fldEmail.getStyleClass().add("register-field");
 
         lbEmailErro = new Label();
         lbEmailErro.getStyleClass().add("error-label");
@@ -250,19 +278,30 @@ public class RegisterView extends BorderPane {
         fldSenha = new PasswordField();
         fldSenha.setPromptText("Senha");
         fldSenha.setPrefHeight(40);
-        fldSenha.getStyleClass().add("form-field");
+        fldSenha.getStyleClass().add("register-field");
 
         lbIntroRegra = new Label("* A senha deve conter, no mínimo:");
         lbIntroRegra.setTextFill(Color.LIGHTGRAY);
+        lbIntroRegra.setFont(Font.font("System", FontWeight.NORMAL, 14));
+
         lbRegraEspecial = new Label("- 1 caractere especial");
         lbRegraEspecial.setTextFill(Color.LIGHTGRAY);
+        lbRegraEspecial.setFont(Font.font("System", FontWeight.NORMAL, 14));
+
         lbRegraDigito = new Label("- 1 dígito");
         lbRegraDigito.setTextFill(Color.LIGHTGRAY);
+        lbRegraDigito.setFont(Font.font("System", FontWeight.NORMAL, 14));
+
         lbRegraLetra = new Label("- 1 letra");
         lbRegraLetra.setTextFill(Color.LIGHTGRAY);
+        lbRegraLetra.setFont(Font.font("System", FontWeight.NORMAL, 14));
 
-        VBox passwordRulesBox = new VBox(1, lbIntroRegra, lbRegraEspecial, lbRegraDigito, lbRegraLetra);
-        passwordRulesBox.setPadding(new Insets(2,0,2,0));
+        lbRegraTamanho = new Label("- 6 caracteres");
+        lbRegraTamanho.setTextFill(Color.LIGHTGRAY);
+        lbRegraTamanho.setFont(Font.font("System", FontWeight.NORMAL, 14));
+
+        VBox passwordRulesBox = new VBox(1, lbIntroRegra, lbRegraEspecial, lbRegraDigito, lbRegraLetra, lbRegraTamanho);
+        passwordRulesBox.setPadding(new Insets(1,0,1,0));
 
         lbSenhaErro = new Label();
         lbSenhaErro.getStyleClass().add("error-label");
@@ -273,7 +312,11 @@ public class RegisterView extends BorderPane {
         fldDataNascimento = new DatePicker();
         fldDataNascimento.setPromptText("Data de Nascimento");
         fldDataNascimento.setPrefHeight(40);
-        fldDataNascimento.getStyleClass().add("form-field");
+        fldDataNascimento.getStyleClass().add("register-field");
+        bloquearIntervaloData(fldDataNascimento,
+                LocalDate.of(1960, 1, 1),
+                LocalDate.of(2017, 12, 31)
+        );
 
         dobErrorLabel = new Label();
         dobErrorLabel.getStyleClass().add("error-label");
@@ -284,7 +327,7 @@ public class RegisterView extends BorderPane {
         fldCidade = new TextField();
         fldCidade.setPromptText("Cidade");
         fldCidade.setPrefHeight(40);
-        fldCidade.getStyleClass().add("form-field");
+        fldCidade.getStyleClass().add("register-field");
 
         lbCidadeErro = new Label();
         lbCidadeErro.getStyleClass().add("error-label");
@@ -314,7 +357,24 @@ public class RegisterView extends BorderPane {
                 titleBox, nameBox, emailBox, passwordBox, dobBox, cityBox,
                 btnRegistrar, generalErrorBox, backLinkBox
         );
+
         return formBox;
+    }
+
+    private void bloquearIntervaloData(DatePicker fldDataNascimento, LocalDate dataMinima, LocalDate dataMaxima) {
+        fldDataNascimento.setDayCellFactory(dp -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item.isBefore(dataMinima) || item.isAfter(dataMaxima)) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #d3d3d3;");
+                } else {
+                    setDisable(false);
+                    setStyle("-fx-background-color: white;");
+                }
+            }
+        });
     }
 
     /**
@@ -338,13 +398,21 @@ public class RegisterView extends BorderPane {
             atualizarRegraSenhaUI(lbRegraEspecial, rulesStatus.getOrDefault("hasSpecial", false));
             atualizarRegraSenhaUI(lbRegraDigito, rulesStatus.getOrDefault("hasDigit", false));
             atualizarRegraSenhaUI(lbRegraLetra, rulesStatus.getOrDefault("hasLetter", false));
+            atualizarRegraSenhaUI(lbRegraTamanho, rulesStatus.getOrDefault("hasSixChar", false));
             lbSenhaErro.setVisible(false);
             lbErroGeral.setVisible(false);
         });
 
-        fldEmail.textProperty().addListener( (obs,ov,nv) -> { lbEmailErro.setVisible(false); lbErroGeral.setVisible(false); });
-        fldDataNascimento.valueProperty().addListener( (obs, ov, nv) -> { dobErrorLabel.setVisible(false); lbErroGeral.setVisible(false); });
-        fldCidade.textProperty().addListener( (obs,ov,nv) -> { lbCidadeErro.setVisible(false); lbErroGeral.setVisible(false); });
+        fldEmail.textProperty().addListener( (obs,ov,nv) -> {
+            lbEmailErro.setVisible(false); lbErroGeral.setVisible(false);
+        });
+
+        fldDataNascimento.valueProperty().addListener( (obs, ov, nv) -> {
+            dobErrorLabel.setVisible(false); lbErroGeral.setVisible(false);
+        });
+        fldCidade.textProperty().addListener( (obs,ov,nv) -> {
+            lbCidadeErro.setVisible(false); lbErroGeral.setVisible(false);
+        });
 
         List.of(cbCorporativo, cbBeneficente, cbEducacional, cbCultural, cbEsportivo, cbReligioso, cbSocial).forEach(cb ->
                 cb.selectedProperty().addListener((obs, ov, nv) -> {

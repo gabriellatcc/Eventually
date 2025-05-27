@@ -1,6 +1,7 @@
 package com.eventually.controller;
 import com.eventually.dto.CadastrarUsuarioDto;
 import com.eventually.dto.PreferenciasUsuarioDto;
+import com.eventually.service.EmailService;
 import com.eventually.service.UsuarioCadastroService;
 import com.eventually.service.TelaService;
 import com.eventually.view.LoginView;
@@ -31,7 +32,7 @@ public class RegisterController {
     UsuarioCadastroService usuarioCadastroService = new UsuarioCadastroService();
 
     /**
-     * Construtor do {@code RegisterController}, inicializa a view de registro e define os manipuladores de eventos.
+     * Construtor do {@code RegisterController}, inicializa a view de registro.
      * @param registerView a interface de registro associada
      * @param primaryStage o palco principal da aplicação
      */
@@ -54,7 +55,7 @@ public class RegisterController {
      * Neste método é manipulado o clique no link "Voltar" da tela de registro, retornando para a tela de login.
      */
     private void handleVoltarParaSessao() {
-        System.out.println("RegisterController: hyperLink de voltar sessão clicado");
+        System.out.println("RController: hyperLink de voltar sessão clicado");
         try {
             LoginView loginView = new LoginView();
             LoginController loginController = new LoginController(loginView, primaryStage);
@@ -67,11 +68,11 @@ public class RegisterController {
             primaryStage.setTitle("Eventually - Login");
             primaryStage.setScene(loginScene);
         } catch (Exception ex) {
-            System.err.println("RegisterController: Erro ao navegar para a tela de Login: " + ex.getMessage());
+            System.err.println("RController: Erro ao navegar para a tela de Login: " + ex.getMessage());
             ex.printStackTrace();
             if (registerView.getLbErroGeral() != null) {
                 Label erroLabel = registerView.getLbErroGeral();
-                erroLabel.setText("RegisterController: Erro ao tentar voltar para tela de login.");
+                erroLabel.setText("RController: Erro ao tentar voltar para tela de login.");
                 erroLabel.setVisible(true);
             }
         }
@@ -81,7 +82,7 @@ public class RegisterController {
      * Este método manipula o clique no botão de cadastro, redirecionando o usuário à tela de programação após cadastro.
      */
     private void handleCadastro() {
-        System.out.println("RegisterController: botão de registro clicado");
+        System.out.println("RController: botão de registro clicado");
         handleCamposPreenchidos();
 
         UserScheduleView userScheduleView = new UserScheduleView();
@@ -94,7 +95,6 @@ public class RegisterController {
         sceneUserSchedule.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
         primaryStage.setTitle("Eventually - Programação do Usuário");
         primaryStage.setScene(sceneUserSchedule);
-
         //falta: trow runtime exception se da erro
     }
 
@@ -120,15 +120,13 @@ public class RegisterController {
 
         try {
             usuarioCadastroService.cadastrarNovoUsuario(cadastroUsuarioDto);
-            System.out.println("RegisterController: usuário cadastrado com sucesso!");
+            System.out.println("RController: usuário cadastrado com sucesso!");
             //falta: exibir mensagem de sucesso na interface
         } catch (RuntimeException e) {
-            System.err.println("RegisterController: Erro ao cadastrar usuário: " + e.getMessage());
+            System.err.println("RController: Erro ao cadastrar usuário: " + e.getMessage());
             registerView.getLbErroGeral().setText(e.getMessage());
             registerView.getLbErroGeral().setVisible(true);
         }
-
-        //falta trow runtime exception se da erro
     }
 
     /**
