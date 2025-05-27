@@ -1,24 +1,31 @@
 package com.eventually.controller;
 
 import com.eventually.service.TelaService;
+import com.eventually.view.LoginView;
 import com.eventually.view.SettingsView;
 import com.eventually.view.UserScheduleView;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 /**
- * Esta classe {@code SettingsController} é responsável por gerenciar as interações da interface principal da aplicação
- * Eventually, ela conecta os botões da {@link UserScheduleView} às ações correspondentes, garantindo a
- * separação entre a lógica de interface e a lógica de negócio.
+ * Classe controller da tela de programação do usuário.
+ * Esta classe é responsável pela comunicação
+ * da tela de programação com o backend.
  * @author Gabriella Tavares Costa Corrêa
  * @version 1.01
- * @since 2025-04-25 (Construção da documentação da classe e revisão)
+ * @since 2025-04-25 (Construção da documentação da classe e revisão da estrutura)
  */
 public class UserScheduleController {
 
     private final UserScheduleView userScheduleView;
     private final Stage primaryStage;
 
+    /**
+     * Construtor do {@code UserScheduleController}, inicializa a view de programação de usuário.
+     * @param userScheduleView a interface de programação associada
+     * @param primaryStage o palco principal da aplicação
+     */
     public UserScheduleController(UserScheduleView userScheduleView, Stage primaryStage) {
         this.userScheduleView = userScheduleView;
         this.primaryStage = primaryStage;
@@ -30,9 +37,10 @@ public class UserScheduleController {
         userScheduleView.getBtnInicio().setOnAction(e -> handleHomeButton());
         userScheduleView.getBtnMeusEventos().setOnAction(e -> handleMyEventsButton());
         userScheduleView.getBtnConfiguracoes().setOnAction(e -> handleSettingsButton());
+        userScheduleView.getBtnSair().setOnAction(e -> handleSairButton());
+
 
         userScheduleView.getBtnProgramacao().setOnAction(e -> handleProgramacaoButton());
-        userScheduleView.getBtnAgenda().setOnAction(e -> handleAgendaButton());
         userScheduleView.getBtnNovoEvento().setOnAction(e -> abrirNovoModal());
 
         userScheduleView.getGrupoDatas().selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
@@ -42,6 +50,25 @@ public class UserScheduleController {
         });
     }
 
+    private void handleSairButton()
+    {
+        abrirModalEscerrrarSessão();
+        System.out.println("USController: botão de sair clicado");
+        LoginView loginView = new LoginView();
+        LoginController loginController = new LoginController(loginView, primaryStage);
+        loginView.setLoginController(loginController);
+
+        TelaService service = new TelaService();
+        Scene loginScene = new Scene(loginView,service.medirWidth(),service.medirHeight());
+
+        loginScene.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
+        primaryStage.setTitle("Eventually - Login");
+        primaryStage.setScene(loginScene);
+    }
+
+    private void abrirModalEscerrrarSessão() {
+        System.out.println("USController: modal escerrar sessão clicado");
+    }
 
     private void handleDateSelection(javafx.scene.control.Toggle toggle) {System.out.println("Controller: Data selecionada: " + toggle.getUserData());}
 
@@ -71,10 +98,6 @@ public class UserScheduleController {
 
 
     private void handleProgramacaoButton() {System.out.println("Controller: Programação clicado");}
-
-
-    private void handleAgendaButton() {System.out.println("Controller: Minha agenda clicado");}
-
 
     private void abrirNovoModal() {System.out.println("Controller: Novo Modal clicado");}
 }
