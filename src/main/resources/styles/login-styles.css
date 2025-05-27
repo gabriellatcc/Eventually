@@ -3,14 +3,15 @@
     -fx-background-radius: 5px;
     -fx-border-radius: 5px;
     -fx-border-color: #cccccc;
-    -fx-border-width: 1px;
+    -fx-border-width: 0px;
     -fx-font-size: 14px;
     -fx-padding: 8px;
 }
 
 .login-field:focused {
     -fx-border-color: #800080;
-    -fx-border-width: 2px;
+    -fx-border-width: 3px;
+    -fx-border-radius: 3px;
 }
 
 .login-button {

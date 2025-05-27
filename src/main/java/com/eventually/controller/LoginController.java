@@ -3,12 +3,11 @@ import com.eventually.dto.AutenticarUsuarioDto;
 import com.eventually.model.UsuarioModel;
 import com.eventually.service.AutenticacaoUsuarioService;
 import com.eventually.service.TelaService;
+import com.eventually.view.ForgotPasswordModal;
 import com.eventually.view.LoginView;
 import com.eventually.view.RegisterView;
 import com.eventually.view.UserScheduleView;
 import javafx.scene.Scene;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.util.Optional;
@@ -24,11 +23,14 @@ import java.util.Optional;
  * @since 2025-05-14
  */
 public class LoginController {
-    private TextField emailField;
-    private PasswordField passwordField;
     private final LoginView loginView;
     private final Stage primaryStage;
 
+    /**
+     * Construtor do {@code SettingsController}, inicializa a view de sessão de usuário.
+     * @param loginView a interface de sessão associada
+     * @param primaryStage o palco principal da aplicação
+     */
     public LoginController(LoginView loginView, Stage primaryStage) {
         this.loginView = loginView;
         this.primaryStage = primaryStage;
@@ -46,7 +48,7 @@ public class LoginController {
      * Manipula o evento de clique no link "Esqueceu sua senha"e abre o modal
      */
     private void handleEsqueceuSenhaLink() {
-        System.out.println("LoginController: Botão de esqueceu sua senha clicado!");
+        System.out.println("LController: Botão de esqueceu sua senha clicado!");
         abrirModalEsqueceuSenha();
     }
 
@@ -55,7 +57,7 @@ public class LoginController {
      * abre a tela de cadastro.
      */
     private void handleRegistrar() {
-        System.out.println("LoginController: Botão de registrar clicado!");
+        System.out.println("LController: Botão de registrar clicado!");
         this.abrirRegisterView();
     }
 
@@ -64,7 +66,7 @@ public class LoginController {
      * e lida com o resultado.
      */
     private void handleLogin() {
-        System.out.println("LoginController: botão de login clicado");
+        System.out.println("LController: botão de login clicado");
 
         String email = loginView.getEmailField().getText();
         String senha = loginView.getPasswordField().getText();
@@ -87,11 +89,11 @@ public class LoginController {
                 primaryStage.setTitle("Eventually - Progamação do Usuário");
                 primaryStage.setScene(sceneUserSchedule);
             } catch (Exception e) {
-                System.out.println("LoginController: Erro ao abrir a tela principal: " + e.getMessage());
+                System.out.println("LController: Erro ao abrir a tela principal: " + e.getMessage());
                 e.printStackTrace();
             }
         } else {
-            System.out.println("LoginController: Email não cadastrado ou senha incorretos.");
+            System.out.println("LController: Email não cadastrado ou senha incorretos.");
             //falta: implementar a chamada de um método que instancia um elemento visual de "Senha incorreta ou email não cadastrado"
         }
     }
@@ -133,8 +135,12 @@ public class LoginController {
      * Método que instancia e chama o modal de "Esqueceu sua senha"
      */
     public void abrirModalEsqueceuSenha() {
-        System.out.println("LoginController: Solicitacao para tela 'Esqueceu Senha' recebida. Logica para modal aqui.");
-        //falta: chamar modal
+        System.out.println("LController: Abrir modal");
+
+        ForgotPasswordModal forgotPasswordModal = new ForgotPasswordModal();
+        forgotPasswordModal.showForgotPasswordModal(primaryStage);
+        ForgotPasswordController fpController = new ForgotPasswordController(forgotPasswordModal);
+        forgotPasswordModal.setForgotPasswordController(fpController);
     }
 
     /**

@@ -65,10 +65,6 @@ public class LoginView extends BorderPane {
         StackPane paneDireitaLogin = criarPainelDireito();
         VBox conteudoLogin = criarConteudoLogin();
 
-        //se minimizar fica nessa proporcao
-        setPrefWidth(1080);
-        setPrefHeight(600);
-
         paneDireitaLogin.setAlignment(Pos.TOP_RIGHT);
         setRight(paneDireitaLogin);
         setCenter(conteudoLogin);
@@ -128,7 +124,7 @@ public class LoginView extends BorderPane {
     private VBox criarConteudoLogin() {
         VBox loginBox = new VBox(15);
         loginBox.setAlignment(Pos.CENTER_LEFT);
-        loginBox.setPadding(new Insets(0, 0, 0, 100));
+        loginBox.setPadding(new Insets(0, 0, 0, 0));
         loginBox.setMaxWidth(600);
 
         ImageView logoImageView = new ImageView();
@@ -162,15 +158,18 @@ public class LoginView extends BorderPane {
             tuallyText.setFill(Color.WHITE);
             tuallyText.setFont(Font.font("Arial", FontWeight.BOLD, 48));
             fallbackLogoBox.getChildren().addAll(eventText, tuallyText);
+
             Text tagline = new Text("join the moment");
             tagline.setFill(Color.WHITE);
             tagline.setFont(Font.font("Arial", 18));
+
             HBox taglineBox = new HBox();
             taglineBox.getChildren().add(tagline);
             taglineBox.setPadding(new Insets(-20, 0, 20, 5));
+
             logoContainer.getChildren().addAll(fallbackLogoBox, taglineBox);
         }
-        logoContainer.setPadding(new Insets(0, 0, 30, 0));
+        logoContainer.setPadding(new Insets(0, 0, 30, 75));
 
         emailField = new TextField();
         emailField.setPromptText("E-mail");
@@ -186,7 +185,7 @@ public class LoginView extends BorderPane {
         esqueceuSenhaLink.setTextFill(Color.WHITE);
 
         HBox forgotPasswordBox = new HBox(esqueceuSenhaLink);
-        forgotPasswordBox.setAlignment(Pos.CENTER_LEFT);
+        forgotPasswordBox.setAlignment(Pos.CENTER);
         forgotPasswordBox.setPadding(new Insets(0, 0, 0, 2));
 
         btnLogin = new Button("Login");
@@ -205,6 +204,9 @@ public class LoginView extends BorderPane {
         boxRegistrar.setPadding(new Insets(10, 0, 0, 0));
 
         loginBox.getChildren().addAll(logoContainer, emailField, passwordField, forgotPasswordBox, btnLogin, boxRegistrar);
+        loginBox.setAlignment(Pos.CENTER);
+        loginBox.setMaxWidth(500);
+        loginBox.setMaxHeight(450);
 
         return loginBox;
     }
