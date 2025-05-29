@@ -12,7 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -26,51 +25,53 @@ import java.util.Optional;
 /**
  * Classe para a tela de Configurações.
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
- * @author Yuri Garcia Maia (Criação e revisão)
+ * @author Yuri Garcia Maia (Criação)
  * @since 22-05-2025
  * @version 1.0
+ * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, lógica e da estrutura da classe)
+ * @since 22-05-2025
  */
 public class SettingsView extends BorderPane {
 
-    private SettingsController controller;
+    private SettingsController sController;
 
-    private Button btnInicio, btnMeusEventos, btnConfiguracoesSidebar;
-    private Button btnProgramacao, btnAgenda, btnNovoEventoHeader;
+    private Button btnInicio;
+    private Button btnMeusEventos;
+    private Button btnConfiguracoes;
+    private Button btnSair;
+    private Button btnProgramacao;
+    private Button btnDeleteAccount;
+
     private Label lbNomeUsuarioHeader;
-    private Circle avatarHeader;
-
-    private List<CheckBox> themeCheckBoxes = new ArrayList<>();
-    private Button btnSaveChangesContentPrefs;
-
     private Label nameDisplay, emailDisplay, phoneDisplay, passwordDisplay, cityDisplay, dobDisplay;
     private ImageView profilePhotoView;
     private Label profilePhotoErrorLabel;
+    private Circle avatarHeader;
 
-    private Button btnDeleteAccount;
+    private List<CheckBox> themeCheckBoxes = new ArrayList<>();
+
     private final DateTimeFormatter appDateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     /**
      * Construtor da SettingsView.
      */
     public SettingsView() {
-        this.getStyleClass().add("settings-view");
+        setupUI();
     }
 
     /**
      * Define o controller para esta view.
-     * @param controller O controller a ser usado.
+     * @param sController O controller a ser usado.
      */
-    public void setSettingsController(SettingsController controller) {
-        this.controller = controller;
-        setupUI();
-        setupActionHandlers();
+    public void setSettingsController(SettingsController sController) {
+        this.sController = sController;
     }
 
     /**
      * Configura a interface gráfica principal da tela de configurações.
      */
     private void setupUI() {
-        VBox barraLateral = createSidebar();
+        VBox barraLateral = criarBarraLateral();
         HBox barraSuperior = createTopbar();
         VBox conteudoCentral = createCenterContent();
 
@@ -78,62 +79,71 @@ public class SettingsView extends BorderPane {
         VBox mainContentWrapper = new VBox(conteudoCentral);
         VBox.setVgrow(mainContentWrapper, Priority.ALWAYS);
 
-        VBox centerAreaWithSubHeader = new VBox(subHeader, mainContentWrapper);
-        VBox.setVgrow(centerAreaWithSubHeader, Priority.ALWAYS);
+        ScrollPane scrollPane = new ScrollPane(conteudoCentral);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setPadding(new Insets(0));
+        scrollPane.setStyle("-fx-background-color:transparent;");
+
+        VBox centerAreaWithSubHeader = new VBox(subHeader, scrollPane);
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         setLeft(barraLateral);
         setTop(barraSuperior);
         setCenter(centerAreaWithSubHeader);
-
-        try {
-            this.getStylesheets().add(getClass().getResource("/styles/settings-styles.css").toExternalForm());
-        } catch (Exception e) {
-            System.err.println("Erro ao carregar /styles/settings-styles.css para SettingsView: " + e.getMessage());
-        }
     }
 
     /**
-     * Este método obtém o formatador de data padrão da aplicação.
-     * @return O DateTimeFormatter configurado.
+     * Este método criarBarraLateral() cria uma barra lateral de navegação vertical da interface.
+     * Essa barra aparece na lateral esquerda da tela e contém botões para acessar
+     * diferentes seções do aplicativo:
+     * Página Inicial, Meus eventos Programação, Configurações e saída
+     * @return a barra lateral.
      */
-    public DateTimeFormatter getAppDateFormatter() {
-        return appDateFormatter;
-    }
-
-    /**
-     * Este método cria a barra lateral de navegação.
-     * @return A VBox da barra lateral.
-     */
-    private VBox createSidebar() {
-        VBox sidebar = new VBox(20);
-        sidebar.setPadding(new Insets(20));
-        sidebar.getStyleClass().add("sidebar");
-        sidebar.setPrefWidth(200);
-        sidebar.setAlignment(Pos.TOP_CENTER);
+    private VBox criarBarraLateral() {
+        VBox barraLateral = new VBox(20);
+        barraLateral.setPadding(new Insets(20));
+        barraLateral.getStyleClass().add("sidebar");
+        barraLateral.setPrefWidth(200);
+        barraLateral.setAlignment(Pos.TOP_CENTER);
 
         btnInicio = new Button("Página inicial");
-        btnMeusEventos = new Button("Meus eventos");
-        btnConfiguracoesSidebar = new Button("Configurações");
-        Button btnSair = new Button("Sair");
-
         btnInicio.getStyleClass().add("menu-button");
-        btnMeusEventos.getStyleClass().add("menu-button");
-        btnConfiguracoesSidebar.getStyleClass().add("menu-button");
-        btnConfiguracoesSidebar.setStyle("-fx-background-color: #D54BD9;");
-        btnSair.getStyleClass().add("menu-button");
-
-
         btnInicio.setMaxWidth(Double.MAX_VALUE);
+        btnInicio.setPadding(new Insets(0,0,15,0));
+
+        btnMeusEventos = new Button("Meus eventos");
+        btnMeusEventos.getStyleClass().add("menu-button");
         btnMeusEventos.setMaxWidth(Double.MAX_VALUE);
-        btnConfiguracoesSidebar.setMaxWidth(Double.MAX_VALUE);
+        btnMeusEventos.setPadding(new Insets(0,0,15,0));
+
+        btnProgramacao = new Button("Programação");
+        btnProgramacao.getStyleClass().add("menu-button");
+        btnProgramacao.setMaxWidth(Double.MAX_VALUE);
+        btnProgramacao.setPadding(new Insets(0,0,15,0));
+
+        VBox parteSuperior = new VBox(15, btnInicio, btnMeusEventos, btnProgramacao);
+        parteSuperior.setPadding(new Insets(20,15,15,15));
+
+        Region espacador = new Region();
+        VBox.setVgrow(espacador, Priority.ALWAYS);
+
+        btnConfiguracoes = new Button("Configurações");
+        btnConfiguracoes.getStyleClass().add("menu-button");
+        btnConfiguracoes.setMaxWidth(Double.MAX_VALUE);
+        btnConfiguracoes.setPadding(new Insets(0,0,15,0));
+
+        btnSair = new Button("Sair");
+        btnSair.getStyleClass().add("menu-button");
         btnSair.setMaxWidth(Double.MAX_VALUE);
+        btnSair.setPadding(new Insets(0,0,15,0));
 
+        VBox parteInferior = new VBox(15, btnConfiguracoes, btnSair);
+        parteInferior.setPadding(new Insets(0,15,40,15));
 
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
-
-        sidebar.getChildren().addAll(btnInicio, btnMeusEventos, btnConfiguracoesSidebar, spacer, btnSair);
-        return sidebar;
+        barraLateral.getChildren().addAll(parteSuperior, espacador, parteInferior);
+        barraLateral.setPadding(new Insets(0));
+        return barraLateral;
     }
 
     /**
@@ -161,10 +171,6 @@ public class SettingsView extends BorderPane {
         subHeader.setAlignment(Pos.CENTER_LEFT);
         subHeader.getStyleClass().add("sub-header-controls");
 
-        btnProgramacao = new Button("Programação");
-        btnAgenda = new Button("Minha agenda");
-        btnNovoEventoHeader = new Button("+ Novo Evento");
-
         lbNomeUsuarioHeader = new Label("Usuário Exemplo");
         lbNomeUsuarioHeader.getStyleClass().add("user-display-label");
 
@@ -177,13 +183,11 @@ public class SettingsView extends BorderPane {
         userDisplayBox.getStyleClass().add("user-display-box");
 
         btnProgramacao.getStyleClass().add("top-button");
-        btnAgenda.getStyleClass().add("top-button");
-        btnNovoEventoHeader.getStyleClass().add("new-event-button");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        subHeader.getChildren().addAll(btnProgramacao, btnAgenda, btnNovoEventoHeader, spacer, userDisplayBox);
+        subHeader.getChildren().addAll(spacer, userDisplayBox);
         return subHeader;
     }
 
@@ -209,11 +213,9 @@ public class SettingsView extends BorderPane {
         btnDeleteAccount.setStyle("-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-font-weight: bold;");
         btnDeleteAccount.setPrefWidth(150);
 
-
         HBox deleteButtonContainer = new HBox(btnDeleteAccount);
         deleteButtonContainer.setAlignment(Pos.CENTER_RIGHT);
         deleteButtonContainer.setPadding(new Insets(20,0,0,0));
-
 
         centerContent.getChildren().addAll(title, contentPrefsSection, userPrefsSection, deleteButtonContainer);
         return centerContent;
@@ -229,50 +231,57 @@ public class SettingsView extends BorderPane {
 
         Label title = new Label("Preferências de conteúdo");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+
         Label description = new Label("(Remover eventos visualizados na página inicial - descrição exemplo)");
         description.setFont(Font.font("Arial", 12));
         description.setTextFill(Color.GRAY);
 
-        GridPane themesGrid = new GridPane();
-        themesGrid.setHgap(40);
-        themesGrid.setVgap(10);
+        // Cria os dois grupos (colunas)
+        VBox leftColumn = new VBox(10);
+        VBox rightColumn = new VBox(10);
 
-        String[] themeNames = {"Corporativos", "Educacionais", "Culturais", "Esportivos", "Beneficentes", "Religiosos", "Socials"};
-        String[] themeDescriptions = {
-                "(palestras, workshops, feiras de negócios)", "(palestras, seminários, cursos)",
-                "(shows, exposições, festivais)", "(competições, maratonas, torneios)",
-                "(arrecadação de fundos, campanhas sociais)", "(cultos, retiros, encontros espirituais)",
+        // Dados das categorias
+        String[] leftNames = {"Corporativos", "Educacionais", "Culturais", "Esportivos"};
+        String[] leftDescriptions = {
+                "(palestras, workshops, feiras de negócios)",
+                "(palestras, seminários, cursos)",
+                "(shows, exposições, festivais)",
+                "(competições, maratonas, torneios)"
+        };
+
+        String[] rightNames = {"Beneficentes", "Religiosos", "Sociais"};
+        String[] rightDescriptions = {
+                "(arrecadação de fundos, campanhas sociais)",
+                "(cultos, retiros, encontros espirituais)",
                 "(aniversários, casamentos, confraternizações)"
         };
 
         themeCheckBoxes.clear();
-        int col = 0;
-        int row = 0;
-        for (int i = 0; i < themeNames.length; i++) {
-            CheckBox cb = new CheckBox(themeNames[i]);
-            Label descLabel = new Label(themeDescriptions[i]);
-            descLabel.setFont(Font.font("Arial", 11));
-            descLabel.setTextFill(Color.DARKSLATEGRAY);
-            VBox themeEntry = new VBox(2, cb, descLabel);
+
+        for (int i = 0; i < leftNames.length; i++) {
+            CheckBox cb = new CheckBox(leftNames[i]);
+            Label desc = new Label(leftDescriptions[i]);
+            desc.setFont(Font.font("Arial", 11));
+            desc.setTextFill(Color.DARKSLATEGRAY);
+            VBox entry = new VBox(2, cb, desc);
+            leftColumn.getChildren().add(entry);
             themeCheckBoxes.add(cb);
-            themesGrid.add(themeEntry, col, row);
-            col++;
-            if (col > 0 && (i+1) < themeNames.length) {
-                col = 0;
-                row++;
-            } else if (col > 1) {
-                col = 0;
-                row++;
-            }
         }
 
-        btnSaveChangesContentPrefs = new Button("Salvar Preferências de Conteúdo");
-        btnSaveChangesContentPrefs.getStyleClass().add("save-prefs-button");
-        HBox buttonBox = new HBox(btnSaveChangesContentPrefs);
-        buttonBox.setAlignment(Pos.CENTER_LEFT);
-        buttonBox.setPadding(new Insets(10,0,0,0));
+        for (int i = 0; i < rightNames.length; i++) {
+            CheckBox cb = new CheckBox(rightNames[i]);
+            Label desc = new Label(rightDescriptions[i]);
+            desc.setFont(Font.font("Arial", 11));
+            desc.setTextFill(Color.DARKSLATEGRAY);
+            VBox entry = new VBox(2, cb, desc);
+            rightColumn.getChildren().add(entry);
+            themeCheckBoxes.add(cb);
+        }
 
-        section.getChildren().addAll(title, description, themesGrid, buttonBox);
+        // Organiza as colunas em um HBox
+        HBox columns = new HBox(60, leftColumn, rightColumn);
+
+        section.getChildren().addAll(title, description, columns);
         return section;
     }
 
@@ -304,7 +313,6 @@ public class SettingsView extends BorderPane {
         Label emailLabelForDisplay = new Label("Email:");
         userDetailsGrid.add(emailLabelForDisplay, 0, 1);
         userDetailsGrid.add(emailDisplay, 1, 1);
-
 
         phoneDisplay = new Label();
         StackPane phoneFieldContainer = createEditableField("phone", "Telefone:", phoneDisplay, "(xx) xxxxx-xxxx");
@@ -375,7 +383,7 @@ public class SettingsView extends BorderPane {
 
 
         Hyperlink changePhotoLink = new Hyperlink("(alterar)");
-/*        changePhotoLink.setOnAction(e -> controller.handleChangeProfilePhoto()); */
+/*        changePhotoLink.setOnAction(e -> sController.handleChangeProfilePhoto()); */
 
         profilePhotoErrorLabel = new Label();
         profilePhotoErrorLabel.setTextFill(Color.SALMON);
@@ -475,7 +483,7 @@ public class SettingsView extends BorderPane {
 
         saveButton.setOnAction(e -> {
             fieldErrorLabel.setVisible(false);
-            if (controller != null) {
+            if (sController != null) {
                 String newValue = "";
                 LocalDate newDate = null;
 
@@ -487,14 +495,14 @@ public class SettingsView extends BorderPane {
                     newDate = ((DatePicker) editField).getValue();
                 }
 /*
-                // Chamar o método apropriado do controller
+                // Chamar o método apropriado do sController
                 switch (fieldKey) {
-                    case "name": controller.handleUpdateName(newValue); break;
-                    case "email": controller.handleUpdateEmail(newValue); break; // Se email se tornar editável
-                    case "phone": controller.handleUpdatePhone(newValue); break;
-                    case "password": controller.handleUpdatePassword(newValue); break;
-                    case "city": controller.handleUpdateCity(newValue); break;
-                    case "dateOfBirth": controller.handleUpdateDateOfBirth(newDate); break;
+                    case "name": sController.handleUpdateName(newValue); break;
+                    case "email": sController.handleUpdateEmail(newValue); break; // Se email se tornar editável
+                    case "phone": sController.handleUpdatePhone(newValue); break;
+                    case "password": sController.handleUpdatePassword(newValue); break;
+                    case "city": sController.handleUpdateCity(newValue); break;
+                    case "dateOfBirth": sController.handleUpdateDateOfBirth(newDate); break;
                 }
 
  */
@@ -507,202 +515,22 @@ public class SettingsView extends BorderPane {
     }
 
     /**
-     * Este método exibe os dados do usuário na interface.
-     * @param userData Mapa contendo os dados do usuário.
+     *
+     * Métodos getters e setters
      */
-    public void displayUserData(Map<String, Object> userData) {
-        nameDisplay.setText((String) userData.getOrDefault("name", "N/A"));
-        emailDisplay.setText((String) userData.getOrDefault("email", "N/A"));
-        phoneDisplay.setText((String) userData.getOrDefault("phone", "N/A"));
-        passwordDisplay.setText("********");
-        cityDisplay.setText((String) userData.getOrDefault("city", "N/A"));
-        LocalDate dob = (LocalDate) userData.get("dateOfBirth");
-        dobDisplay.setText(dob != null ? dob.format(appDateFormatter) : "N/A");
+    public Button getBtnInicio() {return btnInicio;}
+    public Button getBtnMeusEventos() {return btnMeusEventos;}
+    public Button getBtnConfiguracoes() {return btnConfiguracoes;}
+    public Button getBtnSair() {return btnSair;}
+    public Button getBtnProgramacao() {return btnProgramacao;}
+    public Button getBtnDeleteAccount() {return btnDeleteAccount;}
 
-        if (lbNomeUsuarioHeader != null) {
-            lbNomeUsuarioHeader.setText((String) userData.getOrDefault("name", "Usuário"));
-        }
+    public Label getLbNomeUsuarioHeader() {return lbNomeUsuarioHeader;}
+    public void setLbNomeUsuarioHeader(Label lbNomeUsuarioHeader) {this.lbNomeUsuarioHeader = lbNomeUsuarioHeader;}
 
+    public Circle getAvatarHeader() {return avatarHeader;}
+    public void setAvatarHeader(Circle avatarHeader) {this.avatarHeader = avatarHeader;}
 
-        String photoPath = (String) userData.get("profilePhotoPath");
-        if (photoPath != null && !photoPath.isEmpty()) {
-            try {
-                profilePhotoView.setImage(new Image(new File(photoPath).toURI().toString()));
-            } catch (Exception e) {
-                System.err.println("Erro ao carregar foto de perfil: " + photoPath + " - " + e.getMessage());
-            }
-        } else {
-        }
-    }
-
-    /**
-     * Este método exibe as preferências de conteúdo (temas selecionados).
-     * @param preferences Lista de temas preferidos.
-     */
-    public void displayContentPreferences(List<String> preferences) {
-        for (CheckBox cb : themeCheckBoxes) {
-            cb.setSelected(preferences.contains(cb.getText()));
-        }
-    }
-
-    /**
-     * Este método atualiza um campo de exibição após uma edição bem-sucedida.
-     * Também reverte o campo para o modo de visualização.
-     * @param fieldKey A chave do campo (ex: "name", "phone").
-     * @param newValue O novo valor a ser exibido.
-     */
-    public void updateDisplayField(String fieldKey, String newValue) {
-        Label displayLabel = null;
-        switch (fieldKey) {
-            case "name": displayLabel = nameDisplay; break;
-            case "email": displayLabel = emailDisplay; break;
-            case "phone": displayLabel = phoneDisplay; break;
-            case "password": displayLabel = passwordDisplay; newValue = "********"; break;
-            case "city": displayLabel = cityDisplay; break;
-            case "dateOfBirth": displayLabel = dobDisplay; break;
-            case "profilePhotoPath":
-                System.out.println("View: Foto de perfil atualizada para " + newValue);
-                if (newValue != null && !newValue.isEmpty()) {
-                    try { profilePhotoView.setImage(new Image(new File(newValue).toURI().toString())); }
-                    catch (Exception e) { System.err.println("Erro ao recarregar foto: " + e.getMessage());}
-                } else {
-                    // profilePhotoView.setImage(null);
-                }
-                break;
-        }
-
-        if (displayLabel != null) {
-            displayLabel.setText(newValue);
-            Node fieldContainer = displayLabel.getParent().getParent();
-            if (fieldContainer instanceof StackPane) {
-                Node viewMode = ((StackPane) fieldContainer).getChildren().get(0);
-                Node editVBox = ((StackPane) fieldContainer).getChildren().get(1);
-                viewMode.setVisible(true);
-                editVBox.setVisible(false);
-            }
-        }
-        if ("name".equals(fieldKey) && lbNomeUsuarioHeader != null) {
-            lbNomeUsuarioHeader.setText(newValue);
-        }
-    }
-
-    /**
-     * Este método exibe uma mensagem de erro específica para um campo.
-     * Mantém o campo no modo de edição.
-     * @param fieldKey A chave do campo (ex: "name", "phone").
-     * @param message A mensagem de erro.
-     */
-    public void showFieldError(String fieldKey, String message) {
-        Node fieldUIElement = null;
-        switch (fieldKey) {
-            case "name": fieldUIElement = nameDisplay; break;
-            case "email": fieldUIElement = emailDisplay; break;
-            case "phone": fieldUIElement = phoneDisplay; break;
-            case "password": fieldUIElement = passwordDisplay; break;
-            case "city": fieldUIElement = cityDisplay; break;
-            case "dateOfBirth": fieldUIElement = dobDisplay; break;
-            case "profilePhotoPath": fieldUIElement = profilePhotoErrorLabel; break;
-        }
-
-        if (fieldUIElement == profilePhotoErrorLabel) {
-            profilePhotoErrorLabel.setText(message);
-            profilePhotoErrorLabel.setVisible(true);
-        } else if (fieldUIElement instanceof Label) {
-            Node container = ((Label)fieldUIElement).getParent().getParent();
-            if (container instanceof StackPane) {
-                StackPane stack = (StackPane) container;
-                if (stack.getChildren().size() > 1 && stack.getChildren().get(1) instanceof VBox) {
-                    VBox editVBox = (VBox) stack.getChildren().get(1);
-                    if (editVBox.getChildren().size() > 1 && editVBox.getChildren().get(1) instanceof Label) {
-                        Label errorLabel = (Label) editVBox.getChildren().get(1);
-                        errorLabel.setText(message);
-                        errorLabel.setVisible(true);
-                        stack.getChildren().get(0).setVisible(false);
-                        editVBox.setVisible(true);
-                        if (editVBox.getChildren().get(0) instanceof HBox) {
-                            editVBox.getChildren().get(0).setVisible(true);
-                        }
-                    }
-                }
-            }
-        }
-        showErrorMessage("Verifique o campo: " + message);
-    }
-
-
-    /**
-     * Este método exibe uma mensagem de erro genérica (ex: Alert).
-     * @param message A mensagem de erro.
-     */
-    public void showErrorMessage(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Erro de Configuração");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    /**
-     * Este método exibe uma mensagem de sucesso (ex: Alert).
-     * @param message A mensagem de sucesso.
-     */
-    public void showSuccessMessage(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Sucesso");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    /**
-     * Este método exibe um diálogo de confirmação para exclusão de conta.
-     * @return true se o usuário confirmar, false caso contrário.
-     */
-    public boolean confirmAccountDeletion() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmar Exclusão de Conta");
-        alert.setHeaderText("Tem certeza que deseja excluir sua conta?");
-        alert.setContentText("Esta ação é irreversível e todos os seus dados serão perdidos.");
-        Optional<ButtonType> result = alert.showAndWait();
-        return result.isPresent() && result.get() == ButtonType.OK;
-    }
-
-    /**
-     * Este método configura os manipuladores de ação para os botões da view.
-     */
-    private void setupActionHandlers() {
-        if (controller == null) return;
-
-        /*
-        btnInicio.setOnAction(e -> controller.navigateToHome());
-        btnMeusEventos.setOnAction(e -> controller.navigateToMyEvents());
-        // btnConfiguracoesSidebar já é a tela atual, pode não ter ação ou recarregar
-        btnConfiguracoesSidebar.setOnAction(e -> controller.loadInitialData());
-
-
-        btnProgramacao.setOnAction(e -> controller.navigateToProgramacao());
-        btnAgenda.setOnAction(e -> controller.navigateToMinhaAgenda());
-        btnNovoEventoHeader.setOnAction(e -> controller.navigateToNovoEvento());
-*/
-
-        btnSaveChangesContentPrefs.setOnAction(e -> {
-            List<String> selected = new ArrayList<>();
-            for (CheckBox cb : themeCheckBoxes) {
-                if (cb.isSelected()) {
-                    selected.add(cb.getText());
-                }
-            }
-          /*  controller.handleUpdateContentPreferences(selected); */
-        });
-
-/*        btnDeleteAccount.setOnAction(e -> controller.handleDeleteAccount());*/
-    }
-    /**
-     * Este método navega para a tela de "Meus Eventos".
-     * (Pode ser a mesma UserScheduleView com um filtro ou uma view diferente)
-     */
-    public void navigateToMyEvents() {
-        System.out.println("View: Navegando para Meus Eventos (implementação pendente, usando Home).");
-        controller.navigateToSchedule();
-    }
+    public List<CheckBox> getThemeCheckBoxes() {return themeCheckBoxes;}
+    public void setThemeCheckBoxes(List<CheckBox> themeCheckBoxes) {this.themeCheckBoxes = themeCheckBoxes;}
 }
