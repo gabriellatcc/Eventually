@@ -10,7 +10,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -23,7 +22,7 @@ import java.util.Locale;
 /**
  * Esta classe representa a visualização da tela de programação de eventos do usuário
  * @author Yuri Garcia Maia
- * @version 1.04
+ * @version 1.05
  * @author Gabriela Tavares Costa Corrêa (Documentação e revisão da classe)
  * @since 2025-04-06
  */
@@ -42,22 +41,28 @@ public class UserScheduleView extends BorderPane {
     private VBox listaEventos;
 
     private Label lbNomeUsuario;
-    private Stage primaryStage;
     private LocalDate dataSelecionada;
 
     private UserScheduleController userScheduleController;
 
     /**
      *Construtor da classe {@code UserScheduleView}.
+     */
+    public UserScheduleView() {
+        setupUIUserSchedule();
+    }
+
+    public void setUserScheduleController(UserScheduleController userScheduleController) {this.userScheduleController = userScheduleController;}
+
+    /**
      * Inicializa e organiza os elementos visuais da tela principal chamando métodos
      * A disposição dos componentes é gerenciada pelo {@code BorderPane}, posicionando a barra lateral à esquerda,
      * a barra superior no topo e o conteúdo principal no centro.
      * A disposição dos componentes é gerenciada pelo {@code BorderPane}.
      */
-    public UserScheduleView() {
-        this.btnsData = new ArrayList<>();
-        this.getStyleClass().add("user-schedule-view");
-        this.dataSelecionada = LocalDate.now();
+    public void setupUIUserSchedule() {
+        btnsData = new ArrayList<>();
+        dataSelecionada = LocalDate.now();
 
         VBox barraLateral = criarBarraLateral();
         HBox barraSuperior = criarBarraSuperior();
@@ -68,13 +73,11 @@ public class UserScheduleView extends BorderPane {
         setCenter(conteudoCentral);
     }
 
-    public void setUserScheduleController(UserScheduleController userScheduleController) {this.userScheduleController = userScheduleController;}
-
     /**
      * Este método criarBarraLateral() cria uma barra lateral de navegação vertical da interface.
      * Essa barra aparece na lateral esquerda da tela e contém botões para acessar
      * diferentes seções do aplicativo:
-     * Página Inicial, Meus eventos e Configurações
+     * Página Inicial, Meus eventos Programação, Configurações e saída
      * @return a barra lateral.
      */
     private VBox criarBarraLateral() {
@@ -84,26 +87,42 @@ public class UserScheduleView extends BorderPane {
         barraLateral.setPrefWidth(200);
         barraLateral.setAlignment(Pos.TOP_CENTER);
 
-        this.btnInicio = new Button("Página inicial");
-        this.btnInicio.getStyleClass().add("menu-button");
-        this.btnInicio.setMaxWidth(Double.MAX_VALUE);
+        btnInicio = new Button("Página inicial");
+        btnInicio.getStyleClass().add("menu-button");
+        btnInicio.setMaxWidth(Double.MAX_VALUE);
+        btnInicio.setPadding(new Insets(0,0,15,0));
 
-        this.btnMeusEventos = new Button("Meus eventos");
-        this.btnMeusEventos.getStyleClass().add("menu-button");
-        this.btnMeusEventos.setMaxWidth(Double.MAX_VALUE);
+        btnMeusEventos = new Button("Meus eventos");
+        btnMeusEventos.getStyleClass().add("menu-button");
+        btnMeusEventos.setMaxWidth(Double.MAX_VALUE);
+        btnMeusEventos.setPadding(new Insets(0,0,15,0));
 
-        this.btnConfiguracoes = new Button("Configurações");
-        this.btnConfiguracoes.getStyleClass().add("menu-button");
-        this.btnConfiguracoes.setMaxWidth(Double.MAX_VALUE);
+        btnProgramacao = new Button("Programação");
+        btnProgramacao.getStyleClass().add("menu-button");
+        btnProgramacao.setMaxWidth(Double.MAX_VALUE);
+        btnProgramacao.setPadding(new Insets(0,0,15,0));
 
-        this.btnSair = new Button("Sair");
-        this.btnSair.getStyleClass().add("menu-button");
-        this.btnSair.setMaxWidth(Double.MAX_VALUE);
+        VBox parteSuperior = new VBox(15, btnInicio, btnMeusEventos, btnProgramacao);
+        parteSuperior.setPadding(new Insets(20,15,15,15));
 
         Region espacador = new Region();
         VBox.setVgrow(espacador, Priority.ALWAYS);
 
-        barraLateral.getChildren().addAll(this.btnInicio, this.btnMeusEventos, espacador, this.btnConfiguracoes,this.btnSair);
+        btnConfiguracoes = new Button("Configurações");
+        btnConfiguracoes.getStyleClass().add("menu-button");
+        btnConfiguracoes.setMaxWidth(Double.MAX_VALUE);
+        btnConfiguracoes.setPadding(new Insets(0,0,15,0));
+
+        btnSair = new Button("Sair");
+        btnSair.getStyleClass().add("menu-button");
+        btnSair.setMaxWidth(Double.MAX_VALUE);
+        btnSair.setPadding(new Insets(0,0,15,0));
+
+        VBox parteInferior = new VBox(15, btnConfiguracoes, btnSair);
+        parteInferior.setPadding(new Insets(0,15,40,15));
+
+        barraLateral.getChildren().addAll(parteSuperior, espacador, parteInferior);
+        barraLateral.setPadding(new Insets(0));
         return barraLateral;
     }
 
@@ -135,27 +154,24 @@ public class UserScheduleView extends BorderPane {
         subCabecalho.setAlignment(Pos.CENTER_LEFT);
         subCabecalho.getStyleClass().add("sub-header-controls");
 
-        this.btnProgramacao = new Button("Programação");
-        this.btnProgramacao.getStyleClass().add("top-button");
+        btnNovoEvento = new Button("+ Novo Evento");
+        btnNovoEvento.getStyleClass().add("new-event-button");
 
-        this.btnNovoEvento = new Button("+ Novo Evento");
-        this.btnNovoEvento.getStyleClass().add("new-event-button");
+        lbNomeUsuario = new Label("Usuário");
+        lbNomeUsuario.getStyleClass().add("user-display-label");
 
-        this.lbNomeUsuario = new Label("Usuário");
-        this.lbNomeUsuario.getStyleClass().add("user-display-label");
+        avatar = new Circle(18);
+        avatar.getStyleClass().add("avatar-circle");
+        avatar.setFill(Color.LIGHTGRAY);
 
-        this.avatar = new Circle(18);
-        this.avatar.getStyleClass().add("avatar-circle");
-        this.avatar.setFill(Color.LIGHTGRAY);
-
-        HBox userDisplayBox = new HBox(8, this.lbNomeUsuario, this.avatar);
+        HBox userDisplayBox = new HBox(8, lbNomeUsuario, avatar);
         userDisplayBox.setAlignment(Pos.CENTER);
         userDisplayBox.getStyleClass().add("user-display-box");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        subCabecalho.getChildren().addAll(this.btnProgramacao, this.btnNovoEvento, spacer, userDisplayBox);
+        subCabecalho.getChildren().addAll(btnNovoEvento, spacer, userDisplayBox);
 
         return subCabecalho;
     }
@@ -176,8 +192,8 @@ public class UserScheduleView extends BorderPane {
         datePicker.getStyleClass().add("date-picker-bar");
         datePicker.setPadding(new Insets(5, 15, 5, 15));
 
-        this.grupoDatas = new ToggleGroup();
-        this.btnsData.clear();
+        grupoDatas = new ToggleGroup();
+        btnsData.clear();
 
         LocalDate today = LocalDate.now();
         LocalDate monday = today.with(DayOfWeek.MONDAY);
@@ -192,14 +208,14 @@ public class UserScheduleView extends BorderPane {
 
             ToggleButton btn = new ToggleButton(dayOfWeek + "\n" + dayNumber);
             btn.getStyleClass().add("date-button");
-            btn.setToggleGroup(this.grupoDatas);
+            btn.setToggleGroup(grupoDatas);
             btn.setUserData(date);
 
             if (date.equals(today)) {
                 btn.setSelected(true);
-                this.dataSelecionada = date;
+                dataSelecionada = date;
             }
-            this.btnsData.add(btn);
+            btnsData.add(btn);
             datePicker.getChildren().add(btn);
         }
         datePickerContainer.getChildren().add(datePicker);
@@ -212,12 +228,12 @@ public class UserScheduleView extends BorderPane {
      * @return a lista de eventos a serem exibidos no dia selecionado
      */
     private VBox criarListaEventos() {
-        this.listaEventos = new VBox(15);
-        this.listaEventos.setPadding(new Insets(20));
-        this.listaEventos.getStyleClass().add("event-list-container");
+        listaEventos = new VBox(15);
+        listaEventos.setPadding(new Insets(20));
+        listaEventos.getStyleClass().add("event-list-container");
 
         carregarEventosPorData(dataSelecionada);
-        return this.listaEventos;
+        return listaEventos;
     }
 
     /** Esta classe cria um container que exibe a lista de eventos para o dia do mês e ano específicos, ao selecionar
@@ -227,7 +243,7 @@ public class UserScheduleView extends BorderPane {
      *  exibida em formato EEE dd MMM yy
      */
     private void carregarEventosPorData(LocalDate date) {
-        this.listaEventos.getChildren().clear();
+        listaEventos.getChildren().clear();
 
         DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEE dd,", new Locale("pt", "BR")).withLocale(new Locale("pt", "BR"));
         DateTimeFormatter monthYearFormatter = DateTimeFormatter.ofPattern("MMM yy", new Locale("pt", "BR")).withLocale(new Locale("pt", "BR"));
@@ -236,7 +252,7 @@ public class UserScheduleView extends BorderPane {
         String monthYearStr = date.format(monthYearFormatter).toUpperCase();
 
         Label placeholder = new Label("Eventos para " + dayStr + " " + monthYearStr + ".");
-        this.listaEventos.getChildren().add(placeholder);
+        listaEventos.getChildren().add(placeholder);
     }
 
     /**
@@ -251,8 +267,8 @@ public class UserScheduleView extends BorderPane {
 
         VBox centerContent = new VBox(0);
         centerContent.getStyleClass().add("center-content-area");
-        centerContent.getChildren().addAll(controlesSubCabecalho, datePicker, this.listaEventos);
-        VBox.setVgrow(this.listaEventos, Priority.ALWAYS);
+        centerContent.getChildren().addAll(controlesSubCabecalho, datePicker, listaEventos);
+        VBox.setVgrow(listaEventos, Priority.ALWAYS);
 
         return centerContent;
     }
