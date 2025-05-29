@@ -7,7 +7,7 @@ import java.util.*;
  * Esta classe {@code UsuarioRepository} é para gerenciar a coleção de usuários em memória,
  * fornece métodos para acessar e modificar a lista de usuários.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.01
+ * @version 1.02
  * @since 2025-04-22
  */
 public class UsuarioRepository {
@@ -26,6 +26,8 @@ public class UsuarioRepository {
         int id = System.identityHashCode(usuario);
         usuario.setId(id);
         listaUsuarios.add(usuario);
+        System.out.println("UR: Usuário adicionado com ID: " + id + " | HashSet size: " + listaUsuarios.size());
+        System.out.println("UR: Endereço (hash) do objeto na memória: " + Integer.toHexString(id));
     }
 
     /**
