@@ -1,6 +1,7 @@
 package com.eventually.controller;
 
 import com.eventually.service.TelaService;
+import com.eventually.view.HomeView;
 import com.eventually.view.LoginView;
 import com.eventually.view.SettingsView;
 import com.eventually.view.UserScheduleView;
@@ -73,7 +74,19 @@ public class UserScheduleController {
     private void handleDateSelection(javafx.scene.control.Toggle toggle) {System.out.println("Controller: Data selecionada: " + toggle.getUserData());}
 
 
-    private void handleHomeButton() {System.out.println("Controller: Página inicial clicada");}
+    private void handleHomeButton() {
+        System.out.println("Controller: Página inicial clicada");
+        HomeView homeView = new HomeView();
+        HomeController homeController = new HomeController(homeView, primaryStage);
+        homeView.setHomeController(homeController);
+
+        TelaService service = new TelaService();
+        Scene sceneHome = new Scene(homeView,service.medirWidth(),service.medirHeight());
+
+        sceneHome.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
+        primaryStage.setTitle("Eventually - Página inicial");
+        primaryStage.setScene(sceneHome);
+    }
 
 
     private void handleMyEventsButton() {

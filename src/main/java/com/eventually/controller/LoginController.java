@@ -3,10 +3,7 @@ import com.eventually.dto.AutenticarUsuarioDto;
 import com.eventually.model.UsuarioModel;
 import com.eventually.service.AutenticacaoUsuarioService;
 import com.eventually.service.TelaService;
-import com.eventually.view.ForgotPasswordModal;
-import com.eventually.view.LoginView;
-import com.eventually.view.RegisterView;
-import com.eventually.view.UserScheduleView;
+import com.eventually.view.*;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -40,7 +37,7 @@ public class LoginController {
 
     public void setupEventHandlersLogin() {
         loginView.getEsqueceuSenhaLink().setOnAction(e -> handleEsqueceuSenhaLink());
-        loginView.getBtnLogin().setOnAction(e -> handleLogin());
+        loginView.getBtnLogin().setOnAction(e -> testeModal());
         loginView.getBtnRegistrar().setOnAction(e -> handleRegistrar());
     }
 
@@ -61,6 +58,12 @@ public class LoginController {
         this.abrirRegisterView();
     }
 
+    private void testeModal(){
+        System.out.println("LController: Abrir modal");
+
+        ChangeConfirmModal changeConfirmModal = new ChangeConfirmModal();
+        changeConfirmModal.showChangePasswordModal(primaryStage);
+    }
     /**
      * Método que estabelece a lógica para quando o botão de login é clicado
      * e lida com o resultado.
