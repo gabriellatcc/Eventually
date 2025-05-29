@@ -1,4 +1,5 @@
 package com.eventually.model;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -15,14 +16,14 @@ public class UsuarioModel {
     private String email;
     private String senha;
     private String localizacaoUsuario;
-    private String dataNascimento;
+    private LocalDate dataNascimento;
     private String fotoUsuario;
     private List<EventoModel> eventosParticipa = new ArrayList<>();
     private List<EventoModel> eventosOrganizados = new ArrayList<>();
     private Set<TemaPreferencia> temasPreferidos = new HashSet<>();
 
     public UsuarioModel(String nomePessoa, String email, String senha, String localizacaoUsuario,
-                        String dataNascimento, String fotoUsuario, List<EventoModel> eventosOrganizados, List<EventoModel> eventosParticipa,
+                        LocalDate dataNascimento, String fotoUsuario, List<EventoModel> eventosOrganizados, List<EventoModel> eventosParticipa,
                         Set<TemaPreferencia> temasPreferidos)
     {
         this.nomePessoa = nomePessoa;
@@ -51,11 +52,11 @@ public class UsuarioModel {
     public String getSenha() {return senha;}
     public void setSenha(String senha) {this.senha = senha;}
 
+    public LocalDate getDataNascimento() {return dataNascimento;}
+    public void setDataNascimento(LocalDate dataNascimento) {this.dataNascimento = dataNascimento;}
+
     public String getLocalizacaoUsuario() {return localizacaoUsuario;}
     public void setLocalizacaoUsuario(String localizacaoUsuario) {this.localizacaoUsuario = localizacaoUsuario;}
-
-    public String getDataNascimento() {return dataNascimento;}
-    public void setDataNascimento(String dataNascimento) {this.dataNascimento = dataNascimento;}
 
     public String getFotoUsuario() {return fotoUsuario;}
     public void setFotoUsuario(String fotoUsuario) {this.fotoUsuario = fotoUsuario;}

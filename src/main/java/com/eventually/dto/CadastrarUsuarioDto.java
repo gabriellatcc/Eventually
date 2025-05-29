@@ -1,5 +1,6 @@
 package com.eventually.dto;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -11,11 +12,11 @@ import java.util.Objects;
  * @param data a data de nascimento do usuario a ser validado
  * @param preferencias as preferencias de tema do usuário
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.0
+ * @version 1.1
  * @since 2025-05-15
  */
 public record CadastrarUsuarioDto(String nomePessoa, String email, String senha, String localizacaoUsuario,
-                                  String data, PreferenciasUsuarioDto preferencias) {
+                                  LocalDate data, PreferenciasUsuarioDto preferencias) {
     public CadastrarUsuarioDto {
         Objects.requireNonNull(nomePessoa);
         Objects.requireNonNull(email);
