@@ -2,6 +2,7 @@ package com.eventually.dto;
 import com.eventually.model.EventoModel;
 import com.eventually.model.TemaPreferencia;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -10,7 +11,7 @@ import java.util.Set;
  * Apenas os campos não nulos serão utilizados para atualizar o {@code UsuarioModel}.
  *
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.0
+ * @version 1.1
  * @since 2025-05-18
  */
 public record UsuarioEdicaoDto(
@@ -18,7 +19,7 @@ public record UsuarioEdicaoDto(
         String email,
         String senha,
         String localizacaoUsuario,
-        String dataNascimento,
+        LocalDate dataNascimento,
         String fotoUsuario,
         List<EventoModel> eventosParticipa,
         List<EventoModel> eventosOrganizados,
