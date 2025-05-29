@@ -13,8 +13,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.image.Image;
+import javafx.util.StringConverter;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +27,7 @@ import java.util.Map;
  * por cadastrar o usuário na memória.
  *
  * @author Yuri Garcia Maia
- * @version 1.00
+ * @version 1.01
  * @since 2025-05-13
  * @author Gabriella Tavares Costa Corrêa (Documentação e revisão da classe)
  * @since 2025-05-14
@@ -36,21 +39,17 @@ public class RegisterView extends BorderPane {
     private DatePicker fldDataNascimento;
     private TextField fldCidade;
 
-    private Label lbNameErro;
-    private Label lbEmailErro;
-    private Label lbSenhaErro;
-    private Label dobErrorLabel;
-    private Label lbCidadeErro;
-    private Label lbTemasErros;
-    private Label lbErroGeral;
-
     private Label lbRegraNome;
+    private Label lbRegraEmail;
     private Label lbIntroRegra;
     private Label lbRegraEspecial;
     private Label lbRegraDigito;
     private Label lbRegraLetra;
     private Label lbRegraTamanho;
+    private Label lbRegraData;
+    private Label lbRegraCidade;
 
+    private Label lbRegraTema;
     private CheckBox cbCorporativo;
     private CheckBox cbBeneficente;
     private CheckBox cbEducacional;
@@ -97,8 +96,6 @@ public class RegisterView extends BorderPane {
         HBox.setHgrow(paneDireitoRegister, Priority.ALWAYS);
 
         setCenter(layoutPrincipal);
-
-        configurarValidacaoDinamica();
     }
 
     /**
@@ -216,15 +213,15 @@ public class RegisterView extends BorderPane {
             cb.setTextFill(Color.WHITE);
         }
 
-        lbTemasErros = new Label();
-        lbTemasErros.setTextFill(Color.SALMON);
-        lbTemasErros.setVisible(false);
+        lbRegraTema = new Label("* Isso pode ser alterado depois.");
+        lbRegraTema.getStyleClass().add("form-field");
+        lbRegraTema.setWrapText(true);
+        lbRegraTema.setPadding(new Insets(1, 0, 0, 0));
 
         boxSelecaoTema.getChildren().addAll(
                 tituloTemas,
                 cbCorporativo, cbBeneficente, cbEducacional,
-                cbCultural, cbEsportivo, cbReligioso, cbSocial,
-                lbTemasErros
+                cbCultural, cbEsportivo, cbReligioso, cbSocial,lbRegraTema
         );
         return boxSelecaoTema;
     }
@@ -253,27 +250,39 @@ public class RegisterView extends BorderPane {
         fldNome.getStyleClass().add("register-field");
 
         lbRegraNome = new Label("* O nome deve conter pelo menos nome e sobrenome.");
-        lbRegraNome.setTextFill(Color.LIGHTGRAY);
-        lbRegraNome.setFont(Font.font("System", FontWeight.NORMAL, 14));
+        lbRegraNome.getStyleClass().add("form-field");
         lbRegraNome.setWrapText(true);
         lbRegraNome.setPadding(new Insets(1, 0, 0, 0));
 
-        lbNameErro = new Label();
-        lbNameErro.getStyleClass().add("error-label");
-        lbNameErro.setTextFill(Color.SALMON);
-        lbNameErro.setVisible(false);
-        VBox nameBox = new VBox(3, fldNome, lbRegraNome, lbNameErro);
+        fldNome.textProperty().addListener((obs, oldVal, novoValorNome) -> {
+            if (registerController.conferirNome(novoValorNome)) {
+                lbRegraNome.setTextFill(Color.LIGHTGREEN);
+            } else {
+                lbRegraNome.setTextFill(Color.LIGHTGRAY);
+            }
+        });
+
+        VBox nameBox = new VBox(3, fldNome, lbRegraNome);
 
         fldEmail = new TextField();
         fldEmail.setPromptText("E-mail");
         fldEmail.setPrefHeight(40);
         fldEmail.getStyleClass().add("register-field");
 
-        lbEmailErro = new Label();
-        lbEmailErro.getStyleClass().add("error-label");
-        lbEmailErro.setTextFill(Color.SALMON);
-        lbEmailErro.setVisible(false);
-        VBox emailBox = new VBox(3, fldEmail, lbEmailErro);
+        lbRegraEmail = new Label("* O email deve conter um domínio válido.");
+        lbRegraEmail.getStyleClass().add("form-field");
+        lbRegraEmail.setWrapText(true);
+        lbRegraEmail.setPadding(new Insets(1, 0, 0, 0));
+
+        fldEmail.textProperty().addListener((obs, oldVal, novoValorEmail) -> {
+            if (registerController.conferirEmail(novoValorEmail, false)) {
+                lbRegraEmail.setTextFill(Color.LIGHTGREEN);
+            } else {
+                lbRegraEmail.setTextFill(Color.LIGHTGRAY);
+            }
+        });
+
+        VBox emailBox = new VBox(3, fldEmail, lbRegraEmail);
 
         fldSenha = new PasswordField();
         fldSenha.setPromptText("Senha");
@@ -281,33 +290,28 @@ public class RegisterView extends BorderPane {
         fldSenha.getStyleClass().add("register-field");
 
         lbIntroRegra = new Label("* A senha deve conter, no mínimo:");
-        lbIntroRegra.setTextFill(Color.LIGHTGRAY);
-        lbIntroRegra.setFont(Font.font("System", FontWeight.NORMAL, 14));
-
+        lbIntroRegra.getStyleClass().add("form-field");
         lbRegraEspecial = new Label("- 1 caractere especial");
-        lbRegraEspecial.setTextFill(Color.LIGHTGRAY);
-        lbRegraEspecial.setFont(Font.font("System", FontWeight.NORMAL, 14));
-
+        lbRegraEspecial.getStyleClass().add("form-field");
         lbRegraDigito = new Label("- 1 dígito");
-        lbRegraDigito.setTextFill(Color.LIGHTGRAY);
-        lbRegraDigito.setFont(Font.font("System", FontWeight.NORMAL, 14));
-
+        lbRegraDigito.getStyleClass().add("form-field");
         lbRegraLetra = new Label("- 1 letra");
-        lbRegraLetra.setTextFill(Color.LIGHTGRAY);
-        lbRegraLetra.setFont(Font.font("System", FontWeight.NORMAL, 14));
-
+        lbRegraLetra.getStyleClass().add("form-field");
         lbRegraTamanho = new Label("- 6 caracteres");
-        lbRegraTamanho.setTextFill(Color.LIGHTGRAY);
-        lbRegraTamanho.setFont(Font.font("System", FontWeight.NORMAL, 14));
+        lbRegraTamanho.getStyleClass().add("form-field");
 
         VBox passwordRulesBox = new VBox(1, lbIntroRegra, lbRegraEspecial, lbRegraDigito, lbRegraLetra, lbRegraTamanho);
         passwordRulesBox.setPadding(new Insets(1,0,1,0));
 
-        lbSenhaErro = new Label();
-        lbSenhaErro.getStyleClass().add("error-label");
-        lbSenhaErro.setTextFill(Color.SALMON);
-        lbSenhaErro.setVisible(false);
-        VBox passwordBox = new VBox(3, fldSenha, passwordRulesBox, lbSenhaErro);
+        fldSenha.textProperty().addListener((obs, oldVal, novoValorSenha) -> {
+            Map<String, Boolean> rulesStatus = registerController.conferirSenhaParaUI(novoValorSenha);
+            atualizarRegraSenhaUI(lbRegraEspecial, rulesStatus.getOrDefault("hasSpecial", false));
+            atualizarRegraSenhaUI(lbRegraDigito, rulesStatus.getOrDefault("hasDigit", false));
+            atualizarRegraSenhaUI(lbRegraLetra, rulesStatus.getOrDefault("hasLetter", false));
+            atualizarRegraSenhaUI(lbRegraTamanho, rulesStatus.getOrDefault("hasSixChar", false));
+        });
+
+        VBox passwordBox = new VBox(3, fldSenha, passwordRulesBox);
 
         fldDataNascimento = new DatePicker();
         fldDataNascimento.setPromptText("Data de Nascimento");
@@ -315,25 +319,80 @@ public class RegisterView extends BorderPane {
         fldDataNascimento.getStyleClass().add("register-field");
         bloquearIntervaloData(fldDataNascimento,
                 LocalDate.of(1960, 1, 1),
-                LocalDate.of(2017, 12, 31)
+                LocalDate.of(2013, 12, 31)
         );
 
-        dobErrorLabel = new Label();
-        dobErrorLabel.getStyleClass().add("error-label");
-        dobErrorLabel.setTextFill(Color.SALMON);
-        dobErrorLabel.setVisible(false);
-        VBox dobBox = new VBox(3, fldDataNascimento, dobErrorLabel);
+        lbRegraData = new Label("Informe sua data de nascimento no formato dia/mês/ano.");
+        lbRegraData.getStyleClass().add("form-field");
+        lbRegraData.setWrapText(true);
+        lbRegraData.setPadding(new Insets(1, 0, 0, 0));
+
+        fldDataNascimento.getEditor().setOnAction(event -> {
+            try {
+                String input = fldDataNascimento.getEditor().getText();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate parsedDate = LocalDate.parse(input, formatter);
+                fldDataNascimento.setValue(parsedDate);
+            } catch (DateTimeParseException e) {
+                System.out.println("Erro ao interpretar data digitada manualmente: " + e.getMessage());
+            }
+        });
+
+        fldDataNascimento.valueProperty().addListener((obs, oldVal,novoValorData) -> {
+            if (registerController.conferirDataNasc(novoValorData)) {
+                lbRegraData.setTextFill(Color.LIGHTGREEN);
+            } else {
+                lbRegraData.setTextFill(Color.LIGHTGRAY);
+            }
+        });
+        fldDataNascimento.setConverter(new StringConverter<LocalDate>() {
+            private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+            @Override
+            public String toString(LocalDate date) {
+                return date != null ? date.format(formatter) : "";
+            }
+
+            @Override
+            public LocalDate fromString(String string) {
+                return string != null && !string.isEmpty() ? LocalDate.parse(string, formatter) : null;
+            }
+        });
+
+        fldDataNascimento.getEditor().focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (!isNowFocused) {
+                try {
+                    String input = fldDataNascimento.getEditor().getText();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate parsedDate = LocalDate.parse(input, formatter);
+                    fldDataNascimento.setValue(parsedDate);
+                } catch (DateTimeParseException e) {
+                    System.out.println("Erro ao interpretar data ao perder foco: " + e.getMessage());
+                }
+            }
+        });
+
+        VBox dobBox = new VBox(2, fldDataNascimento, lbRegraData);
 
         fldCidade = new TextField();
         fldCidade.setPromptText("Cidade");
         fldCidade.setPrefHeight(40);
         fldCidade.getStyleClass().add("register-field");
 
-        lbCidadeErro = new Label();
-        lbCidadeErro.getStyleClass().add("error-label");
-        lbCidadeErro.setTextFill(Color.SALMON);
-        lbCidadeErro.setVisible(false);
-        VBox cityBox = new VBox(3, fldCidade, lbCidadeErro);
+        lbRegraCidade = new Label("Informe sua cidade para ver primeiro os eventos mais próximos de você.");
+        lbRegraCidade.getStyleClass().add("form-field");
+        lbRegraCidade.setWrapText(true);
+        lbRegraCidade.setPadding(new Insets(1, 0, 0, 0));
+
+        fldCidade.textProperty().addListener((obs, oldVal, novoValorCidade) -> {
+            if (registerController.conferirCidade(novoValorCidade)) {
+                lbRegraCidade.setTextFill(Color.LIGHTGREEN);
+            } else {
+                lbRegraCidade.setTextFill(Color.LIGHTGRAY);
+            }
+        });
+
+        VBox cityBox = new VBox(2, fldCidade, lbRegraCidade);
 
         btnRegistrar = new Button("Registrar");
         btnRegistrar.setPrefHeight(40);
@@ -346,21 +405,20 @@ public class RegisterView extends BorderPane {
         backLinkBox.setAlignment(Pos.CENTER);
         backLinkBox.setPadding(new Insets(10,0,0,0));
 
-        lbErroGeral = new Label();
-        lbErroGeral.setTextFill(Color.SALMON);
-        lbErroGeral.getStyleClass().add("error-label");
-        lbErroGeral.setVisible(false);
-        HBox generalErrorBox = new HBox(lbErroGeral);
-        generalErrorBox.setAlignment(Pos.CENTER);
-
         formBox.getChildren().addAll(
                 titleBox, nameBox, emailBox, passwordBox, dobBox, cityBox,
-                btnRegistrar, generalErrorBox, backLinkBox
+                btnRegistrar, backLinkBox
         );
 
         return formBox;
     }
 
+    /**
+     * Este método bloqueia a seleção de datas do datapicker na interface
+     * @param fldDataNascimento o campo de data
+     * @param dataMinima data minima de nascimento (2013)
+     * @param dataMaxima data maxima de nascimento (1960)
+     */
     private void bloquearIntervaloData(DatePicker fldDataNascimento, LocalDate dataMinima, LocalDate dataMaxima) {
         fldDataNascimento.setDayCellFactory(dp -> new DateCell() {
             @Override
@@ -375,51 +433,6 @@ public class RegisterView extends BorderPane {
                 }
             }
         });
-    }
-
-    /**
-     * Neste método os campos do formulário, passam por validações que atualizam cores dos rótulos
-     * visuais, chamando o método {@code atualizarRegraSenhaUI()} e esconde mensagens de erro
-     * conforme o usuário digita ou altera valores na interface.
-     */
-    private void configurarValidacaoDinamica() {
-        fldNome.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (registerController.conferirNome(newVal)) {
-                lbRegraNome.setTextFill(Color.LIGHTGREEN);
-            } else {
-                lbRegraNome.setTextFill(Color.LIGHTGRAY);
-            }
-            lbNameErro.setVisible(false);
-            lbErroGeral.setVisible(false);
-        });
-
-        fldSenha.textProperty().addListener((obs, oldVal, newVal) -> {
-            Map<String, Boolean> rulesStatus = registerController.conferirSenha(newVal);
-            atualizarRegraSenhaUI(lbRegraEspecial, rulesStatus.getOrDefault("hasSpecial", false));
-            atualizarRegraSenhaUI(lbRegraDigito, rulesStatus.getOrDefault("hasDigit", false));
-            atualizarRegraSenhaUI(lbRegraLetra, rulesStatus.getOrDefault("hasLetter", false));
-            atualizarRegraSenhaUI(lbRegraTamanho, rulesStatus.getOrDefault("hasSixChar", false));
-            lbSenhaErro.setVisible(false);
-            lbErroGeral.setVisible(false);
-        });
-
-        fldEmail.textProperty().addListener( (obs,ov,nv) -> {
-            lbEmailErro.setVisible(false); lbErroGeral.setVisible(false);
-        });
-
-        fldDataNascimento.valueProperty().addListener( (obs, ov, nv) -> {
-            dobErrorLabel.setVisible(false); lbErroGeral.setVisible(false);
-        });
-        fldCidade.textProperty().addListener( (obs,ov,nv) -> {
-            lbCidadeErro.setVisible(false); lbErroGeral.setVisible(false);
-        });
-
-        List.of(cbCorporativo, cbBeneficente, cbEducacional, cbCultural, cbEsportivo, cbReligioso, cbSocial).forEach(cb ->
-                cb.selectedProperty().addListener((obs, ov, nv) -> {
-                    lbTemasErros.setVisible(false);
-                    lbErroGeral.setVisible(false);
-                })
-        );
     }
 
     /**
@@ -452,9 +465,6 @@ public class RegisterView extends BorderPane {
     public CheckBox getCbEsportivo() {return cbEsportivo;}
     public CheckBox getCbReligioso() {return cbReligioso;}
     public CheckBox getCbSocial() {return cbSocial;}
-
-    public Label getLbErroGeral() {return lbErroGeral;}
-    public void setLbErroGeral(Label lbErroGeral) {this.lbErroGeral = lbErroGeral;}
 
     public Hyperlink getVoltarLoginLink() {return voltarLoginLink;}
     public Button getBtnRegistrar() {return btnRegistrar;}
