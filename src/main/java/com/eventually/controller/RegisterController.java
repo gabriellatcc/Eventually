@@ -4,9 +4,9 @@ import com.eventually.dto.PreferenciasUsuarioDto;
 import com.eventually.service.AlertService;
 import com.eventually.service.UsuarioCadastroService;
 import com.eventually.service.TelaService;
+import com.eventually.view.HomeView;
 import com.eventually.view.LoginView;
 import com.eventually.view.RegisterView;
-import com.eventually.view.UserScheduleView;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -102,21 +102,19 @@ public class RegisterController {
             boolean cadastroFoiOk = cadastroService.cadastrarUsuarioSeValido(dto);
 
             if (!cadastroFoiOk) {
-                // Erro já foi alertado dentro do service
                 return;
             }
 
-            // Agora sim pode mudar de tela
-            UserScheduleView userScheduleView = new UserScheduleView();
-            UserScheduleController userScheduleController = new UserScheduleController(userScheduleView, primaryStage);
-            userScheduleView.setUserScheduleController(userScheduleController);
+            HomeView homeView= new HomeView();
+            HomeController homeController = new HomeController(homeView, primaryStage);
+            homeView.setHomeController(homeController);
 
             TelaService service = new TelaService();
-            Scene sceneUserSchedule = new Scene(userScheduleView, service.medirWidth(), service.medirHeight());
+            Scene sceneHomeView = new Scene(homeView,service.medirWidth(),service.medirHeight());
 
-            sceneUserSchedule.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
-            primaryStage.setTitle("Eventually - Programação do Usuário");
-            primaryStage.setScene(sceneUserSchedule);
+            sceneHomeView.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
+            primaryStage.setTitle("Eventually - Página Inicial");
+            primaryStage.setScene(sceneHomeView);
 
         } catch (Exception ex) {
             System.err.println("RController: Erro ao navegar para a tela de Menu: " + ex.getMessage());

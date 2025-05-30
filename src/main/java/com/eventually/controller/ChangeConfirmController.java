@@ -8,8 +8,13 @@ import java.util.regex.Pattern;
 /**
  * Controller para o modal de Alteração de Senha.
  * Gerencia a lógica de validação e atualização de senha.
+ * @author Yuri Garcia Maia (Estrutura base)
+ * @version 1.02
+ * @since 2025-05-23
+ * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
+ * @since 2025-05-29
  */
-public class ChangePasswordController {
+public class ChangeConfirmController {
 
     private ChangeConfirmModal view;
     private SettingsService settingsService;
@@ -19,12 +24,11 @@ public class ChangePasswordController {
     private static final Pattern PASSWORD_DIGIT_PATTERN = Pattern.compile(".*[0-9].*");
 
     /**
-     * Construtor do ChangePasswordController.
-     *
-     * @param view            A instância da ChangeConfirmModal associada.
+     * Construtor do ChangeConfirmController.
+     * @param view A instância da ChangeConfirmModal associada.
      * @param settingsService O serviço para interagir com os dados do usuário.
      */
-    public ChangePasswordController(ChangeConfirmModal view, SettingsService settingsService) {
+    public ChangeConfirmController(ChangeConfirmModal view, SettingsService settingsService) {
         this.view = view;
         this.settingsService = settingsService;
     }
@@ -33,8 +37,8 @@ public class ChangePasswordController {
      * Este método exibe um Alert simples.
      *
      * @param alertType O tipo de alerta (ERROR, INFORMATION, etc.).
-     * @param title     O título do alerta.
-     * @param message   A mensagem do alerta.
+     * @param title O título do alerta.
+     * @param message A mensagem do alerta.
      */
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
@@ -52,12 +56,12 @@ public class ChangePasswordController {
      * Manipula a solicitação de alteração de senha vinda da view.
      *
      * @param currentPassword A senha atual fornecida pelo usuário.
-     * @param newPassword     A nova senha fornecida pelo usuário.
+     * @param newPassword A nova senha fornecida pelo usuário.
      * @param confirmPassword A confirmação da nova senha.
      */
     public void handleChangePasswordRequest(String currentPassword, String newPassword, String confirmPassword) {
         if (view == null || settingsService == null) {
-            System.err.println("ChangePasswordController: View ou Service não configurado.");
+            System.err.println("ChangeConfirmController: View ou Service não configurado.");
             return;
         }
 

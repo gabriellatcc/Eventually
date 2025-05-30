@@ -81,16 +81,16 @@ public class LoginController {
 
         if (usuarioAutenticado.isPresent()) {
             try {
-                UserScheduleView userScheduleView = new UserScheduleView();
-                UserScheduleController userScheduleController = new UserScheduleController(userScheduleView, primaryStage);
-                userScheduleView.setUserScheduleController(userScheduleController);
+                HomeView homeView= new HomeView();
+                HomeController homeController = new HomeController(homeView, primaryStage);
+                homeView.setHomeController(homeController);
 
                 TelaService service = new TelaService();
-                Scene sceneUserSchedule = new Scene(userScheduleView,service.medirWidth(),service.medirHeight());
+                Scene sceneHomeView = new Scene(homeView,service.medirWidth(),service.medirHeight());
 
-                sceneUserSchedule.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
-                primaryStage.setTitle("Eventually - Progamação do Usuário");
-                primaryStage.setScene(sceneUserSchedule);
+                sceneHomeView.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
+                primaryStage.setTitle("Eventually - Página Inicial");
+                primaryStage.setScene(sceneHomeView);
             } catch (Exception e) {
                 System.out.println("LController: Erro ao abrir a tela principal: " + e.getMessage());
                 e.printStackTrace();

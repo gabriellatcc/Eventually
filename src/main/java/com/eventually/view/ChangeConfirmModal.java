@@ -1,6 +1,6 @@
 package com.eventually.view;
 
-import com.eventually.controller.ChangePasswordController;
+import com.eventually.controller.ChangeConfirmController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,8 +21,8 @@ import javafx.stage.StageStyle;
 /**
  * Classe para o modal de "Alterar Senha" dentro das configurações.
  * @author Yuri Garcia Maia (Estrutura base)
- * @author Gabriella Tavares Costa Corrêa (Adaptação para Alterar Senha)
- * @version 1.1
+ * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
+ * @version 1.02
  * @since 29-05-2025
  */
 public class ChangeConfirmModal {
@@ -35,7 +35,7 @@ public class ChangeConfirmModal {
     private PasswordField fldNovaSenha;
     private PasswordField fldConfirmarNovaSenha;
 
-    private ChangePasswordController cpController;
+    private ChangeConfirmController cpController;
 
     /**
      * Construtor padrão da classe.
@@ -47,9 +47,7 @@ public class ChangeConfirmModal {
      * Define o controller para este modal.
      * @param cpController O controller a ser usado.
      */
-    public void setChangePasswordController(ChangePasswordController cpController) {
-        this.cpController = cpController;
-    }
+    public void setChangePasswordController(ChangeConfirmController cpController) {this.cpController = cpController;}
 
     /**
      * Exibe a janela modal configurada para alteração de senha.
