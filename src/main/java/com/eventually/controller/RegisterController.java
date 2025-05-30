@@ -101,84 +101,23 @@ public class RegisterController {
             UsuarioCadastroService cadastroService = new UsuarioCadastroService();
             boolean cadastroFoiOk = cadastroService.cadastrarUsuarioSeValido(dto);
 
-            if (!cadastroFoiOk) {
-                return;
+            if (cadastroFoiOk) { //se for true
+                HomeView homeView = new HomeView();
+                HomeController homeController = new HomeController(homeView, primaryStage);
+                homeView.setHomeController(homeController);
+
+                TelaService service = new TelaService();
+                Scene sceneHomeView = new Scene(homeView, service.medirWidth(), service.medirHeight());
+
+                sceneHomeView.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
+                primaryStage.setTitle("Eventually - Página Inicial");
+                primaryStage.setScene(sceneHomeView);
             }
-
-            HomeView homeView= new HomeView();
-            HomeController homeController = new HomeController(homeView, primaryStage);
-            homeView.setHomeController(homeController);
-
-            TelaService service = new TelaService();
-            Scene sceneHomeView = new Scene(homeView,service.medirWidth(),service.medirHeight());
-
-            sceneHomeView.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
-            primaryStage.setTitle("Eventually - Página Inicial");
-            primaryStage.setScene(sceneHomeView);
-
         } catch (Exception ex) {
             System.err.println("RController: Erro ao navegar para a tela de Menu: " + ex.getMessage());
             ex.printStackTrace();
             alertService.alertarErro("Erro ao navegar para a tela de Menu.");
         }
-    }
-
-
-    /**
-     * Esté método lê os campos da interface de registro e envia os dados para cadastro via {@link UsuarioCadastroService}.
-     */
-    private void handleCamposPreenchidos() {
-        try {
-            String nome = registerView.getFldNome().getText();
-            String email = registerView.getFldEmail().getText();
-            String senha = registerView.getFldSenha().getText();
-            String cidade = registerView.getFldCidade().getText();
-            LocalDate data = registerView.getFldDataNascimento().getValue();
-
-            CadastrarUsuarioDto cadastroUsuarioDto = new CadastrarUsuarioDto(
-                    nome,
-                    email,
-                    senha,
-                    cidade,
-                    data,
-                    handlePreferenciasSelecionadas()
-            );
-
-            boolean sucesso = usuarioCadastroService.cadastrarUsuarioSeValido(cadastroUsuarioDto);
-            if (sucesso) {
-                System.out.println("RC: usuário cadastrado com sucesso!");
-                alertService.alertarInfo("Sucesso ao fazer o cadastro!");
-            }
-
-        } catch (Exception ex) {
-            System.err.println("RC: erro ao obter dados do formulário.");
-            ex.printStackTrace();
-            alertService.alertarErro("Erro ao obter dados do formulário");
-        }
-    }
-
-    /**
-     * Neste método as preferências selecionadas pelo usuário na interface são lidas e empacotadas em um DTO.
-     * @return um objeto {@link PreferenciasUsuarioDto} contendo as preferências selecionadas.
-     */
-    private PreferenciasUsuarioDto handlePreferenciasSelecionadas() {
-        try{
-            PreferenciasUsuarioDto preferenciasUsuarioDto = new PreferenciasUsuarioDto(
-                    registerView.getCbCorporativo().isSelected(),
-                    registerView.getCbBeneficente().isSelected(),
-                    registerView.getCbEducacional().isSelected(),
-                    registerView.getCbCultural().isSelected(),
-                    registerView.getCbEsportivo().isSelected(),
-                    registerView.getCbReligioso().isSelected(),
-                    registerView.getCbSocial().isSelected()
-            );
-            return preferenciasUsuarioDto;
-        } catch (Exception ex) {
-          System.err.println("RC: Erro ao receber preferências");
-          ex.printStackTrace();
-          alertService.alertarErro("Erro ao receber preferências.");
-          return null;
-      }
     }
 
     /**
@@ -202,9 +141,9 @@ public class RegisterController {
      * @param novoValorEmail o email a ser validado
      * @return true se válido, false caso contrário
      */
-    public boolean conferirEmail(String novoValorEmail, boolean exibirAlertas) {
+    public boolean conferirEmail(String novoValorEmail) {
         try{
-            return usuarioCadastroService.isRegraEmailCumprida(novoValorEmail, exibirAlertas);
+            return usuarioCadastroService.isRegraEmailCumprida(novoValorEmail);
         }
         catch (RuntimeException e) {
             System.out.println("RC: ocorreu um erro ao conferir o email.");

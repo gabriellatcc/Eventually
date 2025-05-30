@@ -68,14 +68,14 @@ public class UsuarioCadastroService {
      * @param novoValorEmail email de usuário,
      * @return {@code true} se seguir o padrão, caso contrário {@code false}.
      */
-    public boolean isRegraEmailCumprida(String novoValorEmail, boolean exibirAlertas) {
+    public boolean isRegraEmailCumprida(String novoValorEmail) {
         try {
             if (novoValorEmail == null || novoValorEmail.trim().isEmpty()) {
-                if (exibirAlertas) alertService.alertarCampoVazio("EMAIL");
+                alertService.alertarCampoVazio("EMAIL");
                 return false;
             }
             boolean emailValido = EMAIL_DOMAIN_PATTERN.matcher(novoValorEmail).matches();
-            if (!emailValido && exibirAlertas) {
+            if (!emailValido) {
                 alertService.alertarWarn("Email inválido", "Informe um email válido, como exemplo@dominio.com");
             }
             return emailValido;
@@ -164,37 +164,44 @@ public class UsuarioCadastroService {
      * @throws RuntimeException se qualquer campo for inválido.
      */
     public boolean cadastrarUsuarioSeValido(CadastrarUsuarioDto dto) {
-        boolean nomeOk = isRegraNomeCumprida(dto.nomePessoa());
-        boolean emailOk = isRegraEmailCumprida(dto.email(), false);
-        boolean cidadeOk = isRegraCidadeCumprida(dto.localizacaoUsuario());
-
-        boolean senhaOk = false;
-        Map<String, Boolean> regrasSenha = isRegraSenhaCumprida(dto.senha());
-        if (regrasSenha != null) {
-            senhaOk = regrasSenha.getOrDefault("hasSpecial", false)
-                    && regrasSenha.getOrDefault("hasDigit", false)
-                    && regrasSenha.getOrDefault("hasLetter", false)
-                    && regrasSenha.getOrDefault("hasSixChar", false);
-        }
-
-        boolean dataOk;
         try {
-            LocalDate dataNascimento = dto.data();
-            dataOk = isRegraDataCumprida(dataNascimento);
-        } catch (DateTimeParseException e) {
-            System.out.println("UCS: Erro ao converter data: " + dto.data());
-            alertService.alertarWarn("Data inválida", "Informe a data no formato correto (dd/MM/yyyy).");
-            dataOk = false;
-        }
+            boolean nomeOk = isRegraNomeCumprida(dto.nomePessoa());
+            boolean emailOk = isRegraEmailCumprida(dto.email());
+            boolean cidadeOk = isRegraCidadeCumprida(dto.localizacaoUsuario());
 
-        boolean temasOk = isRegraTemasCumprida(dto.preferencias());
+            boolean senhaOk = false;
+            Map<String, Boolean> regrasSenha = isRegraSenhaCumprida(dto.senha());
+            if (regrasSenha != null) {
+                senhaOk = regrasSenha.getOrDefault("hasSpecial", false)
+                        && regrasSenha.getOrDefault("hasDigit", false)
+                        && regrasSenha.getOrDefault("hasLetter", false)
+                        && regrasSenha.getOrDefault("hasSixChar", false);
+            }
 
-        if (nomeOk && emailOk && cidadeOk && senhaOk && dataOk && temasOk) {
-            criarUsuario(dto);
-            return true;
-        } else {
-            alertService.alertarWarn("Cadastro inválido", "Preencha corretamente todos os campos.");
-            System.out.println("UCS: Falha no cadastro: algum dado não passou na validação.");
+            boolean dataOk;
+            try {
+                LocalDate dataNascimento = dto.data();
+                dataOk = isRegraDataCumprida(dataNascimento);
+            } catch (DateTimeParseException e) {
+                System.out.println("UCS: Erro ao converter data: " + dto.data());
+                alertService.alertarWarn("Data inválida", "Informe a data no formato correto (dd/MM/yyyy).");
+                dataOk = false;
+            }
+
+            boolean temasOk = isRegraTemasCumprida(dto.preferencias());
+
+            if (nomeOk && emailOk && cidadeOk && senhaOk && dataOk && temasOk) {
+                criarUsuario(dto);
+                return true;
+            } else {
+                alertService.alertarWarn("Cadastro inválido", "Preencha corretamente todos os campos.");
+                System.out.println("UCS: Falha no cadastro: algum dado não passou na validação.");
+                return false;
+            }
+        }catch (RuntimeException e) {
+            System.out.println("UCS: Erro ao validar DTO.");
+            e.printStackTrace();
+            alertService.alertarErro("Erro ao validar se o DTO é valido.");
             return false;
         }
     }

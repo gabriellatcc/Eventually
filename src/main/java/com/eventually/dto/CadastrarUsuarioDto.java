@@ -22,7 +22,7 @@ public record CadastrarUsuarioDto(String nomePessoa, String email, String senha,
         Objects.requireNonNull(email);
         Objects.requireNonNull(senha);
         Objects.requireNonNull(localizacaoUsuario);
-        Objects.requireNonNull(data);
+        Objects.nonNull(data);
         Objects.requireNonNull(preferencias);
     }
 }

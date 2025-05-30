@@ -275,7 +275,7 @@ public class RegisterView extends BorderPane {
         lbRegraEmail.setPadding(new Insets(1, 0, 0, 0));
 
         fldEmail.textProperty().addListener((obs, oldVal, novoValorEmail) -> {
-            if (registerController.conferirEmail(novoValorEmail, false)) {
+            if (registerController.conferirEmail(novoValorEmail)) {
                 lbRegraEmail.setTextFill(Color.LIGHTGREEN);
             } else {
                 lbRegraEmail.setTextFill(Color.LIGHTGRAY);
