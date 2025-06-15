@@ -1,4 +1,4 @@
-# 📆 Eventually - Sistema de Participação  de de Eventos
+# 📆 Eventually - Sistema de Participação de Eventos
 Esta aplicação foi desenvolvida como parte do projeto da disciplina de **Estrutura de Dados** da **FATEC - Prof. Waldomiro May**.
 
 O **Eventually** é uma plataforma desenvolvida para organizar e facilitar a participação de usuários em eventos, oferecendo uma interface clara para visualização, cadastro e gerenciamento de informações. A aplicação permite o registro de usuários e eventos, a inscrição de participantes, a definição de categorias e o controle detalhado por meio de operações CRUD bem estruturadas.
