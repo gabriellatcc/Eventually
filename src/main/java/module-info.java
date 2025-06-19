@@ -5,10 +5,9 @@ module com.eventually {
     requires java.mail;
     requires java.sql;
     requires activation;
+    requires org.slf4j;
 
-    opens com.eventually.view to javafx.fxml;
     opens com.eventually to javafx.fxml;
 
     exports com.eventually;
-    exports com.eventually.view;
 }
