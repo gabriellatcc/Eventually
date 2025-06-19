@@ -1,17 +1,15 @@
 package com.eventually.dto;
 import com.eventually.model.EventoModel;
-import com.eventually.model.TemaPreferencia;
-
+import javafx.scene.image.Image;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
+
 
 /**
  * DTO utilizado para representar os dados de edição de um usuário.
  * Apenas os campos não nulos serão utilizados para atualizar o {@code UsuarioModel}.
- *
- * @author Gabriella Tavares Costa Corrêa
- * @version 1.1
+ * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação, estrutura e revisão da parte lógica da classe)
+ * @version 1.02
  * @since 2025-05-18
  */
 public record UsuarioEdicaoDto(
@@ -20,8 +18,9 @@ public record UsuarioEdicaoDto(
         String senha,
         String localizacaoUsuario,
         LocalDate dataNascimento,
-        String fotoUsuario,
+        Image fotoUsuario,
         List<EventoModel> eventosParticipa,
         List<EventoModel> eventosOrganizados,
-        Set<TemaPreferencia> temasPreferidos
+        PreferenciasUsuarioDto temasPreferidos,
+        boolean estado
 ) {}
