@@ -1,51 +1,85 @@
 package com.eventually.service;
 
+import com.eventually.controller.LoginController;
 import com.eventually.model.UsuarioModel;
-import com.eventually.repository.UsuarioRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
 /**
- * Serviço que fornece a operação de deletar (DELETE do CRUD) para usuários.
- * Esta classe utiliza o {@link UsuarioRepository} para acessar e manipular os dados dos usuários.
- * @author Gabriella Tavares Costa Corrêa
+ * Esta classe é um Singleton, garantindo que apenas uma instância de {@code UsuarioExclusaoService} exista em toda a aplicação.
+ * Serviço que fornece a operação de exclusão (DELETE do CRUD) para usuários, ele altera o estado do usuário para false.
+ * Esta classe utiliza a instância única de {@link UsuarioCadastroService} para acessar e manipular os dados
+ * dos usuários em memória.
+ * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
  * @version 1.00
  * @since 2025-05-18
  */
-public class UsuarioExclusaoService {
-    private final UsuarioRepository usuarioRepository;
+public final class UsuarioExclusaoService {
+    private static UsuarioExclusaoService instancia;
+    private UsuarioCadastroService usuarioCadastroService;
+
+    private AlertaService alertaService =new AlertaService();
+
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(LoginController.class);
 
     /**
-     * Construtor da classe {@code UsuarioExclucaoService}.
-     * Inicializa o {@code UsuarioRepository} a ser utilizado.
+     * Construtor privado que obtém a instância única de UsuarioCadastroService para acessar a lista de usuários e
+     * immpede a criação de múltiplas instâncias externamente.
      */
-    public UsuarioExclusaoService() {
-        this.usuarioRepository = new UsuarioRepository();
+    private UsuarioExclusaoService() {
+        this.usuarioCadastroService = UsuarioCadastroService.getInstancia();
+        sistemaDeLogger.info("Inicializado e conectado ao UsuarioCadastroService.");
     }
 
+    /**
+     * Retorna a instância única de {@code UsuarioExclusaoService}, se não existe, ela é criada e, em caso de falha, é
+     * exibida uma mensagem no console.
+     * @return a instância única de {@code UsuarioExclusaoService}.
+     */
+    public static synchronized UsuarioExclusaoService getInstancia() {
+        sistemaDeLogger.info("Método getInstancia() chamado.");
+        try{
+            if (instancia == null) {
+                instancia = new UsuarioExclusaoService();
+            }
+            return instancia;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao retornar a instância: "+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /**
-     * Deleta um usupario do repositório com base no ID do {@code UsuarioModel} fornecido.
-     * Este método representa a operação de exclusão (Delete) do CRUD.
-     *
-     * @param usuarioParaExcluir O objeto {@code UsuarioModel} a ser deletado.
+     * Altera o estado de um usuário (ativo/inativo) e, em caso de falha na atualização de estado do usuário, é exibida
+     * uma mensagem apontando o erro no console.
+     * @param idUsuario o ID do usuário cujo estado será alterado.
+     * @param novoEstado o novo estado (true para ativo, false para inativo).
+     * @return {@code true} se o estado foi alterado com sucesso, {@code false} caso contrário.
      */
-    public void deletarUsuario(UsuarioModel usuarioParaExcluir)
-    {
-        if (usuarioParaExcluir == null || usuarioParaExcluir.getId() == 0) {
-            System.out.println("UDelservice: Usuário inválido para exclusão.");
-            return;
-        }
+    public boolean alterarEstadoDoUsuario(int idUsuario, boolean novoEstado) {
+        sistemaDeLogger.info("Método alterarEstadoDoUsuario() chamado.");
+        try {
+            Optional<UsuarioModel> usuarioOptional = usuarioCadastroService.buscarUsuarioPorId(idUsuario);
 
-        int idUsuarioParaExcluir = usuarioParaExcluir.getId();
-        Optional<UsuarioModel> usuarioEncontradoOptional = usuarioRepository.buscarUsuarioPorId(idUsuarioParaExcluir);
-
-        usuarioEncontradoOptional.ifPresentOrElse(usuario -> {
-            if (usuarioRepository.removerUsuario(usuario)) {
-                System.out.println("UDelservice: Usuário com ID " + idUsuarioParaExcluir + " ('" + usuario.getNomePessoa() + "') deletado com sucesso.");
+            if (usuarioOptional.isPresent()) {
+                UsuarioModel usuario = usuarioOptional.get();
+                usuario.setEstadoDoUsuario(novoEstado);
+                sistemaDeLogger.info("Estado do usuário com ID " + idUsuario + " alterado para " + (novoEstado ? "ATIVO" : "INATIVO") + ".");
+                alertaService.alertarInfo("Sucesso: Estado do usuário alterado!");
+                return true;
             } else {
-                System.out.println("UDelservice: Erro ao deletar o usuário com ID " + idUsuarioParaExcluir + ".");
+                alertaService.alertarWarn("Alteração de Estado Inválida", "Usuário com ID " + idUsuario + " não encontrado.");
+                sistemaDeLogger.info("Usuário com ID " + idUsuario + " não encontrado para alterar estado.");
+                return false;
             }
-        }, () -> System.out.println("UDelservice: Usuário com ID " + idUsuarioParaExcluir + " não encontrado."));
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro inesperado ao alterar estado do usuário: " + e.getMessage());
+            e.printStackTrace();
+            alertaService.alertarErro("Erro ao alterar estado do usuário.");
+            return false;
+        }
     }
 }

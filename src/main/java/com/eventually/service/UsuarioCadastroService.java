@@ -1,10 +1,13 @@
 package com.eventually.service;
 
+import com.eventually.controller.LoginController;
 import com.eventually.dto.CadastrarUsuarioDto;
 import com.eventually.dto.PreferenciasUsuarioDto;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.model.UsuarioModel;
-import com.eventually.repository.UsuarioRepository;
+import javafx.scene.image.Image;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -12,42 +15,95 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * Classe responsável por realizar a lógica de registro de novos usuários,
- * incluindo validações de dados e persistência no repositório.
- * Utiliza padrões de validação para nome, e-mail, senha, data de nascimento,
- * localização e temas preferidos.
- * @author Gabriella Tavares Costa Corrêa
+ * Esta classe é um Singleton, garantindo que apenas uma instância de {@code UsuarioCadastroService} exista em toda a aplicação.
+ * É responsável por realizar a lógica de registro de novos usuários, utiliza padrões de validação para nome,
+ * e-mail, senha, data de nascimento, localização e temas preferidos.
+ * Além disso, possui o método CREATE do CRUD para usuário.
+ * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
  * @version 1.0
  * @since 2025-05-15
  */
-public class UsuarioCadastroService {
+public final class UsuarioCadastroService {
+    private static UsuarioCadastroService instancia;
+    private Set<UsuarioModel> listaUsuarios;
 
-    private final UsuarioRepository usuarioRepository;
-
-    private AlertService alertService = new AlertService();
-
-    private static final Pattern EMAIL_DOMAIN_PATTERN = Pattern.compile("^[a-zA-Z0-9._%+-]{2,}@[a-zA-Z0-9.-]{2,}\\.[a-zA-Z]{2,6}$");
+    private static final Pattern EMAIL_DOMAIN_PATTERN = Pattern.compile("^[a-zA-Z0-9._%+-]{2,}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
     private static final Pattern SPECIAL_CHAR_PATTERN = Pattern.compile("[^a-zA-Z0-9]");
     private static final Pattern DIGIT_PATTERN = Pattern.compile("[0-9]");
     private static final Pattern LETTER_PATTERN = Pattern.compile("[a-zA-Z]");
 
+    private static int proximoId = 1;
+
+    private AlertaService alertaService = new AlertaService();
+
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(LoginController.class);
+
     /**
-     * Construtor padrão que inicializa o repositório de usuários.
+     * Construtor que inicializa a lista com um objeto teste do tipo {@link UsuarioModel}.
      */
-    public UsuarioCadastroService() {
-        this.usuarioRepository = new UsuarioRepository();
+    private UsuarioCadastroService() {
+        listaUsuarios = new HashSet<>();
+
+        //usuario teste abaixo:
+        LocalDate dataTeste = LocalDate.of(2003, 2, 1);
+        Image imagemTeste= new Image(getClass().getResourceAsStream("/images/aviso-icone.png"));
+        UsuarioModel usuarioTesteModel = new UsuarioModel("gab tav","gab@gmail.com","a1234$","crz",dataTeste,imagemTeste,null,null,null,true);
+        listaUsuarios.add(usuarioTesteModel);
+        //usuario teste acima
+
+        sistemaDeLogger.info("ServicoCadastroUsuario inicializado e lista de usuários criada. HashSet size: " + listaUsuarios.size());
     }
 
     /**
-     * Verifica se o nome informado possui pelo menos duas partes (nome e sobrenome).
-     *
+     * Retorna a instância única de {@code UsuarioCadastroService}, se ainda não existe, ela é criada e, em caso de
+     * falha, é exibida uma mensagem no console.
+     * @return a instância única de {@code UsuarioCadastroService}.
+     */
+    public static synchronized UsuarioCadastroService getInstancia() {
+        sistemaDeLogger.info("Método getInstancia() chamado.");
+        try {
+            if (instancia == null) {
+                instancia = new UsuarioCadastroService();
+            }
+            return instancia;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao retornar a instância."+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Este método é responsável por garantir que a lista de usuários seja inicializada, carrega dados iniciais e/ou
+     * confirma a criação e, em caso de falha, exibe uma mensagem no console.
+     */
+    public void criarLista() {
+        sistemaDeLogger.info("Método criarLista() chamado.");
+        try{
+            if (listaUsuarios == null) {
+                listaUsuarios = new HashSet<>();
+                sistemaDeLogger.info("Método criarLista() inicializou a lista de usuários.");
+            } else {
+                sistemaDeLogger.info("Método criarLista() chamado, lista de usuários já está pronta. Tamanho atual: " + listaUsuarios.size());
+            }
+        } catch (RuntimeException e) {
+            sistemaDeLogger.error("Erro ao inicializar a lista: "+e.getMessage());
+            e.printStackTrace();
+            alertaService.alertarErro("Erro ao inicializar a lista");
+        }
+    }
+
+    /**
+     * Verifica se o nome informado possui pelo menos duas partes (nome e sobrenome) e, em caso de falha, exibe uma
+     * mensagem no console.
      * @param novoValorNome nome de usuário,
      * @return {@code true} se seguir o padrão, caso contrário {@code false}.
      */
     public boolean isRegraNomeCumprida(String novoValorNome) {
+        sistemaDeLogger.info("Método isRegraNomeCumprida() chamado.");
         try {
             if (novoValorNome == null || novoValorNome.trim().isEmpty()) {
-                alertService.alertarCampoVazio("NOME");
+                alertaService.alertarCampoVazio("NOME");
                 return false;
             }
             String[] separaNomeESobrenome = novoValorNome.trim().split("\\s+");
@@ -56,62 +112,61 @@ public class UsuarioCadastroService {
             }
             return true;
         } catch (Exception e) {
-            System.out.println("UCS: ocorreu um erro");
+            sistemaDeLogger.error("Ocorreu um erro ao validar o nome: "+e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
 
     /**
-     * Verifica se o email informado é válido.
-     *
+     * Verifica se o email informado é válido e, em caso de falha, exibe uma mensagem no console.
      * @param novoValorEmail email de usuário,
      * @return {@code true} se seguir o padrão, caso contrário {@code false}.
      */
     public boolean isRegraEmailCumprida(String novoValorEmail) {
+        sistemaDeLogger.info("Método isRegraEmailCumprida() chamado.");
         try {
             if (novoValorEmail == null || novoValorEmail.trim().isEmpty()) {
-                alertService.alertarCampoVazio("EMAIL");
+                alertaService.alertarCampoVazio("EMAIL");
                 return false;
             }
+
+            int atIndex = novoValorEmail.indexOf("@");
+            int dotIndex = novoValorEmail.lastIndexOf(".");
+
+            boolean estruturaMinima = atIndex > 1
+                    && dotIndex > atIndex + 1
+                    && novoValorEmail.length() - dotIndex - 1 >= 2;
+
+            if (!estruturaMinima) {
+                return false;
+            }
+
             boolean emailValido = EMAIL_DOMAIN_PATTERN.matcher(novoValorEmail).matches();
             if (!emailValido) {
-                alertService.alertarWarn("Email inválido", "Informe um email válido, como exemplo@dominio.com");
+                alertaService.alertarWarn("Email inválido", "Informe um email válido, como exemplo@dominio.com");
             }
+
             return emailValido;
         } catch (Exception e) {
-            System.out.println("UCS: ocorreu um erro ao validar o email.");
+            sistemaDeLogger.error("Ocorreu um erro ao validar o email: "+e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
 
     /**
-     * Valida se ao menos um tema de interesse foi selecionado.
-     *
-     * @param temasSelecionados DTO com os temas preferidos selecionados.
-     * @return Mensagem de erro se nenhum tema for selecionado, ou {@code null} se válido.
+     * Valida se a senha informada é válida e, em caso de falha, é exibida uma mensagem no console.
+     * @param novoValorSenha a senha do usuário.
+     * @return {@code true} se seguir o padrão, caso contrário {@code false}.
      */
-    public boolean isRegraTemasCumprida(PreferenciasUsuarioDto temasSelecionados) {
-        boolean algumSelecionado =
-                temasSelecionados.corporativo() || temasSelecionados.beneficente() ||
-                        temasSelecionados.educacional() || temasSelecionados.cultural() ||
-                        temasSelecionados.esportivo() || temasSelecionados.religioso() ||
-                        temasSelecionados.social();
-
-        if (!algumSelecionado) {
-            alertService.alertarWarn("Tema obrigatório", "Selecione pelo menos um tema de interesse.");
-            return false;
-        }
-        return true;
-    }
-
     public Map<String, Boolean> isRegraSenhaCumprida(String novoValorSenha) {
+        sistemaDeLogger.info("Método isRegraSenhaCumprida() chamado.");
         try {
             Map<String, Boolean> ruleStatus = new HashMap<>();
 
             if (novoValorSenha == null || novoValorSenha.trim().isEmpty()) {
-                alertService.alertarCampoVazio("SENHA");
+                alertaService.alertarCampoVazio("SENHA");
                 return null;
             }
             ruleStatus.put("hasSpecial", SPECIAL_CHAR_PATTERN.matcher(novoValorSenha).find());
@@ -121,53 +176,91 @@ public class UsuarioCadastroService {
 
             return ruleStatus;
         } catch (Exception e) {
-            System.out.println("UCS: Erro ao validar regras da senha.");
+            sistemaDeLogger.error("Erro ao validar regras da senha: "+e.getMessage());
             e.printStackTrace();
-            alertService.alertarErro("Erro ao validar senha.");
+            alertaService.alertarErro("Erro ao validar senha.");
             return null;
         }
     }
 
+    /**
+     * Valida se a data informada é válida e, em caso de falha, é exibida uma mensagem no console.
+     * @param novoValorData a data de nascimento do usuário.
+     * @return {@code true} se seguir o padrão, caso contrário {@code false}.
+     */
     public boolean isRegraDataCumprida(LocalDate novoValorData) {
+        sistemaDeLogger.info("Método isRegraDataCumprida() chamado.");
         try {
             if (novoValorData == null) {
-                alertService.alertarCampoVazio("DATA DE NASCIMENTO");
+                alertaService.alertarCampoVazio("DATA DE NASCIMENTO");
                 return false;
             }
             LocalDate hoje = LocalDate.now();
-            return novoValorData.isBefore(hoje.minusYears(12));//se for antes de 12 anos de hoje é true
+            return novoValorData.isBefore(hoje.minusYears(12));
         } catch (Exception e) {
-            System.out.println("UCS: erro ao validar data.");
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean isRegraCidadeCumprida(String novoValorCidade) {
-        try {
-            if (novoValorCidade == null || novoValorCidade.trim().isEmpty()) {
-                alertService.alertarCampoVazio("CIDADE");
-                return false;
-            }
-            return true;
-        } catch (Exception e) {
-            System.out.println("UCS: ocorreu um erro ao validar a cidade.");
+            sistemaDeLogger.error("Erro ao validar data: "+e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
 
     /**
-     * Este método realiza a validação completa de um novo usuário e, se aprovado, realiza o cadastro.
-     *
+     * Valida se a cidade informada é válida e, em caso de falha, é exibida uma mensagem no console.
+     * @param novoValorCidade a cidade do usuário.
+     * @return {@code true} se seguir o padrão, caso contrário {@code false}.
+     */
+    public boolean isRegraCidadeCumprida(String novoValorCidade) {
+        sistemaDeLogger.info("Método isRegraCidadeCumprida() chamado.");
+        try {
+            if (novoValorCidade == null || novoValorCidade.trim().isEmpty()) {
+                alertaService.alertarCampoVazio("CIDADE");
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Ocorreu um erro ao validar a cidade: "+e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Valida se ao menos um tema de interesse foi selecionado e, em caso de falha, é exibida uma mensagem no console.
+     * @param temasSelecionados DTO com os temas preferidos selecionados.
+     * @return Mensagem de erro se nenhum tema for selecionado, ou {@code null} se válido.
+     */
+    public boolean isRegraTemasCumprida(PreferenciasUsuarioDto temasSelecionados) {
+        sistemaDeLogger.info("Método isRegraTemasCumprida() chamado.");
+        try{
+            boolean algumSelecionado =
+                    temasSelecionados.corporativo() || temasSelecionados.beneficente() ||
+                            temasSelecionados.educacional() || temasSelecionados.cultural() ||
+                            temasSelecionados.esportivo() || temasSelecionados.religioso() ||
+                            temasSelecionados.social();
+
+            if (!algumSelecionado) {
+                alertaService.alertarWarn("Tema obrigatório", "Selecione pelo menos um tema de interesse.");
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Ocorreu um erro ao validar os temas: "+e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Este método realiza a validação completa de um novo usuário e, se aprovado, realiza o cadastro e, em caso de
+     * falha, é exibida uma mensagem no console.
      * @param dto DTO contendo as informações do usuário a ser cadastrado.
      * @throws RuntimeException se qualquer campo for inválido.
      */
     public boolean cadastrarUsuarioSeValido(CadastrarUsuarioDto dto) {
+        sistemaDeLogger.info("Método cadastrarUsuarioSeValido() chamado.");
         try {
             boolean nomeOk = isRegraNomeCumprida(dto.nomePessoa());
             boolean emailOk = isRegraEmailCumprida(dto.email());
-            boolean cidadeOk = isRegraCidadeCumprida(dto.localizacaoUsuario());
 
             boolean senhaOk = false;
             Map<String, Boolean> regrasSenha = isRegraSenhaCumprida(dto.senha());
@@ -183,10 +276,12 @@ public class UsuarioCadastroService {
                 LocalDate dataNascimento = dto.data();
                 dataOk = isRegraDataCumprida(dataNascimento);
             } catch (DateTimeParseException e) {
-                System.out.println("UCS: Erro ao converter data: " + dto.data());
-                alertService.alertarWarn("Data inválida", "Informe a data no formato correto (dd/MM/yyyy).");
+                sistemaDeLogger.error("Erro ao converter data: " + dto.data());
+                alertaService.alertarWarn("Data inválida", "Informe a data no formato correto (dd/MM/yyyy).");
                 dataOk = false;
             }
+
+            boolean cidadeOk = isRegraCidadeCumprida(dto.localizacaoUsuario());
 
             boolean temasOk = isRegraTemasCumprida(dto.preferencias());
 
@@ -194,24 +289,25 @@ public class UsuarioCadastroService {
                 criarUsuario(dto);
                 return true;
             } else {
-                alertService.alertarWarn("Cadastro inválido", "Preencha corretamente todos os campos.");
-                System.out.println("UCS: Falha no cadastro: algum dado não passou na validação.");
+                alertaService.alertarWarn("Cadastro inválido", "Preencha corretamente todos os campos.");
+                sistemaDeLogger.info("Falha no cadastro: algum dado não passou na validação.");
                 return false;
             }
-        }catch (RuntimeException e) {
-            System.out.println("UCS: Erro ao validar DTO.");
+        }catch (Exception e) {
+            sistemaDeLogger.error("Erro ao validar DTO: "+e.getMessage());
             e.printStackTrace();
-            alertService.alertarErro("Erro ao validar se o DTO é valido.");
+            alertaService.alertarErro("Erro ao validar se o DTO é valido.");
             return false;
         }
     }
 
     /**
-     * Valida as informações recebidas no controller e chama o método do repositório para adicionar a lista.
-     * @param dto Objeto {@code UsuarioModel} contendo as informações do usuario a ser criado.
+     * Valida as informações recebidas no controller e chama o método do repositório para adicionar a lista e, em caso
+     * de falha, é exibida uma mensagem no console.
+     * @param dto o objeto {@code UsuarioModel} contendo as informações do usuario a ser criado.
      */
     public void criarUsuario(CadastrarUsuarioDto dto){
-        System.out.println("UCS: método de criar usuario e adicionar na lista do repository chamado");
+        sistemaDeLogger.info("Método criarUsuario() chamado.");
         try {
             Set<TemaPreferencia> temasPreferidos = MapeamentoPreferenciasService.mapearPreferencias(dto.preferencias());
 
@@ -224,18 +320,81 @@ public class UsuarioCadastroService {
                     null,
                     new ArrayList<>(),
                     new ArrayList<>(),
-                    temasPreferidos
+                    temasPreferidos,
+                    true
             );
-            usuarioRepository.adicionarUsuario(novoUsuario);
+            adicionarUsuario(novoUsuario);
         }
         catch (RuntimeException e) {
-            System.out.println("UCS: Erro ao criar usuario.");
+            sistemaDeLogger.error("Erro ao criar usuario: " + e.getMessage());
             e.printStackTrace();
-            alertService.alertarErro("Erro ao criar usuario.");
+            alertaService.alertarErro("Erro ao criar usuario.");
         }
-        System.out.println("UCS: Usuário realmente foi criado:");
-        System.out.println(" - Nome: " + dto.nomePessoa());
-        System.out.println(" - Email: " + dto.email());
-        System.out.println(" - Preferências: " + dto.preferencias());
+    }
+
+    /**
+     * Adiciona um novo usuário à lista de usuários após validações e, em caso de falha, exibe uma mensagem no console.
+     * @param usuario o objeto {@code UsuarioModel} a ser adicionado.
+     * @return {@code true} se o usuário foi adicionado com sucesso, {@code false} caso contrário.
+     */
+    public boolean adicionarUsuario(UsuarioModel usuario) {
+        sistemaDeLogger.info("Método adicionarUsuario() na lista chamado.");
+        try {
+            usuario.setId(proximoId++);
+
+            int id = System.identityHashCode(usuario);
+            usuario.setId(id);
+
+            boolean adicionado = listaUsuarios.add(usuario);
+            if (adicionado) {
+                sistemaDeLogger.info("Usuário adicionado com ID: " + id + " | HashSet size: " + listaUsuarios.size());
+            } else {
+                sistemaDeLogger.info("Usuário não adicionado (possivelmente já existe ou houve um problema).");
+            }
+            return adicionado;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro inesperado ao adicionar usuário: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Busca um usuário na lista pelo seu ID e, em caso de falha, exibe uma mensagem no console.
+     * @param id o ID do usuário a ser buscado.
+     * @return um {@code Optional} contendo o {@code UsuarioModel} correspondente ao ID,
+     * ou um {@code Optional} vazio se não encontrado.
+     */
+    public Optional<UsuarioModel> buscarUsuarioPorId(int id) {
+        sistemaDeLogger.info("Método buscarUsuarioPorId() chamado.");
+        try {
+            return listaUsuarios.stream().
+                    filter(u -> u.getId() == id).
+                    findFirst();
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao retornar a busca de usuario por ID: "+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Retorna a lista de todos os usuários armazenados e, em caso de falha, exibe uma mensagem no console.
+     * @return Um {@code Set} de objetos {@code UsuarioModel}.
+     */
+    public Set<UsuarioModel> getAllUsuarios() {
+        sistemaDeLogger.info("Método getAllUsuarios() chamado.");
+        try {
+            Set<UsuarioModel> usuarios = Collections.unmodifiableSet(listaUsuarios);
+            System.out.println("Usuários encontrados:");
+            for (UsuarioModel usuario : usuarios) {
+                System.out.println(usuario);
+            }
+            return Collections.unmodifiableSet(listaUsuarios);
+        } catch (Exception e) {
+            sistemaDeLogger.info("Erro retornar lista: "+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 }
