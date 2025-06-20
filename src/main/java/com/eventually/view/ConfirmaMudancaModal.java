@@ -1,6 +1,6 @@
 package com.eventually.view;
 
-import com.eventually.controller.ChangeConfirmController;
+import com.eventually.controller.ConfirmaMudancaController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -22,10 +22,10 @@ import javafx.stage.StageStyle;
  * Classe para o modal de "Alterar Senha" dentro das configurações.
  * @author Yuri Garcia Maia (Estrutura base)
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.02
+ * @version 1.03
  * @since 29-05-2025
  */
-public class ChangeConfirmModal {
+public class ConfirmaMudancaModal {
     private Stage modalStage;
     private Scene modalScene;
 
@@ -35,19 +35,19 @@ public class ChangeConfirmModal {
     private PasswordField fldNovaSenha;
     private PasswordField fldConfirmarNovaSenha;
 
-    private ChangeConfirmController cpController;
+    private ConfirmaMudancaController cpController;
 
     /**
      * Construtor padrão da classe.
      */
-    public ChangeConfirmModal() {
+    public ConfirmaMudancaModal() {
     }
 
     /**
      * Define o controller para este modal.
      * @param cpController O controller a ser usado.
      */
-    public void setChangePasswordController(ChangeConfirmController cpController) {this.cpController = cpController;}
+    public void setChangePasswordController(ConfirmaMudancaController cpController) {this.cpController = cpController;}
 
     /**
      * Exibe a janela modal configurada para alteração de senha.
@@ -111,21 +111,11 @@ public class ChangeConfirmModal {
         btnSalvarSenha.setPrefHeight(40);
         btnSalvarSenha.setPrefWidth(160);
         btnSalvarSenha.setStyle("-fx-background-color: #D64BCD; -fx-text-fill: white; -fx-background-radius: 20;");
-        btnSalvarSenha.setOnAction(e -> {
-            if (cpController != null) {
-                cpController.handleChangePasswordRequest(
-                        fldSenhaAtual.getText(),
-                        fldNovaSenha.getText(),
-                        fldConfirmarNovaSenha.getText()
-                );
-            }
-        });
 
         btnFechar = new Button("Fechar");
         btnFechar.setPrefHeight(40);
         btnFechar.setPrefWidth(120);
         btnFechar.setStyle("-fx-background-color: #D64BCD; -fx-text-fill: white; -fx-background-radius: 20;");
-        btnFechar.setOnAction(e -> close());
 
         buttons.getChildren().addAll(btnSalvarSenha, btnFechar);
 
@@ -142,6 +132,18 @@ public class ChangeConfirmModal {
     }
 
     /**
+     * Fecha o modal.
+     */
+    public void close() {
+        if (modalStage != null) {
+            System.out.println("ConfirmaMudancaModal: Fechando modalStage: " + modalStage);
+            modalStage.close();
+        } else {
+            System.out.println("ConfirmaMudancaModal: modalStage é null. Não é possível fechar.");
+        }
+    }
+
+    /**
      * Métodos de encapsulamento getters
      */
     public Button getBtnSalvarSenha() {return btnSalvarSenha;}
@@ -150,16 +152,4 @@ public class ChangeConfirmModal {
     public PasswordField getFldNovaSenha() {return fldNovaSenha;}
     public PasswordField getFldConfirmarNovaSenha() {return fldConfirmarNovaSenha;}
     public Scene getModalScene() {return modalScene;}
-
-    /**
-     * Fecha o modal.
-     */
-    public void close() {
-        if (modalStage != null) {
-            System.out.println("ChangeConfirmModal: Fechando modalStage: " + modalStage);
-            modalStage.close();
-        } else {
-            System.out.println("ChangeConfirmModal: modalStage é null. Não é possível fechar.");
-        }
-    }
 }
