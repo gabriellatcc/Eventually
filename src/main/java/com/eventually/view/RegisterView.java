@@ -64,7 +64,7 @@ public class RegisterView extends BorderPane {
     private RegisterController registerController;
 
     public RegisterView() {
-        setupUIRegisterView();
+        setupUI();
     }
 
     public void setRegisterController(RegisterController registerController) {this.registerController = registerController;}
@@ -73,7 +73,7 @@ public class RegisterView extends BorderPane {
      * Configura a interface da tela de registro dividida em duas áreas, define o
      * plano de fundo e chama os métodos de validações de interface dinâmicas.
      */
-    private void setupUIRegisterView() {
+    private void setupUI() {
         setupBackgroundRegister();
 
         VBox formularioRegistro = criarFormularioRegistro();
@@ -304,7 +304,7 @@ public class RegisterView extends BorderPane {
         passwordRulesBox.setPadding(new Insets(1,0,1,0));
 
         fldSenha.textProperty().addListener((obs, oldVal, novoValorSenha) -> {
-            Map<String, Boolean> rulesStatus = registerController.conferirSenhaParaUI(novoValorSenha);
+            Map<String, Boolean> rulesStatus = registerController.conferirSenha(novoValorSenha);
             atualizarRegraSenhaUI(lbRegraEspecial, rulesStatus.getOrDefault("hasSpecial", false));
             atualizarRegraSenhaUI(lbRegraDigito, rulesStatus.getOrDefault("hasDigit", false));
             atualizarRegraSenhaUI(lbRegraLetra, rulesStatus.getOrDefault("hasLetter", false));
