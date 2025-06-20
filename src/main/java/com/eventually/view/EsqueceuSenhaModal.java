@@ -1,5 +1,6 @@
 package com.eventually.view;
-import com.eventually.controller.ForgotPasswordController;
+import com.eventually.controller.EsqueceuSenhaController;
+import com.eventually.controller.LoginController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,14 +17,17 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.scene.shape.Rectangle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Classe para o modal de "Esqueceu sua senha";
+ * Classe para o modal de "Esqueceu sua senha".
+ * Contém métodos públicos para que sejam acessados por outras classes.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e da estrutura da classe)
- * @version 1.0
+ * @version 1.01
  * @since 23-05-2025
  */
-public class ForgotPasswordModal {
+public class EsqueceuSenhaModal {
     private Stage modalStage;
     private Scene modalScene;
 
@@ -31,25 +35,26 @@ public class ForgotPasswordModal {
     private Button btnFechar;
     private TextField fldEmail;
 
-    private ForgotPasswordController fpController;
+    private EsqueceuSenhaController fpController;
+
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(LoginController.class);
 
     /**
-     * Construtor padrão da classe.
+     *  Construtor padrão da classe.
      */
-    public ForgotPasswordModal() {
-    }
+    public EsqueceuSenhaModal() {}
 
     /**
-     * Define o controller para este modal.
-     * @param fpController O controller a ser usado.
+     * Define o controlador para este modal.
+     * @param fpController a classe controladora a ser usada.
      */
-    public void setForgotPasswordController(ForgotPasswordController fpController) {
+    public void setForgotPasswordController(EsqueceuSenhaController fpController) {
         this.fpController = fpController;
     }
 
     /**
      * Exibe a janela modal configurada para recuperação de senha.
-     * @param parentStage Janela principal da aplicação que será usada como base para o modal.
+     * @param parentStage a janela principal da aplicação que será usada como base para o modal.
      */
     public void showForgotPasswordModal(Stage parentStage) {
         modalStage = new Stage();
@@ -126,14 +131,17 @@ public class ForgotPasswordModal {
     public Button getBtnEnviar() {return btnEnviar;}
     public Button getBtnFechar() {return btnFechar;}
     public TextField getFldEmail() {return fldEmail;}
-    public Scene getModalScene() {return modalScene;}
 
     public void close() {
-        if (modalStage != null) {
-            System.out.println("ForgotPasswordModal: Fechando modalStage: " + modalStage);
-            modalStage.close();
-        } else {
-            System.out.println("ForgotPasswordModal: modalStage é null. Não é possível fechar.");
+        try {
+            if (modalStage != null) {
+                sistemaDeLogger.info("Fechando modalStage: " + modalStage);
+                modalStage.close();
+            } else {
+                sistemaDeLogger.info("ModalStage é null. Não é possível fechar.");
+            }} catch (Exception e) {
+            sistemaDeLogger.error("Ocorreu um erro ao fechar o modal: "+e.getMessage());
+            e.printStackTrace();
         }
     }
 }
