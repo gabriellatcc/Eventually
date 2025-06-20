@@ -1,6 +1,6 @@
 package com.eventually.view;
 
-import com.eventually.controller.CreateEventController;
+import com.eventually.controller.CriaEventoController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -17,20 +17,21 @@ import javafx.stage.StageStyle;
 
 /**
  * Classe responsável pelo modal de "Criar evento".
- *
  * @author Yuri Garcia Maia
  * @version 1.0
  * @since 2025-06-18
+ * @author Gabriella Tavares Costa Corrêa (revisão de documentação e parte lógica)
+ * @since 2025-06-19
  */
-public class CreateEventModal {
+public class CriaEventoModal {
     private Stage modalStage;
     private Scene modalScene;
-    private CreateEventController eventController;
+    private CriaEventoController eventController;
 
     static {
         try {
-            Font.loadFont(CreateEventModal.class.getResource("/fonts/Poppins-Regular.ttf").toExternalForm(), 10);
-            Font.loadFont(CreateEventModal.class.getResource("/fonts/Poppins-Bold.ttf").toExternalForm(), 10);
+            Font.loadFont(CriaEventoModal.class.getResource("/fonts/Poppins-Regular.ttf").toExternalForm(), 10);
+            Font.loadFont(CriaEventoModal.class.getResource("/fonts/Poppins-Bold.ttf").toExternalForm(), 10);
         } catch (Exception e) {
             System.err.println("Fonte Poppins não encontrada. Usando fontes padrão.");
             e.printStackTrace();
@@ -55,14 +56,14 @@ public class CreateEventModal {
     /**
      * Construtor padrão da classe.
      */
-    public CreateEventModal() {
+    public CriaEventoModal() {
     }
 
     /**
      * Define o controller para este modal.
      * @param eventController O controller a ser usado.
      */
-    public void setCreateEventController(CreateEventController eventController) {
+    public void setCreateEventController(CriaEventoController eventController) {
         this.eventController = eventController;
     }
 
@@ -78,7 +79,7 @@ public class CreateEventModal {
         try {
             modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
         } catch (Exception e) {
-            System.err.println("Ícone do app não encontrado para CreateEventModal: " + e.getMessage());
+            System.err.println("Ícone do app não encontrado para CriaEventoModal: " + e.getMessage());
         }
 
         final double MODAL_WIDTH = 1000;
@@ -140,7 +141,7 @@ public class CreateEventModal {
         try {
             modalScene.getStylesheets().add(getClass().getResource("/styles/create-event-modal.css").toExternalForm());
         } catch (Exception e) {
-            System.err.println("CSS não encontrado para CreateEventModal: " + e.getMessage());
+            System.err.println("CSS não encontrado para CriaEventoModal: " + e.getMessage());
         }
         modalStage.setScene(modalScene);
         modalStage.showAndWait();
