@@ -1,148 +1,114 @@
 package com.eventually.controller;
 
-import com.eventually.service.AlertService;
-import com.eventually.service.TelaService;
-import com.eventually.service.UsuarioExclusaoService;
-import com.eventually.view.LoginView;
-import com.eventually.view.SettingsView;
-import com.eventually.view.UserScheduleView;
-import javafx.scene.Scene;
+import com.eventually.service.*;
+import com.eventually.view.*;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Classe controller da tela de Configurações do usuário.
- * Esta classe é responsável pela comunicação
- * da tela de de configurações com o backend.
- * @author Yuri Garcia Maia
+/** PASSÍVEL DE ALTERAÇÕES
+ * Classe controladora da tela de Configurações do usuário, é responsável pela comunicação da tela de de configurações
+ * com o backend.
+ * Contém todos os métodos como privados para que seu acesso seja somente por esta classe.
  * @version 1.00
+ * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-22
- * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e lógica da classe)
+ * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
  * @since 2025-05-22
  */
 public class SettingsController {
     private SettingsView settingsView;
     private final Stage primaryStage;
 
-    private AlertService alertService=new AlertService();
+    private UsuarioSessaoService usuarioSessaoService;
+    private UsuarioExclusaoService usuarioExclusaoService;
+    private NavegacaoService navegacaoService;
 
-    UsuarioExclusaoService usuarioExclusaoService = new UsuarioExclusaoService();
+    private String emailRecebido;
 
+    private AlertaService alertaService =new AlertaService();
+
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(RegisterController.class);
 
     /**
      * Construtor do {@code SettingsController}, inicializa a view de configurações.
      * @param settingsView a interface de configurações associada
      * @param primaryStage o palco principal da aplicação
      */
-    public SettingsController(SettingsView settingsView, Stage primaryStage) {
+    public SettingsController(String email, SettingsView settingsView, Stage primaryStage) {
+        this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
+        this.usuarioExclusaoService = UsuarioExclusaoService.getInstancia();
+        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService e UsuarioExclusaoService.");
+
+        this.emailRecebido = email;
+
         this.settingsView = settingsView;
-        this.primaryStage = primaryStage;
         this.settingsView.setSettingsController(this);
-        setupEventHandlersSettings();
-    }
 
-    private void setupEventHandlersSettings() {
-        settingsView.getBtnInicio().setOnAction(e -> irParaInicio());
-        settingsView.getBtnMeusEventos().setOnAction(e -> irParaMeusEventos());
+        this.primaryStage = primaryStage;
 
-        settingsView.getBtnConfiguracoes().setOnAction(e -> continuar());
-
-        settingsView.getBtnProgramacao().setOnAction(e ->irParaProgramacao());
-        settingsView.getBtnSair().setOnAction(e -> sair());
+        configManiouladoresEventoConfig();
     }
 
     /**
-     * Este método navega para a tela de Início.
+     * Este método configura os manipuladores de eventos para os botões da tela de configurações e, em caso de falha,
+     * exibe uma mensagem no console.
      */
-    public void irParaInicio() {
-        System.out.println("SC: botão de início clicado");
-        try{
-            //falta: instanciar tela
-        } catch (Exception ex) {
-            System.err.println("SC: erro ao ir para tela de programação");
-            ex.printStackTrace();
+    private void configManiouladoresEventoConfig() {
+        sistemaDeLogger.info("Método configManiouladoresEventoConfig() chamado.");
+        try {
+            settingsView.getBtnConfiguracoes().setOnAction(e -> processarNavegacaoConfiguracoes());
+
+            settingsView.getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
+            settingsView.getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
+            settingsView.getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
+
+            settingsView.getBtnSair().setOnAction(e -> navegacaoService.abrirModalEscerrrarSessão());
+            settingsView.getBtnDeleteAccount().setOnAction(e -> processarDeletarConta());
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao configurar manipuladores de configurações: "+e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Este método navega para a tela de Início.
-     */
-    public void irParaMeusEventos() {
-        System.out.println("SC: botão de meus eventos clicado");
-        try{
-            //falta: instanciar tela
-        } catch (Exception ex) {
-            System.err.println("SC: erro ao ir para tela de meus eventos");
-            ex.printStackTrace();
-        }
-    }
+    //
+    //metodo publico exibir valores igual o de outros lugares
+    //metodo publico puxar servico de edicao
 
     /**
-     * Este método exibe mensagem informando que o usuário já está na tela de configurações
+     * Este método exibe mensagem informando que o usuário já está na tela de configurações e, em caso de falha na exibição
+     * do alerta, é exibida uma mensagem de erro.
      */
-    public void continuar() {
-        System.out.println("SC: botão de configurções clicado");
+    private void processarNavegacaoConfiguracoes() {
+        sistemaDeLogger.info("Método processarNavegacaoConfiguracoes() chamado.");
         try{
-            alertService.alertarInfo("Já está na tela de configurações");
-        } catch (Exception ex) {
-            System.err.println("SC: erro ao ir para tela de configurações");
-            ex.printStackTrace();
+            sistemaDeLogger.info("Botão de configurções clicado!");
+            alertaService.alertarInfo("Você já está na tela de configurações!");
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao ir para tela de configurações: "+e.getMessage());
+            e.printStackTrace();
         }
     }
 
     /**
-     * Este método navega para a tela UserScheduleView.
+     * Este método abre o modal no qual o usuário seleciona se quer deletar a conta ou não, na operação é procurado o ID
+     * do usuario e seu email, para que seja alterado o estado do objeto usuário com o email específico para "false", ou
+     * seja, inativo.
      */
-    public void irParaProgramacao() {
-        System.out.println("SC: botão de programação clicado");
+    private void processarDeletarConta() {
         try{
-            UserScheduleView userScheduleView = new UserScheduleView();
-            UserScheduleController userScheduleController = new UserScheduleController(userScheduleView, primaryStage);
-            userScheduleView.setUserScheduleController(userScheduleController);
-
-            TelaService service = new TelaService();
-            Scene sceneUserSchedule = new Scene(userScheduleView,service.medirWidth(),service.medirHeight());
-
-            sceneUserSchedule.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
-            primaryStage.setTitle("Eventually - Progamação do Usuário");
-            primaryStage.setScene(sceneUserSchedule);
-        } catch (Exception ex) {
-            System.err.println("SC: erro ao ir para tela de programação");
-            ex.printStackTrace();
+            //chamar modal
+            //boolean respostaModal = getResposta
+            //if (getresposta) - > ovbiamente true:
+            int idEncontrado = usuarioSessaoService.procurarID(emailRecebido);
+            usuarioExclusaoService.alterarEstadoDoUsuario(idEncontrado, false);
+            //entao:
+            alertaService.alertarInfo("Conta removida com sucesso!");
+            navegacaoService.navegarParaLogin();
         }
-    }
-
-    /**
-     * Este método navega para a tela de login.
-     */
-    public void sair() {
-        System.out.println("Botçao de sair clicado!");
-        try{
-            LoginView loginView = new LoginView();
-            LoginController loginController = new LoginController(loginView, primaryStage);
-            loginView.setLoginController(loginController);
-
-            TelaService settingsService = new TelaService();
-            Scene loginScene = new Scene(loginView,settingsService.medirWidth(),settingsService.medirHeight());
-
-            loginScene.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
-            primaryStage.setTitle("Eventually - Login");
-            primaryStage.setScene(loginScene);
-        } catch (Exception ex) {
-            System.err.println("SC: erro ao voltar para tela de programação");
-            ex.printStackTrace();
-        }
-    }
-
-    public void deletarConta() {
-        try{
-            //falta:
-            //modal: Você está prestes a deletar sua conta, deseja prosseguir?"
-            //modal: inserir senha e confirmar senha para exclusão
-            //chamar usuarioExclusaoService.deletarUsuario(valor);
-        }
-        catch (Exception ex) {
-            System.err.println("SC: erro ao deletar conta");
-            ex.printStackTrace();
+        catch (Exception e) {
+            sistemaDeLogger.info("Erro ao deletar conta: "+e.getMessage());
+            e.printStackTrace();
         }
     }
 }
