@@ -32,7 +32,7 @@ import com.eventually.controller.LoginController;
  * por inicializar e exibir a interface gráfica do usuário.
  *
  * @author Yuri Garcia Maia
- * @version 1.01
+ * @version 1.02
  * @since 2025-05-12
  * @author Gabriella Tavares Costa Corrêa (Documentação e revisão da classe)
  * @since 2025-05-14
@@ -52,7 +52,7 @@ public class LoginView extends BorderPane {
      * Recebe o LoginController via injeção de dependência.
      */
     public LoginView() {
-        setupUILoginView();
+        setupUI();
     }
 
     public void setLoginController(LoginController loginController) {this.loginController = loginController;}
@@ -60,7 +60,7 @@ public class LoginView extends BorderPane {
     /**
      * Configura todos os elementos da interface de usuário para a tela de login.
      */
-    private void setupUILoginView() {
+    private void setupUI() {
         setupBackground();
         StackPane paneDireitaLogin = criarPainelDireito();
         VBox conteudoLogin = criarConteudoLogin();
