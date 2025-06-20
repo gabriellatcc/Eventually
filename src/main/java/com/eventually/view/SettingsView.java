@@ -27,7 +27,7 @@ import java.util.Optional;
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
  * @author Yuri Garcia Maia (Criação)
  * @since 22-05-2025
- * @version 1.0
+ * @version 1.01
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, lógica e da estrutura da classe)
  * @since 22-05-2025
  */
@@ -278,7 +278,6 @@ public class SettingsView extends BorderPane {
             themeCheckBoxes.add(cb);
         }
 
-        // Organiza as colunas em um HBox
         HBox columns = new HBox(60, leftColumn, rightColumn);
 
         section.getChildren().addAll(title, description, columns);
@@ -367,15 +366,6 @@ public class SettingsView extends BorderPane {
 
         photoPlaceholder.setStyle("-fx-border-color: lightgray; -fx-border-width: 1; -fx-background-color: #f0f0f0;");
 
-
-        // try {
-        //     Image defaultImg = new Image(getClass().getResourceAsStream("/images/default-avatar.png"));
-        //     profilePhotoView.setImage(defaultImg);
-        // } catch (Exception e) {
-        //     System.err.println("Erro ao carregar avatar padrão: " + e.getMessage());
-        // }
-
-
         Label photoInfo = new Label("A imagem anexada deve ter\nXX x XX pixels (YY MB)");
         photoInfo.setFont(Font.font("Arial", 10));
         photoInfo.setTextFill(Color.GRAY);
@@ -383,7 +373,6 @@ public class SettingsView extends BorderPane {
 
 
         Hyperlink changePhotoLink = new Hyperlink("(alterar)");
-/*        changePhotoLink.setOnAction(e -> sController.handleChangeProfilePhoto()); */
 
         profilePhotoErrorLabel = new Label();
         profilePhotoErrorLabel.setTextFill(Color.SALMON);
@@ -494,18 +483,6 @@ public class SettingsView extends BorderPane {
                 } else if (editField instanceof DatePicker) {
                     newDate = ((DatePicker) editField).getValue();
                 }
-/*
-                // Chamar o método apropriado do sController
-                switch (fieldKey) {
-                    case "name": sController.handleUpdateName(newValue); break;
-                    case "email": sController.handleUpdateEmail(newValue); break; // Se email se tornar editável
-                    case "phone": sController.handleUpdatePhone(newValue); break;
-                    case "password": sController.handleUpdatePassword(newValue); break;
-                    case "city": sController.handleUpdateCity(newValue); break;
-                    case "dateOfBirth": sController.handleUpdateDateOfBirth(newDate); break;
-                }
-
- */
             }
         });
 
