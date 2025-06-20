@@ -1,12 +1,17 @@
 package com.eventually.service;
 
+import com.eventually.controller.RegisterController;
+import com.eventually.model.UsuarioModel;
 import com.sun.mail.util.MailSSLSocketFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
 import javax.activation.DataHandler;
@@ -23,45 +28,75 @@ import javax.mail.util.ByteArrayDataSource;
 import javax.activation.DataSource;
 import javax.swing.*;
 
-
 /**
- * Serviço responsável por gerar códigos de verificação e enviar e-mails aos usuários,
- * contendo uma senha temporária para recuperação de acesso ao sistema Eventually.
+ * Serviço responsável por gerar código para substituir uma senha esquecida e enviar e-mails aos usuários,
  * O e-mail inclui uma imagem inline (logo do sistema) e uma mensagem em HTML formatada.
- *
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e da estrutura da classe)
- * @version 1.0
+ * @version 1.01
  * @since 23-05-2025
  */
 public class EmailService {
     private String codigoGerado;
+    private String emailRecebido;
+    private UsuarioCadastroService usuarioCadastroService; //referencia
+
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(EmailService.class);
+    private AlertaService alertaService =new AlertaService();
 
     /**
      * Construtor da classe que inicializa o código temporário gerado.
      */
-    public EmailService() {
-        codigoGerado = gerarCodigo();
+    public EmailService(String email) {
+        this.emailRecebido = email;
     }
 
-//metodo validar email, se ele existe, chamar o gerar codigo
-
     /**
-     * Gera um código numérico aleatório de 6 dígitos, formatado com zeros à esquerda.
-     * @return Código de verificação formatado como string de 6 dígitos.
+     * Valida o email inserido pelo usuário, se ele existe, gera um código e reseta a senha do usuário e, em caso de
+     * falha, uma mensagem é exibida no console.
      */
-    public static String gerarCodigo() {
-        Random rand = new Random();
-        int randomCode = rand.nextInt(999999);
-        return String.format("%06d", randomCode);
-        //chamar o set senha usuario.email.x.do repository = randomcode;
+    private void validarEmail(){
+        sistemaDeLogger.info("Método validarEmail() chamado.");
+       try {
+           Optional<UsuarioModel> usuarioOptional = usuarioCadastroService.getAllUsuarios()
+                   .stream()
+                   .filter(usuario -> usuario.getEmail().equalsIgnoreCase(emailRecebido))
+                   .findFirst();
+           if (usuarioOptional.isPresent()) {
+               String codigo = gerarCodigo();
+               usuarioOptional.get().setSenha(codigo);
+               enviarEmail();
+               alertaService.alertarInfo("Realize a sessão com o código enviado pelo email, ele é a sua nova senha. \n Isso poderá ser alterado depois..");
+           } else {
+               alertaService.alertarErro("O email não está cadastrado no sistema");
+           }}catch (Exception e){
+           sistemaDeLogger.error("Erro ao validar o email no sistema: "+e.getMessage());
+           e.printStackTrace();
+       }
     }
 
     /**
-     * Envia um e-mail com uma nova senha temporária para o endereço de e-mail fornecido.
+     * Gera um código numérico aleatório de 6 dígitos, formatado com zeros à esquerda e, em caso de
+     * falha, uma mensagem é exibida no console.
+     * @return código de verificação formatado como string de 6 dígitos.
+     */
+    private String gerarCodigo() {
+        try {
+            Random rand = new Random();
+            int randomCode = rand.nextInt(999999);
+            return String.format("%06d", randomCode);
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao gerar codigo: "+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Envia um e-mail com o código para senha temporária para o endereço de e-mail fornecido e, em caso de
+     * falha no envio, uma mensagem é exibida no console.
      * O conteúdo do e-mail é em HTML com um logo da aplicação embutido.
-     * @param email Endereço de e-mail do destinatário.
      */
-    public void enviarEmail(String email) {
+    private void enviarEmail() {
         try {
             String userHome = System.getProperty("user.home");
 
@@ -73,7 +108,7 @@ public class EmailService {
 
             final String from = "eventuallyaplication@gmail.com";
             final String password = "sguozeqqpluitmun";
-            final String emailUsuario = email;
+            final String emailUsuario = emailRecebido;
 
             MailSSLSocketFactory sf = new MailSSLSocketFactory();
             sf.setTrustAllHosts(true);
@@ -146,7 +181,19 @@ public class EmailService {
 
             Transport.send(message);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Erro ao enviar e-mail: " + e.getMessage());
+            sistemaDeLogger.error("Erro ao enviar e-mail: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Inicia a operação de enviar o email da situação e, em caso de falha, é exibida uma mensagem no console.
+     */
+    public void enviar() {
+        try {
+            validarEmail();
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao enviar e-mail: " + e.getMessage());
             e.printStackTrace();
         }
     }
