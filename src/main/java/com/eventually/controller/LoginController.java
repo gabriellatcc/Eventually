@@ -1,165 +1,152 @@
 package com.eventually.controller;
 import com.eventually.dto.AutenticarUsuarioDto;
 import com.eventually.model.UsuarioModel;
-import com.eventually.service.AutenticacaoUsuarioService;
-import com.eventually.service.TelaService;
+import com.eventually.service.AlertaService;
+import com.eventually.service.NavegacaoService;
+import com.eventually.service.UsuarioSessaoService;
 import com.eventually.view.*;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-/**
- * Classe controller da tela de login.
- * Esta classe é responsável pela comunicação
- * da tela de login com o backend.
- * @author Yuri Garcia Maia
- * @version 1.00
+/** PASSÍVEL DE ALTERAÇÃÕES
+ * Classe controladora da tela de login, é responsável pela comunicação da tela de login com o backend.
+ * Contém todos os métodos como privados para que seu acesso seja somente por esta classe.
+ * @author Yuri Garcia Maia (Estrutura base)
+ * @version 1.01
  * @since 2025-05-07
- * @author Gabriella Tavares Costa Corrêa (Documentação e revisão da classe)
+ * @author Gabriella Tavares Costa Corrêa (Documentação e revisão da da estrutura e parte lógica da classe)
  * @since 2025-05-14
  */
 public class LoginController {
     private final LoginView loginView;
     private final Stage primaryStage;
 
+    private UsuarioSessaoService usuarioSessaoService;
+    private NavegacaoService navegacaoService;
+
+    private AlertaService alertaService =new AlertaService();
+
+    private static final Logger sistemaDeLog = LoggerFactory.getLogger(LoginController.class);
+
     /**
-     * Construtor do {@code SettingsController}, inicializa a view de sessão de usuário.
-     * @param loginView a interface de sessão associada
-     * @param primaryStage o palco principal da aplicação
+     * Construtor do {@code LoginController} que obtém a instância única de UsuarioSessaoService
+     * para acessar a lista de usuários, inicializa a view de sessão de usuário e o servico de
+     * navegação entre telas.
+     * @param loginView a interface de sessão associada.
+     * @param primaryStage o palco principal da aplicação,
      */
-    public LoginController(LoginView loginView, Stage primaryStage) {
+    public LoginController(LoginView loginView, Stage primaryStage){
+        this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
+        sistemaDeLog.info("Inicializado e conectado ao UsuarioSessaoService.");
+
         this.loginView = loginView;
-        this.primaryStage = primaryStage;
         this.loginView.setLoginController(this);
-        setupEventHandlersLogin();
-    }
 
-    public void setupEventHandlersLogin() {
-        loginView.getEsqueceuSenhaLink().setOnAction(e -> handleEsqueceuSenhaLink());
-        loginView.getBtnLogin().setOnAction(e -> testeModal());
-        loginView.getBtnRegistrar().setOnAction(e -> handleRegistrar());
+        this.primaryStage = primaryStage;
+
+        this.navegacaoService = new NavegacaoService(primaryStage);
+
+        configManipuladoresDeEventoLogin();
     }
 
     /**
-     * Manipula o evento de clique no link "Esqueceu sua senha"e abre o modal
+     * Configura os manipuladores de evento para os componentes da tela de login.
+     * Este método associa as ações dos botões e links da interface de login e em caso
+     * de falha na configuração de algum manipulador de evento, uma mensagem de erro
+     * é exibida no console.
      */
-    private void handleEsqueceuSenhaLink() {
-        System.out.println("LController: Botão de esqueceu sua senha clicado!");
-        abrirModalEsqueceuSenha();
+    private void configManipuladoresDeEventoLogin() {
+        sistemaDeLog.info("Método configManipuladoresDeEventoLogin() chamado.");
+        try {
+            loginView.getEsqueceuSenhaLink().setOnAction(e -> processarEsqueceuSenhaLink());
+            loginView.getBtnLogin().setOnAction(e -> processarLogin());
+            loginView.getBtnRegistrar().setOnAction(e -> processarRegistrar());
+        } catch (Exception e) {
+            sistemaDeLog.error("Erro ao configurar manipuladores de login: "+e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Manipula o evento de clique no link "Esqueceu sua senha", abre o modal e em caso
+     * de falha, uma mensagem de erro é exibida no console.
+     */
+    private void processarEsqueceuSenhaLink() {
+        sistemaDeLog.info("Método processarEsqueceuSenhaLink() chamado.");
+        try {
+            sistemaDeLog.info("Botão de esqueceu sua senha clicado!");
+            abrirModalEsqueceuSenha();
+        } catch (Exception e) {
+            sistemaDeLog.error("Erro ao configurar manipulador de senha esquecida: "+e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
      * Este método é acionado quando o botão de registrar é clicado, ele chama o método que
-     * abre a tela de cadastro.
+     * abre a tela de cadastro e em caso de falha, uma mensagem de erro é exibida no console.
      */
-    private void handleRegistrar() {
-        System.out.println("LController: Botão de registrar clicado!");
-        this.abrirRegisterView();
+    private void processarRegistrar() {
+        sistemaDeLog.info("Método processarRegistrar() chamado.");
+        try {
+            sistemaDeLog.info("Botão de registrar clicado!");
+            navegacaoService.navegarParaRegistro();
+        } catch (Exception e) {
+            sistemaDeLog.error("Erro ao configurar manipulador de registro: "+e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    private void testeModal(){
-        System.out.println("LController: Abrir modal");
-
-        ChangeConfirmModal changeConfirmModal = new ChangeConfirmModal();
-        changeConfirmModal.showChangePasswordModal(primaryStage);
-    }
     /**
      * Método que estabelece a lógica para quando o botão de login é clicado
-     * e lida com o resultado.
+     * e em caso de falha, uma mensagem de erro é exibida no console.
      */
-    private void handleLogin() {
-        System.out.println("LController: botão de login clicado");
+    private void processarLogin() {
+        sistemaDeLog.info("Método processarLogin() chamado.");
+        try {
+            sistemaDeLog.info("Botão de login clicado!");
 
-        String email = loginView.getEmailField().getText();
-        String senha = loginView.getPasswordField().getText();
+            String email = loginView.getEmailField().getText();
+            String senha = loginView.getPasswordField().getText();
 
-        AutenticarUsuarioDto usuarioASerAutenticado = new AutenticarUsuarioDto(email, senha);
-        AutenticacaoUsuarioService autenticacaoUsuarioService = new AutenticacaoUsuarioService(usuarioASerAutenticado);
+            AutenticarUsuarioDto usuarioASerAutenticado = new AutenticarUsuarioDto(email, senha);
 
-        Optional<UsuarioModel> usuarioAutenticado = autenticacaoUsuarioService.validarUsuario(usuarioASerAutenticado.email(),usuarioASerAutenticado.senha());
+            Optional<UsuarioModel> usuarioAutenticado = usuarioSessaoService.validarUsuario(usuarioASerAutenticado.email(), usuarioASerAutenticado.senha());
 
-        if (usuarioAutenticado.isPresent()) {
-            try {
-                HomeView homeView= new HomeView();
-                HomeController homeController = new HomeController(homeView, primaryStage);
-                homeView.setHomeController(homeController);
+            if (usuarioAutenticado.isPresent()) {
+                sistemaDeLog.info("Usuário autenticado com sucesso!");
+                navegacaoService.navegarParaHome(usuarioAutenticado.get());
 
-                TelaService service = new TelaService();
-                Scene sceneHomeView = new Scene(homeView,service.medirWidth(),service.medirHeight());
-
-                sceneHomeView.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
-                primaryStage.setTitle("Eventually - Página Inicial");
-                primaryStage.setScene(sceneHomeView);
-            } catch (Exception e) {
-                System.out.println("LController: Erro ao abrir a tela principal: " + e.getMessage());
-                e.printStackTrace();
+            } else {
+                sistemaDeLog.info("Email não cadastrado ou senha incorretos.");
+                //falta: implementar a chamada de um método que instancia um elemento visual de "Senha incorreta ou email não cadastrado".
+                //PROVISORIO:
+                alertaService.alertarWarn("Falha no Login", "Email não cadastrado ou senha incorretos.");
             }
-        } else {
-            System.out.println("LController: Email não cadastrado ou senha incorretos.");
-            //falta: implementar a chamada de um método que instancia um elemento visual de "Senha incorreta ou email não cadastrado"
+        } catch (Exception e) {
+            sistemaDeLog.error("Erro ao configurar manipulador de login: "+e.getMessage());
+            e.printStackTrace();
         }
     }
 
     /**
-     * Tenta autenticar um usuário com as credenciais fornecidas.
-     * @param email O email do usuário
-     * @param password A senha do usuário
-     * @return null se o login for bem-sucedido, uma String com a mensagem de erro caso contrário
+     * Método que instancia e chama o modal de "Esqueceu sua senha" e em caso de falha na configuração
+     * do modal, uma mensagem de erro é exibida no console.
      */
-    public String handleRequisicaoLogin(String email, String password) {
-        boolean emailVazio = (email == null || email.trim().isEmpty());
-        boolean senhaVazia = (password == null || password.isEmpty());
-
-        if (emailVazio && senhaVazia) {
-            exibirAvisoEmailVazio();
-            exibirAvisoSenhaVazia();
-            return "Por favor, preencha o email e a senha.";
-        } else if (emailVazio) {
-            return "Por favor, preencha o seu email.";
-        } else if (senhaVazia) {
-            return "Por favor, preencha a sua senha.";
-        } else {
-            return null;
+    private void abrirModalEsqueceuSenha() {
+        sistemaDeLog.info("Método abrirModalEsqueceuSenha() chamado.");
+        try{
+            //verificar funcionamento
+            EsqueceuSenhaModal esqueceuSenhaModal = new EsqueceuSenhaModal();
+            esqueceuSenhaModal.showForgotPasswordModal(primaryStage);
+            EsqueceuSenhaController fpController = new EsqueceuSenhaController(esqueceuSenhaModal);
+            esqueceuSenhaModal.setForgotPasswordController(fpController);
+        } catch (Exception e) {
+            sistemaDeLog.error("Erro ao abrir o modal: "+e.getMessage());
+            e.printStackTrace();
         }
-    }
-
-    private void exibirAvisoEmailVazio() {
-        System.out.println("Aviso: O campo de email está vazio.");
-        //falta: implementar chamada de método que exibe label de aviso que o campo EMAIL está vazio
-    }
-
-    private void exibirAvisoSenhaVazia() {
-        System.out.println("Aviso: O campo de senha está vazio.");
-        //falta: implementar chamada de método que exibe label de aviso que o campo SENHA está vazio
-    }
-
-    /**
-     * Método que instancia e chama o modal de "Esqueceu sua senha"
-     */
-    public void abrirModalEsqueceuSenha() {
-        System.out.println("LController: Abrir modal");
-
-        ForgotPasswordModal forgotPasswordModal = new ForgotPasswordModal();
-        forgotPasswordModal.showForgotPasswordModal(primaryStage);
-        ForgotPasswordController fpController = new ForgotPasswordController(forgotPasswordModal);
-        forgotPasswordModal.setForgotPasswordController(fpController);
-    }
-
-    /**
-     * Abre a tela de registro.
-     */
-    private void abrirRegisterView(){
-        RegisterView registerView = new RegisterView();
-        RegisterController registerController = new RegisterController(registerView, primaryStage);
-        registerView.setRegisterController(registerController);
-
-        TelaService service = new TelaService();
-        Scene sceneRegister = new Scene(registerView,service.medirWidth(), service.medirHeight());
-
-        sceneRegister.getStylesheets().add(getClass().getResource("/styles/register-styles.css").toExternalForm());
-        primaryStage.setTitle("Eventually - Registro do Usuário");
-        primaryStage.setScene(sceneRegister);
-        primaryStage.setMaximized(true);
     }
 }
