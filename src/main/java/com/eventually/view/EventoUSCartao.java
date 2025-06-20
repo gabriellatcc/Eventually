@@ -6,29 +6,28 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-/**
- * A classe {@code EventCard} representa um cartão visual para exibir informações resumidas
+/** PASSÍVEL DE ALTERAÇÃO
+ * A classe {@code EventoUSCartao} representa um cartão visual para exibir informações resumidas
  * de um evento na interface do usuário.
  * Este componente, construído como um {@code HBox}, organiza o título, a localização e a
  * data/hora do evento de forma visualmente atraente.
  *
  * @author Yuri Garcia Maia
- * @version 1.00
+ * @version 1.01
  * @since 2025-04-06
  * @author Gabriella Tavares Costa Corrêa
  * @since 2025-04-22 (Revisão e documentação da classe)
  */
-public class EventCard extends HBox {
-//falta: controller: dto do evento
+public class EventoUSCartao extends HBox {
      /**
-     * Construtor da classe {@code EventCard}.
+     * Construtor da classe {@code EventoUSCartao}.
      * Inicializa e configura os elementos visuais do cartão de evento, incluindo: padding e
      * espaçamento interno do cartão, estilo de fundo com um gradiente linear e bordas arredondadas,
      * altura preferencial do cartão, {@code VBox} para o título e a localização do evento e um
      * para exibir a data (dia, mês/ano) e a hora do evento, alinhado à direita.
      * Os rótulos de texto são estilizados com cores brancas e, no caso da data e hora, com negrito.
      */
-    public EventCard() {
+    public EventoUSCartao() {
         setPadding(new Insets(15));
         setSpacing(20);
         setStyle("-fx-background-color: linear-gradient(to right, #8e2de2, #c84cf4); -fx-background-radius: 20;");
