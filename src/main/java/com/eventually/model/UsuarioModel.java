@@ -1,13 +1,16 @@
 package com.eventually.model;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import java.time.LocalDate;
 import java.util.*;
 
-/**
+/** PASSÍVEL DE ALTERAÇÃO
  * A classe {@code UsuarioModel} contém atributos como nome da pessoa que criou a conta,
  * email, senha, localização, data de nascimento, foto de usuário, eventos que participa,
  * eventos organizados, temas preferidos.
- * @author Gabriella Tavares Costa Corrêa
- * @version 1.04
+ * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
+ * @version 1.05
  * @since 2025-04-08
  */
 public class UsuarioModel {
@@ -17,24 +20,26 @@ public class UsuarioModel {
     private String senha;
     private String localizacaoUsuario;
     private LocalDate dataNascimento;
-    private String fotoUsuario;
+    private Image fotoUsuario;
     private List<EventoModel> eventosParticipa = new ArrayList<>();
     private List<EventoModel> eventosOrganizados = new ArrayList<>();
     private Set<TemaPreferencia> temasPreferidos = new HashSet<>();
+    private boolean estadoDoUsuario=true;
 
     public UsuarioModel(String nomePessoa, String email, String senha, String localizacaoUsuario,
-                        LocalDate dataNascimento, String fotoUsuario, List<EventoModel> eventosOrganizados, List<EventoModel> eventosParticipa,
-                        Set<TemaPreferencia> temasPreferidos)
+                        LocalDate dataNascimento, Image fotoUsuario, List<EventoModel> eventosOrganizados, List<EventoModel> eventosParticipa,
+                        Set<TemaPreferencia> temasPreferidos, boolean estadoDoUsuario)
     {
         this.nomePessoa = nomePessoa;
         this.email = email;
         this.senha = senha;
         this.localizacaoUsuario = localizacaoUsuario;
         this.dataNascimento = dataNascimento;
-        this.fotoUsuario = fotoUsuario;
+        this.fotoUsuario = new Image(getClass().getResourceAsStream("/images/icone-padrao-usuario.png"));
         this.eventosOrganizados = new ArrayList<EventoModel>();
         this.eventosParticipa = new ArrayList<EventoModel>();
         this.temasPreferidos = temasPreferidos;
+        this.estadoDoUsuario = true; //comeca ativa
     }
 
     /**
@@ -58,8 +63,8 @@ public class UsuarioModel {
     public String getLocalizacaoUsuario() {return localizacaoUsuario;}
     public void setLocalizacaoUsuario(String localizacaoUsuario) {this.localizacaoUsuario = localizacaoUsuario;}
 
-    public String getFotoUsuario() {return fotoUsuario;}
-    public void setFotoUsuario(String fotoUsuario) {this.fotoUsuario = fotoUsuario;}
+    public Image getFotoUsuario() {return fotoUsuario;}
+    public void setFotoUsuario(Image fotoUsuario) {this.fotoUsuario = fotoUsuario;}
 
     public List<EventoModel> getEventosOrganizados() {return eventosOrganizados;}
     public void setEventosOrganizados(List<EventoModel> eventosOrganizados) {this.eventosOrganizados = eventosOrganizados;}
@@ -69,4 +74,37 @@ public class UsuarioModel {
 
     public Set<TemaPreferencia> getTemasPreferidos() {return temasPreferidos;}
     public void setTemasPreferidos(Set<TemaPreferencia> temasPreferidos) {this.temasPreferidos = temasPreferidos;}
+
+    public boolean isEstadoDoUsuario() {return estadoDoUsuario;}
+    public void setEstadoDoUsuario(boolean estadoDoUsuario) {this.estadoDoUsuario = estadoDoUsuario;}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UsuarioModel that = (UsuarioModel) o;
+        return idUsuario == that.idUsuario;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idUsuario);
+    }
+
+    @Override
+    public String toString() {
+        return "UsuarioModel{" +
+                "idUsuario=" + idUsuario +
+                ", nomePessoa='" + nomePessoa + '\'' +
+                ", email='" + email + '\'' +
+                ", senha='" + senha + '\'' +
+                ", localizacaoUsuario='" + localizacaoUsuario + '\'' +
+                ", dataNascimento=" + dataNascimento +
+                ", fotoUsuario=" + fotoUsuario +
+                ", eventosParticipa=" + eventosParticipa +
+                ", eventosOrganizados=" + eventosOrganizados +
+                ", temasPreferidos=" + temasPreferidos +
+                ", estadoDoUsuario=" + estadoDoUsuario +
+                '}';
+    }
 }
