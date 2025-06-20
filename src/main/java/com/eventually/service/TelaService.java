@@ -6,8 +6,8 @@ import javafx.stage.Stage;
 /** Classe utilizada para obter dimensões da tela e aplicar comportamentos relacionados ao Stage
  * quando instaciada, nela são fornecidos métodos para medir largura e altura visível da tela maximizada
  * e restaurada.
- * @author Gabriella Tavares Costa Corrêa
- * @version 1.0
+ * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
+ * @version 1.01
  * @since 2025-05-16
  */
 public class TelaService {
@@ -33,7 +33,7 @@ public class TelaService {
     }
 
     /**
-     * Aplica um comportamento ao Stage para que o restaurar (sair do modo maximizado),
+     * Aplica um comportamento ao Stage para que o restaurar (processarSaida do modo maximizado),
      * seja redimensionado automaticamente para os valores informados.
      *
      * @param stage o palco a ser monitorado
