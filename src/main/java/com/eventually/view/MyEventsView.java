@@ -1,19 +1,20 @@
 package com.eventually.view;
 
 import com.eventually.controller.MyEventsController;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,14 +32,16 @@ public class MyEventsView extends BorderPane {
     private Button btnProgramacao;
     private Button btnNovoEvento;
     private Button btnSair;
+    private ToggleButton btnEventosCriados;
+    private ToggleButton btnEventosFinalizados;
 
-    private Circle avatar;
+    private ImageView avatarView;
     private ToggleGroup grupoDatas;
-    private List<ToggleButton> btnsData;
     private VBox listaEventos;
+    private HBox seletorDataContainer;
 
     private Label lbNomeUsuario;
-    private LocalDate dataSelecionada;
+    private Label lbEmailUsuario;
 
     private MyEventsController myEventsController;
 
@@ -47,6 +50,11 @@ public class MyEventsView extends BorderPane {
      */
     public MyEventsView() {
         setupUI();
+        try {
+            this.getStylesheets().add(getClass().getResource("/styles/my-events-view.css").toExternalForm());
+        } catch (Exception e) {
+            System.err.println("Não foi possível carregar o arquivo CSS: my-events-view.css");
+        }
     }
 
     public void setMyEventsViewController(MyEventsController myEventsController) {this.myEventsController = myEventsController;}
@@ -58,8 +66,7 @@ public class MyEventsView extends BorderPane {
      * A disposição dos componentes é gerenciada pelo {@code BorderPane}.
      */
     private void setupUI() {
-        btnsData = new ArrayList<>();
-        dataSelecionada = LocalDate.now();
+        this.grupoDatas = new ToggleGroup();
 
         VBox barraLateral = criarBarraLateral();
         HBox barraSuperior = criarBarraSuperior();
@@ -93,6 +100,7 @@ public class MyEventsView extends BorderPane {
         btnMeusEventos.getStyleClass().add("menu-button");
         btnMeusEventos.setMaxWidth(Double.MAX_VALUE);
         btnMeusEventos.setPadding(new Insets(0,0,15,0));
+        btnMeusEventos.requestFocus();
 
         btnProgramacao = new Button("Programação");
         btnProgramacao.getStyleClass().add("menu-button");
@@ -147,32 +155,58 @@ public class MyEventsView extends BorderPane {
      */
     private HBox criarControlesSubCabecalho() {
         HBox subCabecalho = new HBox(15);
-        subCabecalho.setPadding(new Insets(10, 20, 10, 20));
+        subCabecalho.setPadding(new Insets(10, 40, 10, 40));
         subCabecalho.setAlignment(Pos.CENTER_LEFT);
         subCabecalho.getStyleClass().add("sub-header-controls");
 
-        btnNovoEvento = new Button("+ Novo Evento");
-        btnNovoEvento.getStyleClass().add("new-event-button");
+        ToggleGroup groupFiltroEventos = new ToggleGroup();
 
-        lbNomeUsuario = new Label("Usuário");
+        btnEventosCriados = new ToggleButton("Eventos criados");
+        btnEventosCriados.setToggleGroup(groupFiltroEventos);
+        btnEventosCriados.getStyleClass().add("filter-button");
+        btnEventosCriados.setSelected(true);
+
+        btnEventosFinalizados = new ToggleButton("Eventos Finalizados");
+        btnEventosFinalizados.setToggleGroup(groupFiltroEventos);
+        btnEventosFinalizados.getStyleClass().add("filter-button");
+
+        HBox filtroBox = new HBox(10, btnEventosCriados, btnEventosFinalizados);
+        filtroBox.setAlignment(Pos.CENTER_LEFT);
+
+        lbNomeUsuario = new Label();
         lbNomeUsuario.getStyleClass().add("user-display-label");
 
-        avatar = new Circle(18);
-        avatar.getStyleClass().add("avatar-circle");
-        avatar.setFill(Color.LIGHTGRAY);
+        lbEmailUsuario = new Label();
+        lbEmailUsuario.getStyleClass().add("user-email-label");
 
-        HBox userDisplayBox = new HBox(8, lbNomeUsuario, avatar);
+        VBox userInfoText = new VBox(-2);
+        userInfoText.setAlignment(Pos.CENTER_LEFT);
+        userInfoText.getChildren().addAll(lbNomeUsuario, lbEmailUsuario);
+
+        try {
+            Image avatarImage = new Image(getClass().getResourceAsStream("/images/icone-padrao-usuario.png"));
+            avatarView = new ImageView(avatarImage);
+        } catch (Exception e) {
+            System.err.println("Imagem de avatar padrão não encontrada, usando placeholder.");
+            avatarView = new ImageView();
+        }
+        avatarView.setFitWidth(40);
+        avatarView.setFitHeight(40);
+        avatarView.setPreserveRatio(true);
+        Circle clip = new Circle(20, 20, 20);
+        avatarView.setClip(clip);
+
+        HBox userDisplayBox = new HBox(10, userInfoText, avatarView);
         userDisplayBox.setAlignment(Pos.CENTER);
         userDisplayBox.getStyleClass().add("user-display-box");
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        subCabecalho.getChildren().addAll(btnNovoEvento, spacer, userDisplayBox);
+        subCabecalho.getChildren().addAll(filtroBox, spacer, userDisplayBox);
 
         return subCabecalho;
     }
-
 
     /** Este método cria a classe do container que representa a lista de eventos
      * da interface gráfica. Essa lista será preenchida com eventos correspondentes
@@ -181,30 +215,82 @@ public class MyEventsView extends BorderPane {
      */
     private VBox criarListaEventos() {
         listaEventos = new VBox(15);
-        listaEventos.setPadding(new Insets(20));
+        listaEventos.setPadding(new Insets(20, 40, 20, 40));
         listaEventos.getStyleClass().add("event-list-container");
-
-        carregarEventosPorData(dataSelecionada);
         return listaEventos;
+    }
+
+    private HBox criarSeletorDeDatas() {
+        seletorDataContainer = new HBox(10);
+        seletorDataContainer.setPadding(new Insets(10, 40, 10, 40));
+        seletorDataContainer.setAlignment(Pos.CENTER);
+        seletorDataContainer.getStyleClass().add("date-picker-bar");
+        return seletorDataContainer;
     }
 
     /** Esta classe cria um container que exibe a lista de eventos para o dia do mês e ano específicos, ao selecionar
      * outros dias da semana, é limpa a mensagem e exibida outra para o dia especifico.
      *
-     * @param date é a data do dia de hoje no padrão java e dentro da classe é refatorado para ser
-     *  exibida em formato EEE dd MMM yy
+     * @param eventosDoDia é a lista de eventos a ser exibida
      */
-    private void carregarEventosPorData(LocalDate date) {
+    public void carregarEventos(List<MyEventsController.Evento> eventosDoDia, EventHandler<ActionEvent> onEditHandler) {
+        limparListaDeEventos();
+        if (eventosDoDia == null || eventosDoDia.isEmpty()) {
+            Label placeholder = new Label("Nenhum evento encontrado.");
+            placeholder.getStyleClass().add("placeholder-label");
+            listaEventos.getChildren().add(placeholder);
+        } else {
+            for (MyEventsController.Evento evento : eventosDoDia) {
+                adicionarEvento(evento, onEditHandler);
+            }
+        }
+    }
+
+    private void adicionarEvento(MyEventsController.Evento evento, EventHandler<ActionEvent> onEditHandler) {
+        HBox cardContainer = new HBox(15);
+        cardContainer.setAlignment(Pos.CENTER);
+
+        VBox infoPrincipal = new VBox(5);
+        Label titulo = new Label(evento.titulo());
+        titulo.getStyleClass().add("event-card-title");
+        Label local = new Label(evento.local());
+        local.getStyleClass().add("event-card-subtitle");
+        infoPrincipal.getChildren().addAll(titulo, local);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        VBox infoData = new VBox(5);
+        infoData.setAlignment(Pos.CENTER_RIGHT);
+
+        DateTimeFormatter agendadoFormatter = DateTimeFormatter.ofPattern("'AGENDADO PARA' EEE dd,", new Locale("pt", "BR"));
+        DateTimeFormatter dataFormatter = DateTimeFormatter.ofPattern("MMM uuuu", new Locale("pt", "BR"));
+
+        Label agendado = new Label(evento.data().format(agendadoFormatter).toUpperCase());
+        Label data = new Label(evento.data().format(dataFormatter).toUpperCase());
+        Label hora = new Label(evento.hora());
+
+        agendado.getStyleClass().add("event-card-date-text");
+        data.getStyleClass().add("event-card-date-text");
+        hora.getStyleClass().add("event-card-date-text");
+        infoData.getChildren().addAll(agendado, data, hora);
+
+        HBox eventCard = new HBox(15, infoPrincipal, spacer, infoData);
+        eventCard.getStyleClass().add("event-card");
+        eventCard.setPadding(new Insets(20));
+        HBox.setHgrow(eventCard, Priority.ALWAYS);
+
+        Button btnEditarEvento = new Button("Editar Evento");
+        btnEditarEvento.getStyleClass().add("edit-event-button");
+        btnEditarEvento.setUserData(evento.id());
+        btnEditarEvento.setOnAction(onEditHandler);
+
+        cardContainer.getChildren().addAll(eventCard, btnEditarEvento);
+        listaEventos.getChildren().add(cardContainer);
+    }
+
+    public void limparListaDeEventos() {
         listaEventos.getChildren().clear();
-
-        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEE dd,", new Locale("pt", "BR")).withLocale(new Locale("pt", "BR"));
-        DateTimeFormatter monthYearFormatter = DateTimeFormatter.ofPattern("MMM yy", new Locale("pt", "BR")).withLocale(new Locale("pt", "BR"));
-
-        String dayStr = date.format(dayFormatter).toUpperCase();
-        String monthYearStr = date.format(monthYearFormatter).toUpperCase();
-
-        Label placeholder = new Label("Eventos para " + dayStr + " " + monthYearStr + ".");
-        listaEventos.getChildren().add(placeholder);
     }
 
     /**
@@ -214,12 +300,22 @@ public class MyEventsView extends BorderPane {
      */
     private VBox criarContainerCentral() {
         HBox controlesSubCabecalho = criarControlesSubCabecalho();
-        criarListaEventos();
+        HBox seletorDeDatas = criarSeletorDeDatas();
+        VBox listaEventosVBox = criarListaEventos();
+
+        btnNovoEvento = new Button("+ Criar novo evento");
+        btnNovoEvento.getStyleClass().add("new-event-button-bottom");
+
+        StackPane stackPane = new StackPane(listaEventosVBox);
+        stackPane.getChildren().add(btnNovoEvento);
+        StackPane.setAlignment(btnNovoEvento, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(btnNovoEvento, new Insets(0, 40, 20, 0));
+
+        VBox.setVgrow(stackPane, Priority.ALWAYS);
 
         VBox centerContent = new VBox(0);
         centerContent.getStyleClass().add("center-content-area");
-        centerContent.getChildren().addAll(controlesSubCabecalho, listaEventos);
-        VBox.setVgrow(listaEventos, Priority.ALWAYS);
+        centerContent.getChildren().addAll(controlesSubCabecalho, seletorDeDatas, stackPane);
 
         return centerContent;
     }
@@ -230,9 +326,30 @@ public class MyEventsView extends BorderPane {
     public Button getBtnProgramacao() {return btnProgramacao;}
     public Button getBtnNovoEvento() {return btnNovoEvento;}
     public Button getBtnSair() {return btnSair;}
+
     public Label getLbNomeUsuario() {return lbNomeUsuario;}
-    public Circle getAvatar() {return avatar;}
+    public Label getLbEmailUsuario() { return lbEmailUsuario; }
+
+    public HBox getSeletorDataContainer() { return seletorDataContainer; }
     public ToggleGroup getGrupoDatas() {return grupoDatas;}
-    public List<ToggleButton> getBtnsData() {return btnsData;}
-    public VBox getListaEventos() {return listaEventos;}
+    public ToggleButton getBtnEventosCriados() {return btnEventosCriados;}
+    public ToggleButton getBtnEventosFinalizados() {return btnEventosFinalizados;}
+
+    public void setNomeUsuario(String nome) {
+        if (nome != null) {
+            this.lbNomeUsuario.setText(nome);
+        }
+    }
+
+    public void setEmailUsuario(String email) {
+        if (email != null) {
+            this.lbEmailUsuario.setText(email);
+        }
+    }
+
+    public void setAvatar(Image avatar) {
+        if (avatar != null) {
+            this.avatarView.setImage(avatar);
+        }
+    }
 }

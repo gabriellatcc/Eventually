@@ -1,0 +1,175 @@
+.root {
+    -fx-font-family: "Poppins", "Arial", sans-serif;
+    -fx-background-color: white;
+}
+
+.sidebar {
+    -fx-background-color: #7A2074;
+}
+
+.menu-button {
+    -fx-background-color: #C93ACD;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 12px 20px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 2);
+}
+
+.menu-button:hover {
+    -fx-background-color: #D54BD9;
+}
+
+.menu-button:focused {
+     -fx-background-color: #E05CE4;
+     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0, 0, 3);
+}
+
+.topbar {
+    -fx-background-color: #5F115A;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 3);
+}
+
+.logo {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.center-content-area {
+    -fx-background-color: white;
+    -fx-alignment: center;
+}
+
+.sub-header-controls {
+    -fx-background-color: white;
+}
+
+.filter-button {
+    -fx-background-color: #f0f0f0;
+    -fx-text-fill: #333;
+    -fx-font-size: 14px;
+    -fx-padding: 12px 25px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.filter-button:hover {
+    -fx-background-color: #e0e0e0;
+}
+
+.filter-button:selected {
+    -fx-background-color: #8E2392;
+    -fx-text-fill: white;
+}
+
+.user-display-box {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 25px;
+    -fx-padding: 5px 5px 5px 15px;
+}
+
+.user-display-label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.user-email-label {
+    -fx-text-fill: #555555;
+    -fx-font-size: 12px;
+}
+
+.date-picker-bar {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 25px;
+    -fx-padding: 5px;
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+    -fx-max-width: 600px;
+    -fx-min-width: 600px;
+}
+
+.date-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #333333;
+    -fx-font-size: 12px;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 15px;
+    -fx-alignment: center;
+    -fx-content-display: center;
+    -fx-text-alignment: center;
+    -fx-min-width: 70px;
+}
+
+.date-button:selected {
+    -fx-background-color: #8E2392;
+    -fx-text-fill: white;
+}
+
+.event-list-container {
+    -fx-background-color: white;
+}
+
+.event-card {
+    -fx-background-color: #8E2392;
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 3);
+}
+
+.event-card-title {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.event-card-subtitle {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-opacity: 0.9;
+}
+
+.event-card-date-text {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.placeholder-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #888;
+    -fx-padding: 40;
+    -fx-alignment: center;
+}
+
+.edit-event-button {
+    -fx-background-color: #C93ACD;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 12px 25px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.edit-event-button:hover {
+     -fx-background-color: #D54BD9;
+}
+
+.new-event-button-bottom {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 15px 25px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 3);
+    -fx-translate-y: -20px;
+}
+
+.new-event-button-bottom:hover {
+    -fx-background-color: #388E3C;
+}
