@@ -77,7 +77,7 @@ public class EsqueceuSenhaController {
     private EventHandler<ActionEvent> fecharModal() {
         sistemaDeLogger.info("Método fecharModal() chamado.");
         try {
-            sistemaDeLogger.info("Botão de Rechar clicado!");
+            sistemaDeLogger.info("Botão de Fechar clicado!");
             esqueceuSenhaModal.close();
             return null;
         } catch (Exception e) {

@@ -63,7 +63,7 @@ public class SettingsController {
             settingsView.getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
             settingsView.getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
 
-            settingsView.getBtnSair().setOnAction(e -> navegacaoService.abrirModalEscerrrarSessão());
+            settingsView.getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
             settingsView.getBtnDeleteAccount().setOnAction(e -> processarDeletarConta());
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores de configurações: "+e.getMessage());
