@@ -61,7 +61,7 @@ public class UserScheduleController {
             userScheduleView.getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
             userScheduleView.getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
 
-            userScheduleView.getBtnSair().setOnAction(e -> navegacaoService.abrirModalEscerrrarSessão());
+            userScheduleView.getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
             userScheduleView.getBtnNovoEvento().setOnAction(e -> navegacaoService.processarCriacaoEvento());
 
             userScheduleView.getGrupoDatas().selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
