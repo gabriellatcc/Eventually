@@ -5,6 +5,7 @@ import com.eventually.service.AlertaService;
 import com.eventually.service.NavegacaoService;
 import com.eventually.service.UsuarioSessaoService;
 import com.eventually.view.*;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +27,6 @@ public class LoginController {
 
     private UsuarioSessaoService usuarioSessaoService;
     private NavegacaoService navegacaoService;
-
-    private AlertaService alertaService =new AlertaService();
 
     private static final Logger sistemaDeLog = LoggerFactory.getLogger(LoginController.class);
 
@@ -122,9 +121,9 @@ public class LoginController {
 
             } else {
                 sistemaDeLog.info("Email não cadastrado ou senha incorretos.");
-                //falta: implementar a chamada de um método que instancia um elemento visual de "Senha incorreta ou email não cadastrado".
-                //PROVISORIO:
-                alertaService.alertarWarn("Falha no Login", "Email não cadastrado ou senha incorretos.");
+                AlertModal alertModal = new AlertModal();
+                alertModal.show(primaryStage, "Erro de Login", "Senha incorreta ou email não cadastrado.");
+
             }
         } catch (Exception e) {
             sistemaDeLog.error("Erro ao configurar manipulador de login: "+e.getMessage());
@@ -139,7 +138,6 @@ public class LoginController {
     private void abrirModalEsqueceuSenha() {
         sistemaDeLog.info("Método abrirModalEsqueceuSenha() chamado.");
         try{
-            //verificar funcionamento
             EsqueceuSenhaModal esqueceuSenhaModal = new EsqueceuSenhaModal();
             esqueceuSenhaModal.showForgotPasswordModal(primaryStage);
             EsqueceuSenhaController fpController = new EsqueceuSenhaController(esqueceuSenhaModal);
