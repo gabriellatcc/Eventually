@@ -31,7 +31,7 @@ public class ConfirmaMudancaController {
     private UsuarioCadastroService usuarioCadastroService;
     private UsuarioSessaoService usuarioSessaoService;
 
-    private String emailRecebido, senhaAtual, senhaNova, confirmacaoSenha;
+    private String emailRecebido;
 
     private AlertaService alertaService =new AlertaService();
 
@@ -50,6 +50,7 @@ public class ConfirmaMudancaController {
 
         this.emailRecebido = email;
         this.confirmaMudancaModal = confirmaMudancaModal;
+        this.confirmaMudancaModal.setChangePasswordController(this);
         configManipuladoresEventoConfirmacaoMudanca();
     }
 
@@ -61,10 +62,6 @@ public class ConfirmaMudancaController {
     private void configManipuladoresEventoConfirmacaoMudanca() {
         sistemaDeLogger.info("Método configManipuladoresEventoConfirmacaoMudanca() chamado.");
         try {
-            senhaAtual = confirmaMudancaModal.getFldSenhaAtual().getText();
-            senhaNova = confirmaMudancaModal.getFldNovaSenha().getText();
-            confirmacaoSenha = confirmaMudancaModal.getFldConfirmarNovaSenha().getText();
-
             confirmaMudancaModal.getBtnSalvarSenha().setOnAction(e -> processarMudancaDeSenha());
             confirmaMudancaModal.getBtnFechar().setOnAction(processarFecharModal());
         } catch (Exception e) {
@@ -77,26 +74,53 @@ public class ConfirmaMudancaController {
      * Manipula a solicitação de alteração de senha vinda da confirmaMudancaModal e, em caso de falha,
      * uma mensagem de erro é exibida no console.
      */
-    private void processarMudancaDeSenha() {
+    public void processarMudancaDeSenha() {
         sistemaDeLogger.info("Método processarMudancaDeSenha() chamado.");
         try {
             sistemaDeLogger.info("Botão Salvar clicado!");
 
+            String senhaAtual = confirmaMudancaModal.getFldSenhaAtual().getText();
+            String senhaNova = confirmaMudancaModal.getFldNovaSenha().getText();
+            String confirmacaoSenha = confirmaMudancaModal.getFldConfirmarNovaSenha().getText();
+
             if (senhaAtual.isEmpty() || senhaNova.isEmpty() || confirmacaoSenha.isEmpty()) {
                 alertaService.alertarWarn("Mudança inválida","Todos os campos de senha devem ser preenchidos corretamente.");
                 return;
+            }
+            if (!conferirSenhaAtual(senhaAtual)) {
+                return;
+            }
+            if (!conferirConfirmacaoSenha(senhaNova, confirmacaoSenha)) {
+                alertaService.alertarWarn("Falha na mudança", "A nova senha e a confirmação não coincidem.");
+                return;
+            }
+
+            Map<String, Boolean> regras = usuarioCadastroService.isRegraSenhaCumprida(senhaNova);
+            if (regras == null || !regras.values().stream().allMatch(b -> b)) {
+                alertaService.alertarWarn("Edição Inválida", "A nova senha não cumpre todos os requisitos.");
+                return;
+            }
+
+            int idUsuario = usuarioSessaoService.procurarID(emailRecebido);
+            Optional<UsuarioModel> usuarioOptional = usuarioCadastroService.buscarUsuarioPorId(idUsuario);
+            if (usuarioOptional.isPresent()) {
+                UsuarioModel usuario = usuarioOptional.get();
+                usuario.setSenha(senhaNova);
+                alertaService.alertarInfo("Senha alterada com sucesso!");
+                confirmaMudancaModal.close();
             } else {
-                int idUsuario = usuarioSessaoService.procurarID(emailRecebido);
-                Optional<UsuarioModel> usuarioOptional = usuarioCadastroService.buscarUsuarioPorId(idUsuario);
+                usuarioOptional = usuarioCadastroService.buscarUsuarioPorId(idUsuario);
                 if (usuarioOptional.isPresent()) {
                     UsuarioModel usuario = usuarioOptional.get();
                     usuario.setSenha(confirmacaoSenha);
                     UsuarioEdicaoDto atributosEditados;
+
                 } else {
                     alertaService.alertarWarn("Edição Inválida", "Senha não cumpre os requisitos.");
                     return;
                 }
             }
+
         } catch (Exception e) {
             sistemaDeLogger.error("Algum erro ocorreu na mudança de senha: " + e.getMessage());
             e.printStackTrace();
@@ -108,15 +132,15 @@ public class ConfirmaMudancaController {
      * @return nulo para que o modal finalize sua exibição e operação.
      */
     private EventHandler<ActionEvent> processarFecharModal() {
-        sistemaDeLogger.info("Método processarFecharModal() chamado. ");
-        try {
-            sistemaDeLogger.info("Botão Fechar clicado!");
-            confirmaMudancaModal.close();
-            return null;
-        } catch (Exception e) {
-            sistemaDeLogger.error("Erro ao fechar o modal: "+e.getMessage());
-            return null;
-        }
+        return event -> {
+            sistemaDeLogger.info("Método processarFecharModal() chamado. ");
+            try {
+                sistemaDeLogger.info("Botão Fechar clicado!");
+                confirmaMudancaModal.close();
+            } catch (Exception e) {
+                sistemaDeLogger.error("Erro ao fechar o modal: "+e.getMessage());
+            }
+        };
     }
 
     /**
@@ -142,16 +166,25 @@ public class ConfirmaMudancaController {
     }
 
     /**
-     * Este método valida se a nova senha inserida atende às regras do sistema e em caso de falha na validação,
-     * uma mensagem de erro é exibida no console.
+     * Este método valida se a nova senha inserida atende às regras do sistema.
+     * Ele não atualiza a view diretamente, apenas retorna o resultado da validação.
      * @param valorSenhaNova a senha a ser validada.
      * @return um {@code Map} com cada regra e o resultado booleano da validação.
      */
     public Map<String, Boolean> conferirSenhaNova(String valorSenhaNova) {
         sistemaDeLogger.info("Método conferirSenhaNova() chamado.");
         try {
-            //criar elemento visual no modal
-            return usuarioCadastroService.isRegraSenhaCumprida(valorSenhaNova); //vai dizer true ou false para os labels
+            if (valorSenhaNova == null || valorSenhaNova.isEmpty()) {
+                return Map.of(
+                        "hasSixChar", false,
+                        "hasSpecial", false,
+                        "hasDigit", false,
+                        "hasLetter", false
+                );
+            }
+
+            Map<String, Boolean> regrasValidadas = usuarioCadastroService.isRegraSenhaCumprida(valorSenhaNova);
+            return regrasValidadas != null ? regrasValidadas : Collections.emptyMap();
         } catch (RuntimeException e) {
             sistemaDeLogger.error("Erro ao conferir a nova senha: " + e.getMessage());
             e.printStackTrace();
@@ -160,23 +193,13 @@ public class ConfirmaMudancaController {
     }
 
     /**
-     * Este método valida se a nova senha inserida e a confirmação dela coincidem e, em caso de falha,
-     * uma mensagem de erro é exibida no console.
+     * Este método valida se a nova senha inserida e a confirmação dela coincidem.
      * @param valorSenhaNova a nova senha informada.
      * @param valorConfirmaSenha a confirmação da nova senha.
      * @return true se válido, false caso contrário.
      */
     public boolean conferirConfirmacaoSenha(String valorSenhaNova, String valorConfirmaSenha) {
         sistemaDeLogger.info("Método conferirConfirmacaoSenha() chamado.");
-        try {
-            if (senhaNova.equals(valorConfirmaSenha)) {
-                //CRIAR UM ELEMENTO NA INTERFACE PARA INFORMAR QUE OS CAMPOS devem COINCIDIR e piscar verde
-                return true;
-            } else {return false;}
-        } catch (RuntimeException e) {
-            sistemaDeLogger.error("Erro ao conferir se as senhas coincidem: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
+        return valorSenhaNova.equals(valorConfirmaSenha);
     }
 }
