@@ -119,7 +119,7 @@ public class EsqueceuSenhaModal {
         layout.getChildren().addAll(cadeadoView, title, instruction, fldEmail, buttons);
 
         modalScene = new Scene(layout, MODAL_WIDTH, MODAL_HEIGHT, Color.TRANSPARENT);
-        modalScene.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
+        modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
         modalStage.setScene(modalScene);
 
         modalStage.showAndWait();
