@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public class Main extends Application {
     private Stage primaryStage;
     private UsuarioCadastroService usuarioCadastroService;
-    AlertaService alertaService = new AlertaService();
+    private NavegacaoService navegacaoService;
     private static final Logger sistemaDeLogger = LoggerFactory.getLogger(Main.class);
 
     /** PASSIVEL DE ALTERAÇÃO
@@ -39,24 +39,12 @@ public class Main extends Application {
             this.primaryStage = primaryStage;
             this.usuarioCadastroService = UsuarioCadastroService.getInstancia();
             usuarioCadastroService.criarLista();
-
-            LoginView loginView = new LoginView();
-            LoginController loginController = new LoginController(loginView, primaryStage);
-
-            Scene sceneLogin = new Scene(loginView);
-            sceneLogin.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
+            this.navegacaoService = new NavegacaoService(primaryStage);
+            navegacaoService.navegarParaLogin();
 
             primaryStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
-
-            primaryStage.setTitle("Eventually - Login");
-            primaryStage.setScene(sceneLogin);
             primaryStage.setResizable(true);
-            primaryStage.setMaximized(true);
             primaryStage.centerOnScreen();
-
-            TelaService telaService = new TelaService();
-            telaService.aplicarTamanhoRestaurar(primaryStage, 1000, 600);
-
             primaryStage.show();
         }catch (Exception e) {
             sistemaDeLogger.error("O programa não foi iniciado deviado algum erro: "+e.getMessage());
