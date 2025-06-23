@@ -9,6 +9,9 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
@@ -25,6 +28,7 @@ public class HomeController {
 
     private UsuarioSessaoService usuarioSessaoService;
     private NavegacaoService navegacaoService;
+    // private EventoService eventoService; // Futuro serviço de eventos
 
     private String emailRecebido;
 
@@ -41,6 +45,7 @@ public class HomeController {
      */
     public HomeController(String email, HomeView homeView, Stage primaryStage) {
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
+        // this.eventoService = new EventoService();
 
         sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService.");
 
@@ -67,7 +72,7 @@ public class HomeController {
             homeView.getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
             homeView.getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
 
-            homeView.getBtnSair().setOnAction(e -> navegacaoService.abrirModalEscerrrarSessão());
+            homeView.getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
 
             homeView.getBtnCriarEvento().setOnAction(e -> navegacaoService.processarCriacaoEvento());
             homeView.getBtnFiltros().setOnAction(e -> processarFiltros());
@@ -75,6 +80,10 @@ public class HomeController {
             homeView.getLbEmailUsuario().setText(emailRecebido);
             homeView.getLbNomeUsuario().setText(definirNome(emailRecebido));
             homeView.setAvatarImagem(definirImagem(emailRecebido));
+
+            // Carrega os eventos ao iniciar a tela
+            processarCarregamentoEventos();
+
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores da tela de início: "+e.getMessage());
             e.printStackTrace();
@@ -87,12 +96,12 @@ public class HomeController {
      * @return retorna a imagem do usuário relativo ao email cadastrado.
      */
     private Image definirImagem(String email) {
-        sistemaDeLogger.info("Método definirNome() chamado.");
+        sistemaDeLogger.info("Método definirImagem() chamado.");
         try {
             Image imagemUsuario = usuarioSessaoService.procurarImagem(email);
             return imagemUsuario;
         } catch (Exception e) {
-            sistemaDeLogger.error("Erro ao obter nome do usuário."+e.getMessage());
+            sistemaDeLogger.error("Erro ao obter imagem do usuário."+e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -152,11 +161,25 @@ public class HomeController {
     public void processarCarregamentoEventos() {
         sistemaDeLogger.info("Método processarCarregamentoEventos() chamado.");
         try {
-            //PUXAR SERVICO CREATE DO EVENTOS: IF EXIXTEM ELEMENTOS NA LSITA -> PUXAR INFORMACOES E TRANFERIR PARA CARTOES NA TELA, IF NAO EXISTEM, EXIBIR MENSAGEMNA TELA
             sistemaDeLogger.info("Carregando eventos da página inicial");
+            // Lógica para buscar eventos do backend (usando um EventoService, por exemplo)
+            // List<HomeView.Evento> eventos = eventoService.buscarTodosEventos();
+            List<HomeView.Evento> eventos = buscarEventosDeExemplo();
+
+            homeView.setEventos(eventos);
+
         } catch (Exception ex) {
             sistemaDeLogger.error("Erro ao carregar eventos: " + ex.getMessage());
             ex.printStackTrace();
         }
+    }
+
+    /**
+     * Simula a busca de eventos no backend.
+     * @return Uma lista de eventos para exibição.
+     */
+    private List<HomeView.Evento> buscarEventosDeExemplo() {
+        // IMPLEMENTAR: lógica para buscar eventos
+        return new ArrayList<>();
     }
 }

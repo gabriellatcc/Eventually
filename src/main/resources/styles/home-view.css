@@ -1,0 +1,134 @@
+.root {
+    -fx-font-family: "Poppins", "Arial", sans-serif;
+    -fx-background-color: white;
+}
+
+.sidebar {
+    -fx-background-color: #7A2074;
+}
+
+.menu-button {
+    -fx-background-color: #C93ACD;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 12px 20px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 2);
+}
+
+.menu-button:hover {
+    -fx-background-color: #D54BD9;
+}
+
+.menu-button:focused {
+     -fx-background-color: #E05CE4;
+     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0, 0, 3);
+}
+
+.topbar {
+    -fx-background-color: #5F115A;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 3);
+}
+
+.logo {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.center-content-area, .events-scroll-pane, .events-grid {
+    -fx-background-color: white;
+}
+
+.greeting-label {
+    -fx-font-family: "Poppins Bold", "Arial Bold";
+    -fx-font-size: 32px;
+    -fx-text-fill: #5F115A;
+}
+
+.user-display-box {
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 25px;
+    -fx-padding: 5px 5px 5px 15px;
+}
+
+.user-display-label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+}
+
+.filters-area {
+    -fx-border-color: #f0f0f0 transparent transparent transparent;
+    -fx-border-width: 2px;
+}
+
+.filters-button, .create-event-button {
+    -fx-background-color: #8E2392;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 25px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.filters-button:hover, .create-event-button:hover {
+    -fx-background-color: #A329A8;
+}
+
+.filter-description-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #777;
+}
+
+.event-card {
+    -fx-background-color: white;
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 15px;
+}
+
+.event-card-content {
+    -fx-background-color: #e9d1e8;
+    -fx-background-radius: 15 15 0 0;
+}
+
+.event-date-time {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8E2392;
+}
+
+.event-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.event-location {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666;
+}
+
+.event-category {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 10px;
+    -fx-background-radius: 15px;
+    -fx-text-fill: white;
+}
+
+.category-educacional { -fx-background-color: #2196F3; }
+.category-religioso { -fx-background-color: #FFC107; }
+.category-corporativo { -fx-background-color: #333333; }
+.category-social { -fx-background-color: #E91E63; }
+
+.placeholder-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #888;
+    -fx-padding: 40;
+    -fx-alignment: center;
+}
