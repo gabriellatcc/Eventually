@@ -173,9 +173,14 @@ public class NavegacaoService {
      * Neste método é manipulado o clique no botão "Sair", abre um modal que aguarda confirmação para
      * saída da sessão e, em caso de falha na abertura do modal, é exibida uma mensagem no console.
      */
-    public void abrirModalEscerrrarSessão() {
-        //modal de encerrarsessao
-        processarSaida();
+    public void abrirModalEncerrarSessao() {
+        LogoutConfirmModal confirmModal = new LogoutConfirmModal();
+        boolean usuarioConfirmou = confirmModal.showAndWait(primaryStage);
+        if (usuarioConfirmou) {
+            processarSaida();
+        } else {
+            System.out.println("O usuário cancelou o encerramento da sessão.");
+        }
     }
 
     /**

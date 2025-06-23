@@ -1,0 +1,82 @@
+.root-pane-modal {
+    -fx-background-color: white;
+    -fx-font-family: "Poppins", "Arial", sans-serif;
+}
+
+.title-label-modal {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5F115A;
+}
+
+.modal-field {
+    -fx-background-color: #f4f4f4;
+    -fx-background-radius: 12;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1px;
+    -fx-prompt-text-fill: #aaaaaa;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 12px;
+}
+
+.modal-field:focused {
+    -fx-border-color: #8E2392;
+    -fx-border-width: 2px;
+    -fx-background-color: white;
+}
+
+.step-label {
+    -fx-font-size: 14px;
+}
+.step-incomplete {
+    -fx-text-fill: #888888;
+}
+.step-complete {
+    -fx-text-fill: #2E7D32;
+    -fx-font-weight: bold;
+}
+
+.password-rule-title {
+    -fx-font-size: 13px;
+    -fx-text-fill: #555555;
+    -fx-font-weight: bold;
+}
+.password-rule {
+    -fx-font-size: 13px;
+}
+.rule-invalid {
+    -fx-text-fill: #999999;
+}
+.rule-valid {
+    -fx-text-fill: #2E7D32;
+    -fx-font-weight: bold;
+}
+.modal-save-button, .modal-close-button {
+    -fx-pref-height: 40px;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+}
+
+.modal-save-button {
+    -fx-background-color: #8E2392;
+    -fx-pref-width: 160px;
+}
+.modal-save-button:hover {
+    -fx-background-color: #A329A8;
+}
+.modal-save-button:disabled {
+    -fx-background-color: #cccccc;
+    -fx-opacity: 0.7;
+}
+
+.modal-close-button {
+    -fx-background-color: #757575;
+    -fx-pref-width: 120px;
+}
+.modal-close-button:hover {
+    -fx-background-color: #8E8E8E;
+}
