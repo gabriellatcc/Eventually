@@ -78,11 +78,7 @@ public class ConfirmaMudancaModal {
         }
 
         modalScene = new Scene(layout, 550, 650, Color.TRANSPARENT);
-        try {
-            modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
-        } catch (Exception e) {
-            System.err.println("CSS não encontrado para ChangePasswordModal: " + e.getMessage());
-        }
+        modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
 
         modalStage.setScene(modalScene);
         modalStage.showAndWait();

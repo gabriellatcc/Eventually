@@ -90,12 +90,7 @@ public class LogoutConfirmModal {
         rootLayout.getChildren().addAll(title, message, buttonsBox, idLabel);
 
         Scene modalScene = new Scene(rootLayout, MODAL_WIDTH, MODAL_HEIGHT, Color.TRANSPARENT);
-        try {
-            modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
-        } catch (Exception e) {
-            System.err.println("CSS não encontrado para LogoutConfirmModal: " + e.getMessage());
-        }
-
+        modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
         modalStage.setScene(modalScene);
         modalStage.showAndWait();
 

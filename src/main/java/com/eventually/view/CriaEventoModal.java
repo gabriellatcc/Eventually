@@ -26,17 +26,6 @@ import javafx.stage.StageStyle;
 public class CriaEventoModal {
     private Stage modalStage;
     private Scene modalScene;
-    private CriaEventoController eventController;
-
-    static {
-        try {
-            Font.loadFont(CriaEventoModal.class.getResource("/fonts/Poppins-Regular.ttf").toExternalForm(), 10);
-            Font.loadFont(CriaEventoModal.class.getResource("/fonts/Poppins-Bold.ttf").toExternalForm(), 10);
-        } catch (Exception e) {
-            System.err.println("Fonte Poppins não encontrada. Usando fontes padrão.");
-            e.printStackTrace();
-        }
-    }
 
     private TextField fldEventName;
     private TextArea areaDescription;
@@ -52,6 +41,18 @@ public class CriaEventoModal {
     private TextField fldTags, fldHashtags;
     private Button btnSalvar;
     private Button btnSair;
+
+    private CriaEventoController eventController;
+
+    static {
+        try {
+            Font.loadFont(CriaEventoModal.class.getResource("/fonts/Poppins-Regular.ttf").toExternalForm(), 10);
+            Font.loadFont(CriaEventoModal.class.getResource("/fonts/Poppins-Bold.ttf").toExternalForm(), 10);
+        } catch (Exception e) {
+            System.err.println("Fonte Poppins não encontrada. Usando fontes padrão.");
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Construtor padrão da classe.
@@ -76,11 +77,7 @@ public class CriaEventoModal {
         modalStage.initModality(Modality.APPLICATION_MODAL);
         modalStage.initOwner(parentStage);
         modalStage.initStyle(StageStyle.TRANSPARENT);
-        try {
-            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
-        } catch (Exception e) {
-            System.err.println("Ícone do app não encontrado para CriaEventoModal: " + e.getMessage());
-        }
+        modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
 
         final double MODAL_WIDTH = 1000;
         final double MODAL_HEIGHT = 730;
@@ -138,11 +135,7 @@ public class CriaEventoModal {
         rootLayout.getChildren().addAll(title, columnsContainer, bottomPane);
 
         modalScene = new Scene(rootLayout, MODAL_WIDTH, MODAL_HEIGHT, Color.TRANSPARENT);
-        try {
-            modalScene.getStylesheets().add(getClass().getResource("/styles/create-event-modal.css").toExternalForm());
-        } catch (Exception e) {
-            System.err.println("CSS não encontrado para CriaEventoModal: " + e.getMessage());
-        }
+        modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
         modalStage.setScene(modalScene);
         modalStage.showAndWait();
     }
