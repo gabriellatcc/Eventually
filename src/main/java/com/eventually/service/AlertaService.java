@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * Serviço responsável por exibir mensagens de alerta ao usuário,
  * utilizando os tipos padrão da interface JavaFX.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.01
+ * @version 1.02
  * @since 2025-05-15
  */
 public class AlertaService {
@@ -101,7 +101,7 @@ public class AlertaService {
         alert.setContentText(mensagem);
         alert.showAndWait();
         try {
-            Image icon = new Image(AlertaService.class.getResourceAsStream("/images/info-icone.png"));
+            Image icon = new Image(AlertaService.class.getResourceAsStream("/images/info-icon.png"));
 
             ImageView imageView = new ImageView(icon);
             imageView.setFitWidth(48);

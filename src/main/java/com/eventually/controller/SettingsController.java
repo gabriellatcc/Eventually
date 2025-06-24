@@ -81,7 +81,15 @@ public class SettingsController {
             settingsView.getLbCidadeUsuario().setText(definirCidade(emailRecebido));
             settingsView.getLbDataNascUsuario().setText(definirDataNasc(emailRecebido));
 
+            settingsView.getHlAlterarNome().setOnAction(e -> navegacaoService.abrirModalMudanca(settingsView, emailRecebido, "nome"));
+            settingsView.getHlAlterarEmail().setOnAction(e -> navegacaoService.abrirModalMudanca(settingsView, emailRecebido, "email"));
+            settingsView.getHlAlterarSenha().setOnAction(e -> navegacaoService.abrirModalMudanca(settingsView, emailRecebido, "senha"));
+            settingsView.getHlAlterarCidade().setOnAction(e -> navegacaoService.abrirModalMudanca(settingsView, emailRecebido, "cidade"));
+            settingsView.getHlAlterarDataNasc().setOnAction(e -> navegacaoService.abrirModalMudanca(settingsView, emailRecebido, "data de nascimento"));
 
+
+            //get all check boxes
+        //    settingsView.getHlAlterarPreferencias().setOnAction(e-> confirmarAlteracoes(/"receber valores"/));
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores de configurações: "+e.getMessage());
             e.printStackTrace();

@@ -14,7 +14,7 @@ import java.util.Set;
  * fornecendo acesso a informações como nome, ID, email, senha e outros atributos do {@link UsuarioModel} (por enquanto, em memória).
  * A classe acessa a coleção de usuários diretamente através do {@link UsuarioCadastroService}.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.02
+ * @version 1.03
  * @since 2025-04-22
  */
 public final class UsuarioSessaoService {
@@ -199,6 +199,18 @@ public final class UsuarioSessaoService {
             alertaService.alertarErro("Erro ao procurar nome do usuário.");
             return null;
         }
+    }
+
+    /**
+     * Busca um usuário pelo seu endereço de email.
+     * @param email o email a ser procurado.
+     * @return um Optional contendo o UsuarioModel se encontrado, ou um Optional vazio caso contrário.
+     */
+    public Optional<UsuarioModel> buscarUsuarioPorEmail(String email) {
+        return usuarioCadastroService.getAllUsuarios()
+                .stream()
+                .filter(usuario -> usuario.getEmail().equalsIgnoreCase(email))
+                .findFirst();
     }
 
     /**

@@ -4,16 +4,22 @@ import com.eventually.controller.*;
 import com.eventually.model.UsuarioModel;
 import com.eventually.view.*;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 /** PASSÍVEL DE ALTERÇÕES
  * Serviço responsável por gerenciar a navegação entre as diferentes telas da aplicação, centraliza a lógica de
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.01
+ * @version 1.02
  * @since 2025-06-19
  */
 public class NavegacaoService {
@@ -206,6 +212,39 @@ public class NavegacaoService {
             changeConfirmModal.showCreateEventModal(primaryStage);
         } catch (Exception ex) {
             sistemaDeLogger.error("Erro ao abrir modal para Criar Evento: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    public void abrirModalMudanca(SettingsView settingsView, String email, String valor) {
+        sistemaDeLogger.info("Método abrirModalMudanca() chamado.");
+        try{
+            ConfirmaMudancaModal modal=new ConfirmaMudancaModal();
+            ConfirmaMudancaController modalController= new ConfirmaMudancaController(settingsView,email,valor,modal,primaryStage);
+            modal.setChangePasswordController(modalController);
+            Stage modalStage = new Stage();
+
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(primaryStage);
+
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
+
+            Scene modalScene = new Scene(modal, modalStage.getWidth()/2,  modalStage.getHeight()/2);
+
+            modalStage.setOnShown(event -> {
+                javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+                modalStage.setX((screenBounds.getWidth() - modalStage.getWidth()) / 2);
+                modalStage.setY((screenBounds.getHeight() - modalStage.getHeight()) / 2);
+            });
+
+            modalScene.setFill(Color.TRANSPARENT);
+            modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
+            modalStage.setScene(modalScene);
+
+            modalStage.showAndWait();
+        } catch (Exception ex) {
+            sistemaDeLogger.error("Erro ao abrir modal para mudar informação do usuário: " + ex.getMessage());
             ex.printStackTrace();
         }
     }

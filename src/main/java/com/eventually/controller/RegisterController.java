@@ -1,6 +1,7 @@
 package com.eventually.controller;
 import com.eventually.dto.CadastrarUsuarioDto;
 import com.eventually.dto.PreferenciasUsuarioDto;
+import com.eventually.model.UsuarioModel;
 import com.eventually.service.*;
 import com.eventually.view.RegisterView;
 import javafx.stage.Stage;
@@ -9,12 +10,13 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Classe controladora da tela de registro, é responsável pela comunicação com o backend.
  * Contém métodos como privados para que seu acesso seja somente por esta classe e métodos públicos para
  * validações dinâmicas e visuais na interface.
- * @version 1.02
+ * @version 1.03
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-13
  * @author Gabriella Tavares Costa Corrêa (Documentação, revisão da estrutura e refatoração da parte lógica da classe)

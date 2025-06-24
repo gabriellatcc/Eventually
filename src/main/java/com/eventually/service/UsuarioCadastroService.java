@@ -1,6 +1,5 @@
 package com.eventually.service;
 
-import com.eventually.controller.LoginController;
 import com.eventually.dto.CadastrarUsuarioDto;
 import com.eventually.dto.PreferenciasUsuarioDto;
 import com.eventually.model.TemaPreferencia;
@@ -10,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -20,7 +18,7 @@ import java.util.regex.Pattern;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.01
+ * @version 1.02
  * @since 2025-05-15
  */
 public final class UsuarioCadastroService {
@@ -264,6 +262,7 @@ public final class UsuarioCadastroService {
         sistemaDeLogger.info("Método cadastrarUsuarioSeValido() chamado.");
         try {
             boolean nomeOk = isRegraNomeCumprida(dto.nomePessoa());
+
             boolean emailOk = isRegraEmailCumprida(dto.email());
 
             boolean senhaOk = false;
@@ -276,27 +275,29 @@ public final class UsuarioCadastroService {
             }
 
             boolean dataOk;
-            try {
-                LocalDate dataNascimento = dto.data();
-                dataOk = isRegraDataCumprida(dataNascimento);
-            } catch (DateTimeParseException e) {
-                sistemaDeLogger.error("Erro ao converter data: " + dto.data());
-                alertaService.alertarWarn("Data inválida", "Informe a data no formato correto (dd/MM/yyyy).");
-                dataOk = false;
-            }
 
+            LocalDate dataNascimento = dto.data();
+            dataOk = isRegraDataCumprida(dataNascimento);
             boolean cidadeOk = isRegraCidadeCumprida(dto.localizacaoUsuario());
 
             boolean temasOk = isRegraTemasCumprida(dto.preferencias());
 
-            if (nomeOk && emailOk && cidadeOk && senhaOk && dataOk && temasOk) {
-                criarUsuario(dto);
-                return true;
-            } else {
-                alertaService.alertarWarn("Cadastro inválido", "Preencha corretamente todos os campos.");
-                sistemaDeLogger.info("Falha no cadastro: algum dado não passou na validação.");
+
+            boolean regrasVisuaisOk = nomeOk && emailOk && senhaOk && dataOk && cidadeOk && temasOk;
+
+            if (!regrasVisuaisOk) {
+                sistemaDeLogger.info("Falha no cadastro: dados de entrada não passaram na validação visual.");
                 return false;
             }
+
+            boolean emailJaExiste = validaSeEmailJaExiste(dto.email());
+            if (emailJaExiste) {
+                alertaService.alertarErro("Este e-mail já está cadastrado.");
+                sistemaDeLogger.warn("Tentativa de cadastro com e-mail duplicado: " + dto.email());
+                return false;
+            }
+            criarUsuario(dto);
+            return true;
         }catch (Exception e) {
             sistemaDeLogger.error("Erro ao validar DTO: "+e.getMessage());
             e.printStackTrace();
@@ -304,6 +305,7 @@ public final class UsuarioCadastroService {
             return false;
         }
     }
+
 
     /**
      * Valida as informações recebidas no controller e chama o método do repositório para adicionar a lista e, em caso
@@ -400,5 +402,20 @@ public final class UsuarioCadastroService {
             e.printStackTrace();
             return null;
         }
+    }
+    /**
+     * Valida a regra de negócio que impede e-mails duplicados.
+     * Consulta o banco de dados para verificar a existência do e-mail.
+     * @param email O e-mail a ser consultado.
+     * @return {@code true} se o e-mail JÁ EXISTE no banco, {@code false} caso contrário.
+     */
+    private boolean validaSeEmailJaExiste(String email) {
+        sistemaDeLogger.info("Validando unicidade do e-mail: " + email);
+
+        Optional<UsuarioModel> usuarioOptional = getAllUsuarios()
+                .stream()
+                .filter(usuario -> usuario.getEmail().equalsIgnoreCase(email))
+                .findFirst();
+        return usuarioOptional.isPresent();
     }
 }

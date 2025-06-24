@@ -1,6 +1,7 @@
 package com.eventually.view;
 
 import com.eventually.controller.SettingsController;
+import com.eventually.service.UsuarioAtualizacaoService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -10,6 +11,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -39,6 +42,8 @@ public class SettingsView extends BorderPane {
     private ImageView avatarView;
 
     private final DateTimeFormatter appDateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(SettingsView.class);
 
     /**
      * Construtor da SettingsView.
