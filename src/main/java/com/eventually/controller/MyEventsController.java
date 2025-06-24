@@ -24,7 +24,7 @@ import java.util.Locale;
  * com o backend.
  * Contém métodos privados para que os acesso sejam somente por esta classe.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.00
+ * @version 1.01
  * @since 2025-06-18
  */
 public class MyEventsController {
@@ -71,11 +71,11 @@ public class MyEventsController {
     private void configManipuladoresDeEventoMeusEventos() {
         sistemaDeLogger.info("Método configManipuladoresDeEventoMeusEventos() chamado.");
         try {
-            myEventsView.getBtnMeusEventos().setOnAction(e -> processarNavegacaoMeusEventos());
-            myEventsView.getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
-            myEventsView.getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
-            myEventsView.getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
-            myEventsView.getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
+            myEventsView.getBarraBuilder().getBtnMeusEventos().setOnAction(e -> processarNavegacaoMeusEventos());
+            myEventsView.getBarraBuilder().getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
+            myEventsView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
+            myEventsView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
+            myEventsView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
             myEventsView.getBtnNovoEvento().setOnAction(e -> navegacaoService.processarCriacaoEvento());
 
             myEventsView.getBtnEventosCriados().setOnAction(e -> carregarEventosCriados());

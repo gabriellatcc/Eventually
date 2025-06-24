@@ -13,7 +13,7 @@ import java.util.Optional;
  * Esta classe utiliza a instância única de {@link UsuarioCadastroService} para acessar e manipular os dados
  * dos usuários em memória.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.00
+ * @version 1.01
  * @since 2025-05-18
  */
 public final class UsuarioExclusaoService {
@@ -22,7 +22,7 @@ public final class UsuarioExclusaoService {
 
     private AlertaService alertaService =new AlertaService();
 
-    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(UsuarioExclusaoService.class);
 
     /**
      * Construtor privado que obtém a instância única de UsuarioCadastroService para acessar a lista de usuários e

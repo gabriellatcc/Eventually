@@ -16,7 +16,7 @@ import java.util.List;
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.01
+ * @version 1.02
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -28,13 +28,13 @@ public class HomeController {
 
     private UsuarioSessaoService usuarioSessaoService;
     private NavegacaoService navegacaoService;
-    // private EventoService eventoService; // Futuro serviço de eventos
+    // private EventoService eventoService;
 
     private String emailRecebido;
 
     private AlertaService alertaService =new AlertaService();
 
-    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(HomeController.class);
 
     /**
      * Construtor do {@code HomeController} que obtém a instância única de
@@ -67,12 +67,12 @@ public class HomeController {
     private void configManipuladoresEventoInicio() {
         sistemaDeLogger.info("Método configManipuladoresEventoInicio() chamado.");
         try {
-            homeView.getBtnInicio().setOnAction(e -> processarNavegacaoInicio());
-            homeView.getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
-            homeView.getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
-            homeView.getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
+            homeView.getBarraBuilder().getBtnInicio().setOnAction(e -> processarNavegacaoInicio());
+            homeView.getBarraBuilder().getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
+            homeView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
+            homeView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
 
-            homeView.getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
+            homeView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
 
             homeView.getBtnCriarEvento().setOnAction(e -> navegacaoService.processarCriacaoEvento());
             homeView.getBtnFiltros().setOnAction(e -> processarFiltros());
@@ -112,7 +112,7 @@ public class HomeController {
      * @param email informado no cadastro.
      * @return retorna o nome do usuário relativo ao email cadastrado.
      */
-    public String definirNome(String email) {
+    private String definirNome(String email) {
         sistemaDeLogger.info("Método definirNome() chamado.");
         try {
             String nome = usuarioSessaoService.procurarNome(email);
@@ -162,7 +162,6 @@ public class HomeController {
         sistemaDeLogger.info("Método processarCarregamentoEventos() chamado.");
         try {
             sistemaDeLogger.info("Carregando eventos da página inicial");
-            // Lógica para buscar eventos do backend (usando um EventoService, por exemplo)
             // List<HomeView.Evento> eventos = eventoService.buscarTodosEventos();
             List<HomeView.Evento> eventos = buscarEventosDeExemplo();
 

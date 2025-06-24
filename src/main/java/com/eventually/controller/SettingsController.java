@@ -1,16 +1,20 @@
 package com.eventually.controller;
 
+import com.eventually.model.TemaPreferencia;
 import com.eventually.service.*;
 import com.eventually.view.*;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe controladora da tela de Configurações do usuário, é responsável pela comunicação da tela de de configurações
  * com o backend.
  * Contém todos os métodos como privados para que seu acesso seja somente por esta classe.
- * @version 1.00
+ * @version 1.01
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-22
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
@@ -28,7 +32,7 @@ public class SettingsController {
 
     private AlertaService alertaService =new AlertaService();
 
-    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(RegisterController.class);
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(SettingsController.class);
 
     /**
      * Construtor do {@code SettingsController}, inicializa a view de configurações.
@@ -46,6 +50,7 @@ public class SettingsController {
         this.settingsView.setSettingsController(this);
 
         this.primaryStage = primaryStage;
+        this.navegacaoService = new NavegacaoService(primaryStage);
 
         configManiouladoresEventoConfig();
     }
@@ -57,23 +62,145 @@ public class SettingsController {
     private void configManiouladoresEventoConfig() {
         sistemaDeLogger.info("Método configManiouladoresEventoConfig() chamado.");
         try {
-            settingsView.getBtnConfiguracoes().setOnAction(e -> processarNavegacaoConfiguracoes());
+            settingsView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> processarNavegacaoConfiguracoes());
 
-            settingsView.getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
-            settingsView.getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
-            settingsView.getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
+            settingsView.getBarraBuilder().getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
+            settingsView.getBarraBuilder().getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
+            settingsView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
 
-            settingsView.getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
+            settingsView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
             settingsView.getBtnDeleteAccount().setOnAction(e -> processarDeletarConta());
+
+            definirCheckBox(emailRecebido);
+
+            settingsView.setAvatarImagem(definirImagem(emailRecebido));
+
+            settingsView.getLbNomeUsuario().setText(definirNome(emailRecebido));
+            settingsView.getLbEmailUsuario().setText(emailRecebido);
+            settingsView.getLbSenhaUsuario().setText(definirSenha(emailRecebido));
+            settingsView.getLbCidadeUsuario().setText(definirCidade(emailRecebido));
+            settingsView.getLbDataNascUsuario().setText(definirDataNasc(emailRecebido));
+
+
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores de configurações: "+e.getMessage());
             e.printStackTrace();
         }
     }
 
-    //
-    //metodo publico exibir valores igual o de outros lugares
-    //metodo publico puxar servico de edicao
+    /**
+     * Pega as preferências salvas do usuário e atualiza o estado
+     * dos checkboxes individuais na tela para refletir essas preferências.
+     * @param email o email do usuário para buscar as preferências.
+     */
+    private void definirCheckBox(String email) {
+        Set<TemaPreferencia> temasSalvos = usuarioSessaoService.procurarPreferencias(email);;
+
+        if (temasSalvos == null) {
+            sistemaDeLogger.info("Usuário não possui preferências de tema salvas. Desmarcando todos os checkboxes.");
+            settingsView.getCbCorporativo().setSelected(false);
+            settingsView.getCbEducacional().setSelected(false);
+            settingsView.getCbCultural().setSelected(false);
+            settingsView.getCbEsportivo().setSelected(false);
+            settingsView.getCbBeneficente().setSelected(false);
+            settingsView.getCbReligioso().setSelected(false);
+            settingsView.getCbSocial().setSelected(false);
+            return;
+        }
+
+        settingsView.getCbCorporativo().setSelected(temasSalvos.contains(TemaPreferencia.CORPORATIVO));
+        settingsView.getCbEducacional().setSelected(temasSalvos.contains(TemaPreferencia.EDUCACIONAL));
+        settingsView.getCbCultural().setSelected(temasSalvos.contains(TemaPreferencia.CULTURAL));
+        settingsView.getCbEsportivo().setSelected(temasSalvos.contains(TemaPreferencia.ESPORTIVO));
+        settingsView.getCbBeneficente().setSelected(temasSalvos.contains(TemaPreferencia.BENEFICENTE));
+        settingsView.getCbReligioso().setSelected(temasSalvos.contains(TemaPreferencia.RELIGIOSO));
+        settingsView.getCbSocial().setSelected(temasSalvos.contains(TemaPreferencia.SOCIAL));
+    }
+
+    /**
+     * Este método retorna a imagem de perfil do usuário, se foi recém cadastrado no sistema, terá a imagem padrão.
+     * @param email informado no cadastro.
+     * @return retorna a imagem do usuário relativo ao email cadastrado.
+     */
+    private Image definirImagem(String email) {
+        sistemaDeLogger.info("Método definirImagem() chamado.");
+        try {
+            Image imagemUsuario = usuarioSessaoService.procurarImagem(email);
+            return imagemUsuario;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao obter imagem do usuário: "+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Este método retorna o nome do usuário e, em caso de falha, é exibida uma mensagem de erro no console.
+     * @param email informado no cadastro.
+     * @return retorna o nome do usuário relativo ao email cadastrado.
+     */
+    private String definirNome(String email) {
+        sistemaDeLogger.info("Método definirNome() chamado.");
+        try {
+            String nome = usuarioSessaoService.procurarNome(email);
+            return nome;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao obter nome do usuário: "+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Este método retorna a senha do usuário e, em caso de falha, é exibida uma mensagem de erro no console.
+     * @param email informado no cadastro.
+     * @return retorna a senha do usuário relativo ao email cadastrado.
+     */
+    private String definirSenha(String email) {
+        sistemaDeLogger.info("Método definirSenha() chamado.");
+        try {
+            String senha = usuarioSessaoService.procurarSenha(email);
+            return senha;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao obter senha do usuário: "+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Este método retorna a cidade do usuário e, em caso de falha, é exibida uma mensagem de erro no console.
+     * @param email informado no cadastro.
+     * @return retorna a cidade do usuário relativo ao email cadastrado.
+     */
+    private String definirCidade(String email) {
+        sistemaDeLogger.info("Método definirCidade() chamado.");
+        try {
+            String cidade = usuarioSessaoService.procurarCidade(email);
+            return cidade;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao obter cidade do usuário: "+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Este método retorna a data de nascimento do usuário e, em caso de falha, é exibida uma mensagem de erro no console.
+     * @param email informado no cadastro.
+     * @return retorna a data de nascimento do usuário relativo ao email cadastrado.
+     */
+    private String definirDataNasc(String email) {
+        sistemaDeLogger.info("Método definirDataNasc() chamado.");
+        try {
+            String dataNasc = usuarioSessaoService.procurarDataNasc(email);
+            return dataNasc;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao obter data de nascimento do usuário: "+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * Este método exibe mensagem informando que o usuário já está na tela de configurações e, em caso de falha na exibição

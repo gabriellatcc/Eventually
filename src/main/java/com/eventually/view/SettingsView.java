@@ -3,52 +3,40 @@ package com.eventually.view;
 import com.eventually.controller.SettingsController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-import java.io.File;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Classe para a tela de Configurações.
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
  * @author Yuri Garcia Maia (Criação)
  * @since 22-05-2025
- * @version 1.01
+ * @version 1.02
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, lógica e da estrutura da classe)
  * @since 22-05-2025
  */
 public class SettingsView extends BorderPane {
-
     private SettingsController sController;
-
-    private Button btnInicio;
-    private Button btnMeusEventos;
-    private Button btnConfiguracoes;
-    private Button btnSair;
-    private Button btnProgramacao;
-    private Button btnDeleteAccount;
-
-    private Label lbNomeUsuarioHeader;
-    private Label nameDisplay, emailDisplay, phoneDisplay, passwordDisplay, cityDisplay, dobDisplay;
-    private ImageView profilePhotoView;
-    private Label profilePhotoErrorLabel;
-    private Circle avatarHeader;
+    private BarraBuilder barraBuilder;
 
     private List<CheckBox> themeCheckBoxes = new ArrayList<>();
+
+    private Label lbNomeUsuario, lbEmailUsuario, lbSenhaUsuario, lbCidadeUsuario, lbDataNascUsuario;
+    private Hyperlink HlAlterarPreferencias, hlAlterarNome, hlAlterarEmail, hlAlterarSenha, hlAlterarCidade, hlAlterarDataNasc,hlAlterarFoto;
+    private Button btnDeleteAccount;
+
+    private CheckBox cbCorporativo, cbBeneficente, cbEducacional, cbCultural, cbEsportivo, cbReligioso, cbSocial;
+
+    private ImageView avatarView;
 
     private final DateTimeFormatter appDateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -61,7 +49,7 @@ public class SettingsView extends BorderPane {
 
     /**
      * Define o controller para esta view.
-     * @param sController O controller a ser usado.
+     * @param sController o controller a ser usado.
      */
     public void setSettingsController(SettingsController sController) {
         this.sController = sController;
@@ -71,282 +59,232 @@ public class SettingsView extends BorderPane {
      * Configura a interface gráfica principal da tela de configurações.
      */
     private void setupUI() {
-        VBox barraLateral = criarBarraLateral();
-        HBox barraSuperior = createTopbar();
-        VBox conteudoCentral = createCenterContent();
+        this.barraBuilder = new BarraBuilder();
+        VBox barraLateral = this.barraBuilder.construirBarraLateral();
 
-        HBox subHeader = createSubHeaderControls();
-        VBox mainContentWrapper = new VBox(conteudoCentral);
-        VBox.setVgrow(mainContentWrapper, Priority.ALWAYS);
+        HBox barraSuperior = this.barraBuilder.construirBarraSuperior();
 
-        ScrollPane scrollPane = new ScrollPane(conteudoCentral);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setPadding(new Insets(0));
-        scrollPane.setStyle("-fx-background-color:transparent;");
+        VBox conteudoCentral = criarConteudoCentral();
 
-        VBox centerAreaWithSubHeader = new VBox(subHeader, scrollPane);
-        VBox.setVgrow(scrollPane, Priority.ALWAYS);
+        VBox envoltorioConteudoPrincipal = new VBox(conteudoCentral);
+        VBox.setVgrow(envoltorioConteudoPrincipal, Priority.ALWAYS);
 
         setLeft(barraLateral);
         setTop(barraSuperior);
-        setCenter(centerAreaWithSubHeader);
-    }
-
-    /**
-     * Este método criarBarraLateral() cria uma barra lateral de navegação vertical da interface.
-     * Essa barra aparece na lateral esquerda da tela e contém botões para acessar
-     * diferentes seções do aplicativo:
-     * Página Inicial, Meus eventos Programação, Configurações e saída
-     * @return a barra lateral.
-     */
-    private VBox criarBarraLateral() {
-        VBox barraLateral = new VBox(20);
-        barraLateral.setPadding(new Insets(20));
-        barraLateral.getStyleClass().add("sidebar");
-        barraLateral.setPrefWidth(200);
-        barraLateral.setAlignment(Pos.TOP_CENTER);
-
-        btnInicio = new Button("Página inicial");
-        btnInicio.getStyleClass().add("menu-button");
-        btnInicio.setMaxWidth(Double.MAX_VALUE);
-        btnInicio.setPadding(new Insets(0,0,15,0));
-
-        btnMeusEventos = new Button("Meus eventos");
-        btnMeusEventos.getStyleClass().add("menu-button");
-        btnMeusEventos.setMaxWidth(Double.MAX_VALUE);
-        btnMeusEventos.setPadding(new Insets(0,0,15,0));
-
-        btnProgramacao = new Button("Programação");
-        btnProgramacao.getStyleClass().add("menu-button");
-        btnProgramacao.setMaxWidth(Double.MAX_VALUE);
-        btnProgramacao.setPadding(new Insets(0,0,15,0));
-
-        VBox parteSuperior = new VBox(15, btnInicio, btnMeusEventos, btnProgramacao);
-        parteSuperior.setPadding(new Insets(20,15,15,15));
-
-        Region espacador = new Region();
-        VBox.setVgrow(espacador, Priority.ALWAYS);
-
-        btnConfiguracoes = new Button("Configurações");
-        btnConfiguracoes.getStyleClass().add("menu-button");
-        btnConfiguracoes.setMaxWidth(Double.MAX_VALUE);
-        btnConfiguracoes.setPadding(new Insets(0,0,15,0));
-
-        btnSair = new Button("Sair");
-        btnSair.getStyleClass().add("menu-button");
-        btnSair.setMaxWidth(Double.MAX_VALUE);
-        btnSair.setPadding(new Insets(0,0,15,0));
-
-        VBox parteInferior = new VBox(15, btnConfiguracoes, btnSair);
-        parteInferior.setPadding(new Insets(0,15,40,15));
-
-        barraLateral.getChildren().addAll(parteSuperior, espacador, parteInferior);
-        barraLateral.setPadding(new Insets(0));
-        return barraLateral;
-    }
-
-    /**
-     * Este método cria a barra superior com o logo.
-     * @return A HBox da barra superior.
-     */
-    private HBox createTopbar() {
-        HBox topbar = new HBox();
-        topbar.setPadding(new Insets(20));
-        topbar.setAlignment(Pos.CENTER);
-        topbar.getStyleClass().add("topbar");
-        Label logo = new Label("Eventually");
-        logo.getStyleClass().add("logo");
-        topbar.getChildren().add(logo);
-        return topbar;
-    }
-
-    /**
-     * Este método cria o sub-cabeçalho com controles de navegação e display do usuário.
-     * @return A HBox do sub-cabeçalho.
-     */
-    private HBox createSubHeaderControls() {
-        HBox subHeader = new HBox(15);
-        subHeader.setPadding(new Insets(10, 20, 10, 20));
-        subHeader.setAlignment(Pos.CENTER_LEFT);
-        subHeader.getStyleClass().add("sub-header-controls");
-
-        lbNomeUsuarioHeader = new Label("Usuário Exemplo");
-        lbNomeUsuarioHeader.getStyleClass().add("user-display-label");
-
-        avatarHeader = new Circle(18);
-        avatarHeader.getStyleClass().add("avatar-circle");
-        avatarHeader.setFill(Color.LIGHTGRAY);
-
-        HBox userDisplayBox = new HBox(8, lbNomeUsuarioHeader, avatarHeader);
-        userDisplayBox.setAlignment(Pos.CENTER);
-        userDisplayBox.getStyleClass().add("user-display-box");
-
-        btnProgramacao.getStyleClass().add("top-button");
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        subHeader.getChildren().addAll(spacer, userDisplayBox);
-        return subHeader;
+        setCenter(conteudoCentral);
     }
 
     /**
      * Este método cria o container central da tela de configurações.
-     * @return A VBox com o conteúdo de configurações.
+     * @return a VBox com o conteúdo de configurações.
      */
-    private VBox createCenterContent() {
-        VBox centerContent = new VBox(30);
-        centerContent.setPadding(new Insets(20));
-        centerContent.getStyleClass().add("center-content-area");
-        centerContent.setAlignment(Pos.TOP_CENTER);
+    private VBox criarConteudoCentral() {
+        VBox conteudoCentral = new VBox(10);
+        conteudoCentral.setPadding(new Insets(15));
+        conteudoCentral.getStyleClass().add("center-content-area");
+        conteudoCentral.setAlignment(Pos.TOP_CENTER);
 
-        Label title = new Label("Configurações");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 28));
-        title.getStyleClass().add("settings-title");
+        Label lbTitulo1 = new Label("Configurações");
+        lbTitulo1.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        lbTitulo1.getStyleClass().add("settings-titulo1");
+        lbTitulo1.setBorder(new Border(new BorderStroke(Color.PINK,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        VBox contentPrefsSection = createContentPreferencesSection();
-        VBox userPrefsSection = createUserPreferencesSection();
+        VBox vbSessaoPreferenciasConteudo = criarConteudoSessaoPreferencias();
+        VBox vbSessaoPreferenciasUsuario = criarSessaoPreferenciasUsuario();
 
         btnDeleteAccount = new Button("Excluir conta");
         btnDeleteAccount.getStyleClass().add("delete-account-button");
         btnDeleteAccount.setStyle("-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-font-weight: bold;");
         btnDeleteAccount.setPrefWidth(150);
 
-        HBox deleteButtonContainer = new HBox(btnDeleteAccount);
-        deleteButtonContainer.setAlignment(Pos.CENTER_RIGHT);
-        deleteButtonContainer.setPadding(new Insets(20,0,0,0));
+        HBox hbBtnExclusao = new HBox(btnDeleteAccount);
+        hbBtnExclusao.setAlignment(Pos.CENTER_RIGHT);
+        hbBtnExclusao.setPadding(new Insets(20,0,0,0));
+        hbBtnExclusao.setBorder(new Border(new BorderStroke(Color.BLUEVIOLET,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        centerContent.getChildren().addAll(title, contentPrefsSection, userPrefsSection, deleteButtonContainer);
-        return centerContent;
+        conteudoCentral.getChildren().addAll(lbTitulo1, vbSessaoPreferenciasConteudo, vbSessaoPreferenciasUsuario, hbBtnExclusao);
+        conteudoCentral.setBorder(new Border(new BorderStroke(Color.ORANGE,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        return conteudoCentral;
     }
 
     /**
      * Este método cria a seção de preferências de conteúdo.
-     * @return A VBox da seção de preferências de conteúdo.
+     * @return a VBox da seção de preferências de conteúdo.
      */
-    private VBox createContentPreferencesSection() {
-        VBox section = new VBox(15);
-        section.setPadding(new Insets(10));
+    private VBox criarConteudoSessaoPreferencias() {
+        VBox vbSessao = new VBox(15);
+        vbSessao.setPadding(new Insets(10));
 
         Label title = new Label("Preferências de conteúdo");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        HlAlterarPreferencias = new Hyperlink("(Alterar)");
+        HBox hbTitulo = new HBox();
+        hbTitulo.setAlignment(Pos.BASELINE_LEFT);
+        Region espacador = new Region();
+        HBox.setHgrow(espacador, Priority.ALWAYS);
+        hbTitulo.getChildren().addAll(title, espacador, HlAlterarPreferencias);
+        hbTitulo.setBorder(new Border(new BorderStroke(Color.BLACK,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        Label description = new Label("(Remover eventos visualizados na página inicial - descrição exemplo)");
+
+        Label description = new Label("(Remover eventos visualizados na página inicial)");
         description.setFont(Font.font("Arial", 12));
         description.setTextFill(Color.GRAY);
 
-        // Cria os dois grupos (colunas)
         VBox leftColumn = new VBox(10);
+        leftColumn.setBorder(new Border(new BorderStroke(Color.GREEN,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         VBox rightColumn = new VBox(10);
+        rightColumn.setBorder(new Border(new BorderStroke(Color.GREENYELLOW,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        // Dados das categorias
-        String[] leftNames = {"Corporativos", "Educacionais", "Culturais", "Esportivos"};
-        String[] leftDescriptions = {
-                "(palestras, workshops, feiras de negócios)",
-                "(palestras, seminários, cursos)",
-                "(shows, exposições, festivais)",
-                "(competições, maratonas, torneios)"
-        };
+        cbCorporativo = new CheckBox("Corporativos");
+        Label descCorporativo = new Label("(palestras, workshops, feiras de negócios)");
+        descCorporativo.setFont(Font.font("Arial", 11));
+        descCorporativo.setTextFill(Color.DARKSLATEGRAY);
+        leftColumn.getChildren().add(new VBox(2, cbCorporativo, descCorporativo));
 
-        String[] rightNames = {"Beneficentes", "Religiosos", "Sociais"};
-        String[] rightDescriptions = {
-                "(arrecadação de fundos, campanhas sociais)",
-                "(cultos, retiros, encontros espirituais)",
-                "(aniversários, casamentos, confraternizações)"
-        };
+        cbEducacional = new CheckBox("Educacionais");
+        Label descEducacional = new Label("(palestras, seminários, cursos)");
+        descEducacional.setFont(Font.font("Arial", 11));
+        descEducacional.setTextFill(Color.DARKSLATEGRAY);
+        leftColumn.getChildren().add(new VBox(2, cbEducacional, descEducacional));
 
-        themeCheckBoxes.clear();
+        cbCultural = new CheckBox("Culturais");
+        Label descCultural = new Label("(shows, exposições, festivais)");
+        descCultural.setFont(Font.font("Arial", 11));
+        descCultural.setTextFill(Color.DARKSLATEGRAY);
+        leftColumn.getChildren().add(new VBox(2, cbCultural, descCultural));
 
-        for (int i = 0; i < leftNames.length; i++) {
-            CheckBox cb = new CheckBox(leftNames[i]);
-            Label desc = new Label(leftDescriptions[i]);
-            desc.setFont(Font.font("Arial", 11));
-            desc.setTextFill(Color.DARKSLATEGRAY);
-            VBox entry = new VBox(2, cb, desc);
-            leftColumn.getChildren().add(entry);
-            themeCheckBoxes.add(cb);
-        }
+        cbEsportivo = new CheckBox("Esportivos");
+        Label descEsportivo = new Label("(competições, maratonas, torneios)");
+        descEsportivo.setFont(Font.font("Arial", 11));
+        descEsportivo.setTextFill(Color.DARKSLATEGRAY);
+        leftColumn.getChildren().add(new VBox(2, cbEsportivo, descEsportivo));
 
-        for (int i = 0; i < rightNames.length; i++) {
-            CheckBox cb = new CheckBox(rightNames[i]);
-            Label desc = new Label(rightDescriptions[i]);
-            desc.setFont(Font.font("Arial", 11));
-            desc.setTextFill(Color.DARKSLATEGRAY);
-            VBox entry = new VBox(2, cb, desc);
-            rightColumn.getChildren().add(entry);
-            themeCheckBoxes.add(cb);
-        }
+        cbBeneficente = new CheckBox("Beneficentes");
+        Label descBeneficente = new Label("(arrecadação de fundos, campanhas sociais)");
+        descBeneficente.setFont(Font.font("Arial", 11));
+        descBeneficente.setTextFill(Color.DARKSLATEGRAY);
+        rightColumn.getChildren().add(new VBox(2, cbBeneficente, descBeneficente));
+
+        cbReligioso = new CheckBox("Religiosos");
+        Label descReligioso = new Label("(cultos, retiros, encontros espirituais)");
+        descReligioso.setFont(Font.font("Arial", 11));
+        descReligioso.setTextFill(Color.DARKSLATEGRAY);
+        rightColumn.getChildren().add(new VBox(2, cbReligioso, descReligioso));
+
+        cbSocial = new CheckBox("Sociais");
+        Label descSocial = new Label("(aniversários, casamentos, confraternizações)");
+        descSocial.setFont(Font.font("Arial", 11));
+        descSocial.setTextFill(Color.DARKSLATEGRAY);
+        rightColumn.getChildren().add(new VBox(2, cbSocial, descSocial));
+
 
         HBox columns = new HBox(60, leftColumn, rightColumn);
+        vbSessao.getChildren().addAll(hbTitulo, description, columns);
+        vbSessao.setBorder(new Border(new BorderStroke(Color.DARKBLUE,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        section.getChildren().addAll(title, description, columns);
-        return section;
+        return vbSessao;
     }
 
     /**
      * Este método cria a seção de preferências de usuário.
-     * @return A VBox da seção de preferências de usuário.
+     * @return a VBox da seção de preferências de usuário.
      */
-    private VBox createUserPreferencesSection() {
-        VBox section = new VBox(15);
-        section.setPadding(new Insets(10));
+    private VBox criarSessaoPreferenciasUsuario() {
+        VBox sessao = new VBox(15);
+        sessao.setPadding(new Insets(10));
 
-        Label title = new Label("Preferências de usuário");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        Label description = new Label("(Edição de informações do usuário - descrição exemplo)");
-        description.setFont(Font.font("Arial", 12));
-        description.setTextFill(Color.GRAY);
+        Label lbTitulo = new Label("Preferências de usuário");
+        lbTitulo.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        Label lbDescricaoTitulo = new Label("(Editar informações do usuário)");
+        lbDescricaoTitulo.setFont(Font.font("Arial", 12));
+        lbDescricaoTitulo.setTextFill(Color.GRAY);
 
-        GridPane userDetailsGrid = new GridPane();
-        userDetailsGrid.setHgap(10);
-        userDetailsGrid.setVgap(10);
-        userDetailsGrid.setPadding(new Insets(10, 0, 10, 0));
+        GridPane gpDetalhesUsuario = new GridPane();
+        gpDetalhesUsuario.setHgap(10);
+        gpDetalhesUsuario.setVgap(15);
+        gpDetalhesUsuario.setPadding(new Insets(10, 0, 10, 0));
+        gpDetalhesUsuario.setBorder(new Border(new BorderStroke(Color.RED,
+               BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        nameDisplay = new Label();
-        StackPane nameFieldContainer = createEditableField("name", "Nome:", nameDisplay, "Exemplo Nome");
-        userDetailsGrid.add(new Label("Nome:"), 0, 0);
-        userDetailsGrid.add(nameFieldContainer, 1, 0);
+        Label lbNome = new Label("Nome:");
+        lbNome.getStyleClass().add("greeting-label");
+        lbNomeUsuario = new Label();
+        lbNomeUsuario.getStyleClass().add("greeting-label");
+        hlAlterarNome = new Hyperlink("(Alterar)");
+        Region espacadorNome = new Region();
+        HBox.setHgrow(espacadorNome, Priority.ALWAYS);
+        HBox hbNome = new HBox(8, lbNome, lbNomeUsuario, espacadorNome, hlAlterarNome);
+        hbNome.setAlignment(Pos.BASELINE_LEFT);
+        gpDetalhesUsuario.add(hbNome, 0, 0);
 
-        emailDisplay = new Label();
-        Label emailLabelForDisplay = new Label("Email:");
-        userDetailsGrid.add(emailLabelForDisplay, 0, 1);
-        userDetailsGrid.add(emailDisplay, 1, 1);
+        Label lbEmail = new Label("Email:");
+        lbEmail.getStyleClass().add("greeting-label");
+        lbEmailUsuario = new Label();
+        lbEmailUsuario.getStyleClass().add("greeting-label");
+        hlAlterarEmail = new Hyperlink("(Alterar)");
+        Region espacadorEmail= new Region();
+        HBox.setHgrow(espacadorEmail, Priority.ALWAYS);
+        HBox hbEmail = new HBox(8, lbEmail, lbEmailUsuario, espacadorEmail, hlAlterarEmail);
+        hbEmail.setAlignment(Pos.BASELINE_LEFT);
+        gpDetalhesUsuario.add(hbEmail, 0, 1);
 
-        phoneDisplay = new Label();
-        StackPane phoneFieldContainer = createEditableField("phone", "Telefone:", phoneDisplay, "(xx) xxxxx-xxxx");
-        userDetailsGrid.add(new Label("Telefone:"), 0, 2);
-        userDetailsGrid.add(phoneFieldContainer, 1, 2);
+        Label lbSenha = new Label("Senha:");
+        lbSenha.getStyleClass().add("greeting-label");
+        lbSenhaUsuario = new Label();
+        lbSenhaUsuario.getStyleClass().add("greeting-label");
+        hlAlterarSenha = new Hyperlink("(Alterar)");
+        Region espacadorSenha= new Region();
+        HBox.setHgrow(espacadorSenha, Priority.ALWAYS);
+        HBox hbSenha = new HBox(8, lbSenha, lbSenhaUsuario, espacadorSenha, hlAlterarSenha);
+        hbSenha.setAlignment(Pos.BASELINE_LEFT);
+        gpDetalhesUsuario.add(hbSenha, 0, 2);
 
-        passwordDisplay = new Label("********");
-        StackPane passwordFieldContainer = createEditableField("password", "Senha:", passwordDisplay, "", true); // isPassword = true
-        userDetailsGrid.add(new Label("Senha:"), 0, 3);
-        userDetailsGrid.add(passwordFieldContainer, 1, 3);
+        Label lbCidade = new Label("Cidade:");
+        lbCidade.getStyleClass().add("greeting-label");
+        lbCidadeUsuario = new Label();
+        lbCidadeUsuario.getStyleClass().add("greeting-label");
+        hlAlterarCidade = new Hyperlink("(Alterar)");
+        Region espacadorCidade= new Region();
+        HBox.setHgrow(espacadorCidade, Priority.ALWAYS);
+        HBox hbCidade = new HBox(8, lbCidade,lbCidadeUsuario, espacadorCidade, hlAlterarCidade);
+        hbCidade.setAlignment(Pos.BASELINE_LEFT);
+        gpDetalhesUsuario.add(hbCidade, 0, 3);
 
-        cityDisplay = new Label();
-        StackPane cityFieldContainer = createEditableField("city", "Cidade:", cityDisplay, "Cidade Exemplo");
-        userDetailsGrid.add(new Label("Cidade:"), 0, 4);
-        userDetailsGrid.add(cityFieldContainer, 1, 4);
+        Label lbDataNascimento = new Label("Data de Nascimento:");
+        lbDataNascimento.getStyleClass().add("greeting-label");
+        lbDataNascUsuario = new Label();
+        lbDataNascUsuario.getStyleClass().add("greeting-label");
+        hlAlterarDataNasc = new Hyperlink("(Alterar)");
+        Region espacadorData= new Region();
+        HBox.setHgrow(espacadorData, Priority.ALWAYS);
+        HBox hbDataNasc = new HBox(8, lbDataNascimento,lbDataNascUsuario, espacadorData, hlAlterarDataNasc);
+        hbDataNasc.setAlignment(Pos.BASELINE_LEFT);
+        gpDetalhesUsuario.add(hbDataNasc, 0, 4);
 
-        dobDisplay = new Label();
-        StackPane dobFieldContainer = createEditableField("dateOfBirth", "Data de Nasc.:", dobDisplay, "dd/mm/yyyy");
-        userDetailsGrid.add(new Label("Data de Nascimento:"), 0, 5);
-        userDetailsGrid.add(dobFieldContainer, 1, 5);
+        VBox photoSection = criarSessaoFotoUsuario();
 
-        VBox photoSection = createProfilePhotoSection();
+        HBox hbPreferenciasUsuario = new HBox(30, gpDetalhesUsuario, photoSection);
+        HBox.setHgrow(gpDetalhesUsuario, Priority.ALWAYS);
 
-        HBox userPrefsMainLayout = new HBox(30, userDetailsGrid, photoSection);
-        HBox.setHgrow(userDetailsGrid, Priority.ALWAYS);
+        sessao.getChildren().addAll(lbTitulo, lbDescricaoTitulo, hbPreferenciasUsuario);
 
-        section.getChildren().addAll(title, description, userPrefsMainLayout);
-        return section;
+        sessao.setBorder(new Border(new BorderStroke(Color.DARKBLUE,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        return sessao;
     }
 
     /**
      * Este método cria a seção de foto de perfil.
      * @return A VBox da seção de foto de perfil.
      */
-    private VBox createProfilePhotoSection() {
+    private VBox criarSessaoFotoUsuario() {
         VBox photoBox = new VBox(10);
         photoBox.setAlignment(Pos.CENTER);
         photoBox.setPadding(new Insets(10));
@@ -354,12 +292,12 @@ public class SettingsView extends BorderPane {
         Label photoTitle = new Label("Foto de perfil");
         photoTitle.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
 
-        profilePhotoView = new ImageView();
-        profilePhotoView.setFitHeight(100);
-        profilePhotoView.setFitWidth(100);
-        profilePhotoView.setPreserveRatio(true);
+        avatarView = new ImageView();
+        avatarView.setFitHeight(100);
+        avatarView.setFitWidth(100);
+        avatarView.setPreserveRatio(true);
 
-        StackPane photoPlaceholder = new StackPane(profilePhotoView);
+        StackPane photoPlaceholder = new StackPane(avatarView);
         photoPlaceholder.setPrefSize(100,100);
         photoPlaceholder.setMinSize(100,100);
         photoPlaceholder.setMaxSize(100,100);
@@ -371,143 +309,47 @@ public class SettingsView extends BorderPane {
         photoInfo.setTextFill(Color.GRAY);
         photoInfo.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
 
+        hlAlterarFoto = new Hyperlink("(Alterar)");
 
-        Hyperlink changePhotoLink = new Hyperlink("(alterar)");
-
-        profilePhotoErrorLabel = new Label();
-        profilePhotoErrorLabel.setTextFill(Color.SALMON);
-        profilePhotoErrorLabel.setVisible(false);
-
-        photoBox.getChildren().addAll(photoTitle, photoPlaceholder, photoInfo, changePhotoLink, profilePhotoErrorLabel);
+        photoBox.getChildren().addAll(photoTitle, photoPlaceholder, photoInfo, hlAlterarFoto);
         return photoBox;
     }
 
     /**
-     * Este método cria um campo editável genérico com Label, TextField/DatePicker e botões Salvar/Cancelar.
-     * @param fieldKey A chave identificadora do campo.
-     * @param labelText O texto do rótulo do campo.
-     * @param displayLabel O Label usado para exibir o valor atual.
-     * @param promptText O texto de prompt para o campo de edição.
-     * @return Um StackPane contendo os modos de visualização e edição.
+     * Métodos de encapsulamento getters e setters
      */
-    private StackPane createEditableField(String fieldKey, String labelText, Label displayLabel, String promptText) {
-        return createEditableField(fieldKey, labelText, displayLabel, promptText, false);
-    }
+    public BarraBuilder getBarraBuilder() {return barraBuilder;}
 
-    /**
-     * Este método cria um campo editável genérico com Label, TextField/PasswordField/DatePicker e botões Salvar/Cancelar.
-     * @param fieldKey A chave identificadora do campo.
-     * @param displayLabel O Label usado para exibir o valor atual.
-     * @param promptText O texto de prompt para o campo de edição.
-     * @param isPassword Indica se o campo é uma senha.
-     * @return Um StackPane contendo os modos de visualização e edição.
-     */
-    private StackPane createEditableField(String fieldKey, String labelTextUnused, Label displayLabel, String promptText, boolean isPassword) {
-        StackPane stack = new StackPane();
+    public CheckBox getCbCorporativo() {return cbCorporativo;}
+    public CheckBox getCbBeneficente() {return cbBeneficente;}
+    public CheckBox getCbEducacional() {return cbEducacional;}
+    public CheckBox getCbCultural() {return cbCultural;}
+    public CheckBox getCbEsportivo() {return cbEsportivo;}
+    public CheckBox getCbReligioso() {return cbReligioso;}
+    public CheckBox getCbSocial() {return cbSocial;}
 
-        HBox viewMode = new HBox(10);
-        viewMode.setAlignment(Pos.CENTER_LEFT);
-        Hyperlink alterLink = new Hyperlink("(alterar)");
-        viewMode.getChildren().addAll(displayLabel, alterLink);
+    public Label getLbNomeUsuario() {return lbNomeUsuario;}
+    public Label getLbEmailUsuario() {return lbEmailUsuario;}
+    public Label getLbSenhaUsuario() {return lbSenhaUsuario;}
+    public Label getLbCidadeUsuario() {return lbCidadeUsuario;}
+    public Label getLbDataNascUsuario() {return lbDataNascUsuario;}
 
-        HBox editMode = new HBox(5);
-        editMode.setAlignment(Pos.CENTER_LEFT);
-        Node editField;
-
-        if ("dateOfBirth".equals(fieldKey)) {
-            DatePicker picker = new DatePicker();
-            picker.setPromptText(promptText);
-            picker.setPrefWidth(150);
-            editField = picker;
-        } else if (isPassword) {
-            PasswordField passField = new PasswordField();
-            passField.setPromptText("Nova Senha");
-            passField.setPrefWidth(150);
-            editField = passField;
-        } else {
-            TextField textField = new TextField();
-            textField.setPromptText(promptText);
-            textField.setPrefWidth(150);
-            editField = textField;
-        }
-
-        Button saveButton = new Button("Salvar");
-        Button cancelButton = new Button("Cancelar");
-        editMode.getChildren().addAll(editField, saveButton, cancelButton);
-        editMode.setVisible(false);
-
-        Label fieldErrorLabel = new Label();
-        fieldErrorLabel.setTextFill(Color.SALMON);
-        fieldErrorLabel.setFont(Font.font("Arial", 10));
-        fieldErrorLabel.setVisible(false);
-
-        VBox fieldContainer = new VBox(3, editMode, fieldErrorLabel);
-
-
-        alterLink.setOnAction(e -> {
-            viewMode.setVisible(false);
-            fieldContainer.setVisible(true);
-            editMode.setVisible(true);
-            fieldErrorLabel.setVisible(false);
-            if (editField instanceof TextField && !isPassword) {
-                ((TextField) editField).setText(displayLabel.getText());
-            } else if (editField instanceof DatePicker) {
-                try {
-                    if (!displayLabel.getText().equals(promptText) && !displayLabel.getText().isEmpty()) {
-                        ((DatePicker) editField).setValue(LocalDate.parse(displayLabel.getText(), appDateFormatter));
-                    } else {
-                        ((DatePicker) editField).setValue(null);
-                    }
-                } catch (DateTimeParseException ex) {
-                    ((DatePicker) editField).setValue(null);
-                }
-            }
-        });
-
-        cancelButton.setOnAction(e -> {
-            viewMode.setVisible(true);
-            fieldContainer.setVisible(false);
-            editMode.setVisible(false);
-        });
-
-        saveButton.setOnAction(e -> {
-            fieldErrorLabel.setVisible(false);
-            if (sController != null) {
-                String newValue = "";
-                LocalDate newDate = null;
-
-                if (editField instanceof PasswordField) {
-                    newValue = ((PasswordField) editField).getText();
-                } else if (editField instanceof TextField) {
-                    newValue = ((TextField) editField).getText();
-                } else if (editField instanceof DatePicker) {
-                    newDate = ((DatePicker) editField).getValue();
-                }
-            }
-        });
-
-        stack.getChildren().addAll(viewMode, fieldContainer);
-        GridPane.setHgrow(stack, Priority.ALWAYS);
-        return stack;
-    }
-
-    /**
-     *
-     * Métodos getters e setters
-     */
-    public Button getBtnInicio() {return btnInicio;}
-    public Button getBtnMeusEventos() {return btnMeusEventos;}
-    public Button getBtnConfiguracoes() {return btnConfiguracoes;}
-    public Button getBtnSair() {return btnSair;}
-    public Button getBtnProgramacao() {return btnProgramacao;}
     public Button getBtnDeleteAccount() {return btnDeleteAccount;}
 
-    public Label getLbNomeUsuarioHeader() {return lbNomeUsuarioHeader;}
-    public void setLbNomeUsuarioHeader(Label lbNomeUsuarioHeader) {this.lbNomeUsuarioHeader = lbNomeUsuarioHeader;}
-
-    public Circle getAvatarHeader() {return avatarHeader;}
-    public void setAvatarHeader(Circle avatarHeader) {this.avatarHeader = avatarHeader;}
+    public Hyperlink getHlAlterarPreferencias() {return HlAlterarPreferencias;}
+    public Hyperlink getHlAlterarNome() {return hlAlterarNome;}
+    public Hyperlink getHlAlterarEmail() {return hlAlterarEmail;}
+    public Hyperlink getHlAlterarSenha() {return hlAlterarSenha;}
+    public Hyperlink getHlAlterarCidade() {return hlAlterarCidade;}
+    public Hyperlink getHlAlterarDataNasc() {return hlAlterarDataNasc;}
+    public Hyperlink getHlAlterarFoto() {return hlAlterarFoto;}
 
     public List<CheckBox> getThemeCheckBoxes() {return themeCheckBoxes;}
     public void setThemeCheckBoxes(List<CheckBox> themeCheckBoxes) {this.themeCheckBoxes = themeCheckBoxes;}
+
+    public void setAvatarImagem(Image avatarImagem) {
+        if(this.avatarView != null && avatarImagem != null) {
+            this.avatarView.setImage(avatarImagem);
+        }
+    }
 }

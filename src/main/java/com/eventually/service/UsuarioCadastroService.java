@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.0
+ * @version 1.01
  * @since 2025-05-15
  */
 public final class UsuarioCadastroService {
@@ -36,7 +36,7 @@ public final class UsuarioCadastroService {
 
     private AlertaService alertaService = new AlertaService();
 
-    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(UsuarioCadastroService.class);
 
     /**
      * Construtor que inicializa a lista com um objeto teste do tipo {@link UsuarioModel}.
@@ -45,9 +45,13 @@ public final class UsuarioCadastroService {
         listaUsuarios = new HashSet<>();
 
         //usuario teste abaixo:
+        Set<TemaPreferencia> preferenciasDoUsuario = new HashSet<>();
+        preferenciasDoUsuario.add(TemaPreferencia.CORPORATIVO);
+        preferenciasDoUsuario.add(TemaPreferencia.CULTURAL);
+        preferenciasDoUsuario.add(TemaPreferencia.SOCIAL);
         LocalDate dataTeste = LocalDate.of(2003, 2, 1);
         Image imagemTeste= new Image(getClass().getResourceAsStream("/images/aviso-icone.png"));
-        UsuarioModel usuarioTesteModel = new UsuarioModel("gab tav","gab@gmail.com","a1234$","crz",dataTeste,imagemTeste,null,null,null,true);
+        UsuarioModel usuarioTesteModel = new UsuarioModel("gab tav","gab@gmail.com","a1234$","crz",dataTeste,imagemTeste,null,null,preferenciasDoUsuario,true);
         listaUsuarios.add(usuarioTesteModel);
         //usuario teste acima
 

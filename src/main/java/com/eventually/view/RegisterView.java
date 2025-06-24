@@ -27,46 +27,36 @@ import java.util.Map;
  * por cadastrar o usuário na memória.
  *
  * @author Yuri Garcia Maia
- * @version 1.01
+ * @version 1.02
  * @since 2025-05-13
  * @author Gabriella Tavares Costa Corrêa (Documentação e revisão da classe)
  * @since 2025-05-14
  */
 public class RegisterView extends BorderPane {
+    private RegisterController registerController;
+
     private TextField fldNome;
     private TextField fldEmail;
     private PasswordField fldSenha;
     private DatePicker fldDataNascimento;
     private TextField fldCidade;
 
-    private Label lbRegraNome;
-    private Label lbRegraEmail;
-    private Label lbIntroRegra;
-    private Label lbRegraEspecial;
-    private Label lbRegraDigito;
-    private Label lbRegraLetra;
-    private Label lbRegraTamanho;
-    private Label lbRegraData;
-    private Label lbRegraCidade;
+    private Label lbRegraNome, lbRegraEmail, lbRegraEspecial, lbRegraDigito, lbRegraLetra, lbRegraTamanho, lbRegraData, lbRegraCidade;
 
     private Label lbRegraTema;
-    private CheckBox cbCorporativo;
-    private CheckBox cbBeneficente;
-    private CheckBox cbEducacional;
-    private CheckBox cbCultural;
-    private CheckBox cbEsportivo;
-    private CheckBox cbReligioso;
-    private CheckBox cbSocial;
+    private CheckBox cbCorporativo, cbBeneficente, cbEducacional, cbCultural, cbEsportivo, cbReligioso, cbSocial;
 
     private Button btnRegistrar;
     private Hyperlink voltarLoginLink;
-
-    private RegisterController registerController;
 
     public RegisterView() {
         setupUI();
     }
 
+    /**
+     * Define o controller para esta view.
+     * @param registerController o controller a ser usado.
+     */
     public void setRegisterController(RegisterController registerController) {this.registerController = registerController;}
 
     /**
@@ -289,7 +279,7 @@ public class RegisterView extends BorderPane {
         fldSenha.setPrefHeight(40);
         fldSenha.getStyleClass().add("register-field");
 
-        lbIntroRegra = new Label("* A senha deve conter, no mínimo:");
+        Label lbIntroRegra = new Label("* A senha deve conter, no mínimo:");
         lbIntroRegra.getStyleClass().add("form-field");
         lbRegraEspecial = new Label("- 1 caractere especial");
         lbRegraEspecial.getStyleClass().add("form-field");

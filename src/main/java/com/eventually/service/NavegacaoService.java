@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.0
+ * @version 1.01
  * @since 2025-06-19
  */
 public class NavegacaoService {
@@ -23,8 +23,7 @@ public class NavegacaoService {
 
     /**
      * Construtor para o NavegacaoService.
-     *
-     * @param primaryStage O palco principal da aplicação, onde as cenas serão definidas.
+     * @param primaryStage o palco principal da aplicação, onde as cenas serão definidas.
      */
     public NavegacaoService(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -32,8 +31,7 @@ public class NavegacaoService {
     }
 
     /**
-     * Navega para a tela de Login.
-     * Limpa a sessão atual (se houver) e redireciona para a tela inicial de login.
+     * Navega para a tela de Login e limpa a sessão atual (se houver) e redireciona para a tela inicial de login.
      */
     public void navegarParaLogin() {
         sistemaDeLogger.info("Navegando para a tela de Login.");
@@ -88,7 +86,7 @@ public class NavegacaoService {
             homeView.setHomeController(homeController);
 
             Scene sceneHomeView = new Scene(homeView, telaService.medirWidth(), telaService.medirHeight());
-            sceneHomeView.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
+            sceneHomeView.getStylesheets().add(getClass().getResource("/styles/home-view.css").toExternalForm());
 
             primaryStage.setTitle("Eventually - Início");
             primaryStage.setScene(sceneHomeView);
@@ -111,7 +109,7 @@ public class NavegacaoService {
             myEventsView.setMyEventsViewController(myEventsController);
 
             Scene myEventsScene = new Scene(myEventsView, telaService.medirWidth(), telaService.medirHeight());
-            myEventsScene.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
+            myEventsScene.getStylesheets().add(getClass().getResource("/styles/my-events-view.css").toExternalForm());
 
             primaryStage.setTitle("Eventually - Meus Eventos");
             primaryStage.setScene(myEventsScene);
@@ -134,12 +132,11 @@ public class NavegacaoService {
             settingsView.setSettingsController(settingsController);
 
             Scene settingsScene = new Scene(settingsView, telaService.medirWidth(), telaService.medirHeight());
-            settingsScene.getStylesheets().add(String.valueOf(getClass().getResource("/styles/user-schedule-styles.toExternalForm()")));
+            settingsScene.getStylesheets().add(getClass().getResource("/styles/settings-styles.css").toExternalForm());
 
             primaryStage.setTitle("Eventually - Configurações");
             primaryStage.setScene(settingsScene);
             primaryStage.setMaximized(true);
-            sistemaDeLogger.info("Tela de Configurações carregada com sucesso.");
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao navegar para a tela de Configurações: " + e.getMessage());
             e.printStackTrace();

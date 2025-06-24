@@ -15,7 +15,7 @@ import java.util.Set;
  * Esta classe utiliza a instância única de {@link UsuarioCadastroService} para acessar e manipular os dados
  * dos usuários em memória.
  * @author Gabriella Tavares Costa Corrêa (Criação,documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.00
+ * @version 1.01
  * @since 2025-05-18
  */
 public final class UsuarioAtualizacaoService {
@@ -24,7 +24,7 @@ public final class UsuarioAtualizacaoService {
 
     private AlertaService alertaService;
 
-    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(UsuarioAtualizacaoService.class);
 
     /**
      * Construtor privado que inicializa o {@code UsuarioCadastroService} e mpede a criação de múltiplas

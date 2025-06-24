@@ -14,7 +14,7 @@ import java.util.Map;
  * Classe controladora da tela de registro, é responsável pela comunicação com o backend.
  * Contém métodos como privados para que seu acesso seja somente por esta classe e métodos públicos para
  * validações dinâmicas e visuais na interface.
- * @version 1.01
+ * @version 1.02
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-13
  * @author Gabriella Tavares Costa Corrêa (Documentação, revisão da estrutura e refatoração da parte lógica da classe)
@@ -82,15 +82,15 @@ public class RegisterController {
             String cidade = registerView.getFldCidade().getText();
             LocalDate data = registerView.getFldDataNascimento().getValue();
 
-            PreferenciasUsuarioDto preferencias = new PreferenciasUsuarioDto(
-                    registerView.getCbCorporativo().isSelected(),
-                    registerView.getCbBeneficente().isSelected(),
-                    registerView.getCbEducacional().isSelected(),
-                    registerView.getCbCultural().isSelected(),
-                    registerView.getCbEsportivo().isSelected(),
-                    registerView.getCbReligioso().isSelected(),
-                    registerView.getCbSocial().isSelected()
-            );
+                PreferenciasUsuarioDto preferencias = new PreferenciasUsuarioDto(
+                        registerView.getCbCorporativo().isSelected(),
+                        registerView.getCbBeneficente().isSelected(),
+                        registerView.getCbEducacional().isSelected(),
+                        registerView.getCbCultural().isSelected(),
+                        registerView.getCbEsportivo().isSelected(),
+                        registerView.getCbReligioso().isSelected(),
+                        registerView.getCbSocial().isSelected()
+                );
 
             CadastrarUsuarioDto dto = new CadastrarUsuarioDto(nome, email, senha, cidade, data, preferencias);
 

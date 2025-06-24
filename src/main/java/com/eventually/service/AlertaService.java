@@ -12,12 +12,11 @@ import org.slf4j.LoggerFactory;
  * Serviço responsável por exibir mensagens de alerta ao usuário,
  * utilizando os tipos padrão da interface JavaFX.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.0
+ * @version 1.01
  * @since 2025-05-15
  */
 public class AlertaService {
-
-    private static final Logger sistemaDeLog = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger sistemaDeLog = LoggerFactory.getLogger(AlertaService.class);
 
     /**
      * Exibe um alerta de campo obrigatório vazio e, em caso de falha ao exibir o alerta, uma mensagem é impressa

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * Classe controladora da tela de programação do usuário, é responsável pela comunicação
  * da tela de programação com o backend.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.01
+ * @version 1.02
  * @since 2025-04-25
  */
 public class UserScheduleController {
@@ -26,7 +26,7 @@ public class UserScheduleController {
 
     private AlertaService alertaService =new AlertaService();
 
-    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(LoginController.class);
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(UserScheduleController.class);
 
     /**
      * Construtor do {@code UserScheduleController}, inicializa a view de programação de usuário.
@@ -55,13 +55,13 @@ public class UserScheduleController {
     private void configManipuladoresDeEventoUS() {
         sistemaDeLogger.info("Método configManipuladoresEventoRegistro() chamado.");
         try {
-            userScheduleView.getBtnProgramacao().setOnAction(e -> processarNavegacaoProgramacao());
+            userScheduleView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> processarNavegacaoProgramacao());
 
-            userScheduleView.getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
-            userScheduleView.getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
-            userScheduleView.getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
+            userScheduleView.getBarraBuilder().getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
+            userScheduleView.getBarraBuilder().getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
+            userScheduleView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
 
-            userScheduleView.getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
+            userScheduleView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
             userScheduleView.getBtnNovoEvento().setOnAction(e -> navegacaoService.processarCriacaoEvento());
 
             userScheduleView.getGrupoDatas().selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {

@@ -1,6 +1,5 @@
 package com.eventually.controller;
 
-import com.eventually.service.EventService;
 import com.eventually.view.CriaEventoModal;
 import javafx.scene.control.Alert;
 import javafx.stage.Window;
@@ -9,24 +8,20 @@ import java.time.LocalDate;
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe responsável pela comunicação do modal de "Criar evento" com o backend.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.01
+ * @version 1.02
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
  * @since 2025-06-19
  */
 public class CriaEventoController {
-
     private final CriaEventoModal view;
-    private final EventService eventService;
 
     /**
      * Construtor do CriaEventoController.
      * @param view A instância da CriaEventoModal associada.
-     * @param eventService O serviço para interagir com os dados de eventos.
      */
-    public CriaEventoController(CriaEventoModal view, EventService eventService) {
+    public CriaEventoController(CriaEventoModal view) {
         this.view = view;
-        this.eventService = eventService;
     }
 
     /**
@@ -69,6 +64,7 @@ public class CriaEventoController {
         alert.showAndWait();
     }
 
+    /**
     public void handleCreateEventRequest() {
         if (view == null || eventService == null) {
             System.err.println("CriaEventoController: View ou Service não configurado.");
@@ -121,4 +117,5 @@ public class CriaEventoController {
             showAlert("Erro de Sistema", "Ocorreu um erro inesperado: " + e.getMessage());
         }
     }
+     */
 }

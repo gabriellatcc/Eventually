@@ -17,17 +17,14 @@ import java.util.List;
  * Esta classe é responsável por exibir a página principal
  * com filtros de eventos e listagem de eventos disponíveis.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.02
+ * @version 1.03
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-05-29
  */
 public class HomeView extends BorderPane {
-    private Button btnInicio;
-    private Button btnMeusEventos;
-    private Button btnConfiguracoes;
-    private Button btnProgramacao;
-    private Button btnSair;
+    private BarraBuilder barraBuilder;
+
     private Button btnCriarEvento;
     private Button btnFiltros;
 
@@ -51,14 +48,10 @@ public class HomeView extends BorderPane {
      * a barra superior no topo e o conteúdo principal no centro.
      */
     public HomeView() {
-        try {
-            this.getStylesheets().add(getClass().getResource("/styles/home-view.css").toExternalForm());
-        } catch (Exception e) {
-            System.err.println("Não foi possível carregar o arquivo CSS: home-view.css");
-        }
+        this.barraBuilder = new BarraBuilder();
+        VBox barraLateral = this.barraBuilder.construirBarraLateral();
+        HBox barraSuperior = this.barraBuilder.construirBarraSuperior();
 
-        VBox barraLateral = criarBarraLateral();
-        HBox barraSuperior = criarBarraSuperior();
         VBox conteudoCentral = criarContainerCentral();
 
         setLeft(barraLateral);
@@ -68,77 +61,6 @@ public class HomeView extends BorderPane {
 
     public void setHomeController(HomeController homeController) {
         this.homeController = homeController;
-    }
-
-    /**
-     * Este método criarBarraLateral() cria uma barra lateral de navegação vertical da interface.
-     * Essa barra aparece na lateral esquerda da tela e contém botões para acessar
-     * diferentes seções do aplicativo:
-     * Página Inicial, Meus eventos Programação, Configurações e saída
-     * @return a barra lateral.
-     */
-    private VBox criarBarraLateral() {
-        VBox barraLateral = new VBox(20);
-        barraLateral.setPadding(new Insets(20));
-        barraLateral.getStyleClass().add("sidebar");
-        barraLateral.setPrefWidth(200);
-        barraLateral.setAlignment(Pos.TOP_CENTER);
-
-        btnInicio = new Button("Página inicial");
-        btnInicio.getStyleClass().add("menu-button");
-        btnInicio.setMaxWidth(Double.MAX_VALUE);
-        btnInicio.setPadding(new Insets(0,0,15,0));
-        btnInicio.requestFocus();
-
-        btnMeusEventos = new Button("Meus eventos");
-        btnMeusEventos.getStyleClass().add("menu-button");
-        btnMeusEventos.setMaxWidth(Double.MAX_VALUE);
-        btnMeusEventos.setPadding(new Insets(0,0,15,0));
-
-        btnProgramacao = new Button("Programação");
-        btnProgramacao.getStyleClass().add("menu-button");
-        btnProgramacao.setMaxWidth(Double.MAX_VALUE);
-        btnProgramacao.setPadding(new Insets(0,0,15,0));
-
-        VBox parteSuperior = new VBox(15, btnInicio, btnMeusEventos, btnProgramacao);
-        parteSuperior.setPadding(new Insets(20,15,15,15));
-
-        Region espacador = new Region();
-        VBox.setVgrow(espacador, Priority.ALWAYS);
-
-        btnConfiguracoes = new Button("Configurações");
-        btnConfiguracoes.getStyleClass().add("menu-button");
-        btnConfiguracoes.setMaxWidth(Double.MAX_VALUE);
-        btnConfiguracoes.setPadding(new Insets(0,0,15,0));
-
-        btnSair = new Button("Sair");
-        btnSair.getStyleClass().add("menu-button");
-        btnSair.setMaxWidth(Double.MAX_VALUE);
-        btnSair.setPadding(new Insets(0,0,15,0));
-
-        VBox parteInferior = new VBox(15, btnConfiguracoes, btnSair);
-        parteInferior.setPadding(new Insets(0,15,40,15));
-
-        barraLateral.getChildren().addAll(parteSuperior, espacador, parteInferior);
-        barraLateral.setPadding(new Insets(0));
-        return barraLateral;
-    }
-
-    /**
-     * Este método cria a classe do container da barra superior com o nome
-     * do programa.
-     * @return a barra superior
-     */
-    private HBox criarBarraSuperior() {
-        HBox barraSuperior = new HBox();
-        barraSuperior.setPadding(new Insets(20));
-        barraSuperior.setAlignment(Pos.CENTER);
-        barraSuperior.getStyleClass().add("topbar");
-
-        Label logo = new Label("Eventually");
-        logo.getStyleClass().add("logo");
-        barraSuperior.getChildren().add(logo);
-        return barraSuperior;
     }
 
     /**
@@ -152,7 +74,6 @@ public class HomeView extends BorderPane {
         cabecalhoPrincipal.setAlignment(Pos.CENTER_LEFT);
         cabecalhoPrincipal.getStyleClass().add("main-header");
 
-        // VBox trocado para HBox para alinhar horizontalmente
         HBox saudacaoBox = new HBox(8);
         saudacaoBox.setAlignment(Pos.BASELINE_LEFT);
 
@@ -353,14 +274,11 @@ public class HomeView extends BorderPane {
     /**
      * Métodos de encapsulamento getters
      */
+    public BarraBuilder getBarraBuilder() {return barraBuilder;}
+
     public Label getLbNomeUsuario() {return lbNomeUsuario;}
     public Label getLbEmailUsuario() {return lbEmailUsuario; }
 
-    public Button getBtnInicio() { return btnInicio; }
-    public Button getBtnMeusEventos() { return btnMeusEventos; }
-    public Button getBtnConfiguracoes() { return btnConfiguracoes; }
-    public Button getBtnProgramacao() { return btnProgramacao; }
-    public Button getBtnSair() { return btnSair; }
     public Button getBtnCriarEvento() { return btnCriarEvento; }
     public Button getBtnFiltros() { return btnFiltros; }
 
