@@ -3,6 +3,49 @@
     -fx-font-family: "Poppins", "Arial", sans-serif;
 }
 
+.menu-button {
+    -fx-background-color: #C93ACD;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 12px 20px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 2);
+}
+
+.menu-button:hover {
+    -fx-background-color: #D54BD9;
+}
+
+.menu-button:focused {
+    -fx-background-color: #E05CE4;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0, 0, 3);
+}
+
+.purple-checkbox > .box {
+    -fx-pref-width: 25px;
+    -fx-pref-height: 25px;
+    -fx-background-color: transparent;
+    -fx-border-color: #800080;
+    -fx-border-width: 3px;
+    -fx-border-radius: 3px;
+}
+
+.purple-checkbox:selected > .box {
+    -fx-background-color: #800080;
+    -fx-border-color: #800080;
+}
+
+.purple-checkbox > .box > .mark {
+    -fx-scale-x: 1.5;
+    -fx-scale-y: 1.5;
+}
+
+.purple-checkbox.register-field:focused {
+    -fx-border-color: #800080;
+    -fx-border-width: 2px;
+}
+
 .title-label-modal {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
