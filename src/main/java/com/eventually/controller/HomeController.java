@@ -1,5 +1,9 @@
 package com.eventually.controller;
 
+import com.eventually.model.EventoModel;
+import com.eventually.model.FormatoSelecionado;
+import com.eventually.model.TemaPreferencia;
+import com.eventually.model.UsuarioModel;
 import com.eventually.service.AlertaService;
 import com.eventually.service.NavegacaoService;
 import com.eventually.service.UsuarioSessaoService;
@@ -9,6 +13,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +50,6 @@ public class HomeController {
      */
     public HomeController(String email, HomeView homeView, Stage primaryStage) {
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
-        // this.eventoService = new EventoService();
 
         sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService.");
 
@@ -74,16 +78,14 @@ public class HomeController {
 
             homeView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
 
-            homeView.getBtnCriarEvento().setOnAction(e -> navegacaoService.processarCriacaoEvento());
+            homeView.getBtnCriarEvento().setOnAction(e -> navegacaoService.abrirModalCriarEvento(emailRecebido));
             homeView.getBtnFiltros().setOnAction(e -> processarFiltros());
 
             homeView.getLbEmailUsuario().setText(emailRecebido);
             homeView.getLbNomeUsuario().setText(definirNome(emailRecebido));
             homeView.setAvatarImagem(definirImagem(emailRecebido));
 
-            // Carrega os eventos ao iniciar a tela
             processarCarregamentoEventos();
-
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores da tela de início: "+e.getMessage());
             e.printStackTrace();
@@ -165,6 +167,7 @@ public class HomeController {
             // List<HomeView.Evento> eventos = eventoService.buscarTodosEventos();
             List<HomeView.Evento> eventos = buscarEventosDeExemplo();
 
+
             homeView.setEventos(eventos);
 
         } catch (Exception ex) {
@@ -178,7 +181,25 @@ public class HomeController {
      * @return Uma lista de eventos para exibição.
      */
     private List<HomeView.Evento> buscarEventosDeExemplo() {
-        // IMPLEMENTAR: lógica para buscar eventos
+
+        EventoModel evento = new EventoModel(
+                null,                                     // UsuarioModel organizador
+                "Conferência Tech Inovação 2025",                // String nomeEvento
+                "Um evento para discutir o futuro da tecnologia.", // String descricao
+                FormatoSelecionado.PRESENCIAL,                   // FormatoSelecionado formato
+                "https://teams.microsoft.com/link/para/reuniao", // String linkAcesso (mesmo sendo presencial)
+                "Centro de Convenções Anhembi, São Paulo, SP",   // String localizacao
+                null,                                      // Image fotoEvento
+                200,                                             // int nParticipantes (capacidade máxima)
+                LocalDate.of(2025, 10, 20),                      // LocalDate dataInicial
+                "09:00",                                         // String horaInicial
+                LocalDate.of(2025, 10, 22),                      // LocalDate dataFinal
+                "18:00",                                         // String horaFinal
+                null,                                     // Set<TemaPreferencia> temasEvento
+                null,                                   // List<UsuarioModel> participantes
+                true,                                            // boolean estadoDoEvento (true = Ativo)
+                false                                            // boolean isFinalizado (false = Ainda não ocorreu)
+        );
         return new ArrayList<>();
     }
 }

@@ -1,9 +1,11 @@
 package com.eventually.view;
 
 import com.eventually.controller.CriaEventoController;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,9 +13,13 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.stage.Modality;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+
+import java.io.File;
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Classe responsável pelo modal de "Criar evento".
@@ -23,24 +29,26 @@ import javafx.stage.StageStyle;
  * @author Gabriella Tavares Costa Corrêa (revisão de documentação e parte lógica)
  * @since 2025-06-19
  */
-public class CriaEventoModal {
-    private Stage modalStage;
-    private Scene modalScene;
+public class CriaEventoModal extends Parent {
+    private CriaEventoController criaEventoController;
 
-    private TextField fldEventName;
-    private TextArea areaDescription;
+    private TextField fldNomeEvento;
+    private TextArea taDescricao, taLocalizacao;
     private RadioButton radioPresencial, radioOnline, radioHibrido;
     private ToggleGroup groupFormato;
     private TextField fldLink;
-    private TextField fldLocalizacao;
-    private VBox imageUploadBox;
-    private ImageView eventImageView;
-    private TextField fldParticipantCount;
-    private TextField fldStartTime, fldEndTime;
+
+    private Image imageEvento;
+    private ImageView imgPreview;
+    private File arquivoSelecionado;
+
+    private CheckBox cbCorporativo, cbBeneficente, cbEducacional, cbCultural, cbEsportivo, cbReligioso, cbSocial;
+
+    private TextField fldNParticipantes;
+    private TextField fldHoraInicio, fldHoraFinal;
     private DatePicker datePickerStart, datePickerEnd;
-    private TextField fldTags, fldHashtags;
-    private Button btnSalvar;
-    private Button btnSair;
+
+    private Button btnDecrement, btnIncrement, btnEscolherImagem, btnCriar, btnCancelar;
 
     private CriaEventoController eventController;
 
@@ -58,260 +66,350 @@ public class CriaEventoModal {
      * Construtor padrão da classe.
      */
     public CriaEventoModal() {
+        setup();
     }
 
     /**
-     * Define o controller para este modal.
-     * @param eventController O controller a ser usado.
+     * Define o controlador para este modal.
+     * @param criaEventoController o controller a ser usado.
      */
-    public void setCreateEventController(CriaEventoController eventController) {
-        this.eventController = eventController;
+    public void setCriaEventoController(CriaEventoController criaEventoController) {
+        this.criaEventoController = criaEventoController;
+    }
+
+    /**
+     * Exibe a janela modal configurada para criar evento.
+     */
+    private void setup() {
+        VBox layout = criarLayoutPrincipal();
+        this.getChildren().add(layout);
     }
 
     /**
      * Exibe a janela modal configurada para a criação de um novo evento.
-     * @param parentStage Janela principal da aplicação que será usada como base para o modal.
      */
-    public void showCreateEventModal(Stage parentStage) {
-        modalStage = new Stage();
-        modalStage.initModality(Modality.APPLICATION_MODAL);
-        modalStage.initOwner(parentStage);
-        modalStage.initStyle(StageStyle.TRANSPARENT);
-        modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
-
+    public VBox criarLayoutPrincipal() {
         final double MODAL_WIDTH = 1000;
         final double MODAL_HEIGHT = 730;
 
-        VBox rootLayout = new VBox(20);
-        rootLayout.setAlignment(Pos.TOP_CENTER);
-        rootLayout.setPadding(new Insets(30, 40, 30, 40));
-        rootLayout.getStyleClass().add("root-pane");
+        VBox layout = new VBox(20);
+        layout.setAlignment(Pos.TOP_CENTER);
+        layout.setPadding(new Insets(10, 20, 10, 20));
+        layout.getStyleClass().add("root-pane");
+        layout.getStyleClass().add("layout-pane");
 
         Rectangle rect = new Rectangle(MODAL_WIDTH, MODAL_HEIGHT);
         rect.setArcWidth(20);
         rect.setArcHeight(20);
-        rootLayout.setClip(rect);
+        layout.setClip(rect);
 
-        Label title = new Label("Criar novo evento");
-        title.getStyleClass().add("title-label");
+        Label titulo = new Label("Criar novo evento");
+        titulo.getStyleClass().add("title-label-modal");
 
-        HBox columnsContainer = new HBox(50);
-        columnsContainer.setAlignment(Pos.TOP_CENTER);
+        HBox hbColunas = new HBox(50);
+        hbColunas.setAlignment(Pos.TOP_CENTER);
+        VBox vbColunaEsquerda = createLeftColumn();
+        vbColunaEsquerda.setPrefWidth((MODAL_WIDTH / 2) - 60);
+        VBox vbColunaDireita = createRightColumn();
+        vbColunaDireita.setPrefWidth((MODAL_WIDTH / 2) - 60);
+        hbColunas.getChildren().addAll(vbColunaEsquerda, vbColunaDireita);
 
-        VBox leftColumn = createLeftColumn();
-        leftColumn.setPrefWidth((MODAL_WIDTH / 2) - 60);
+        HBox hbBotoes = new HBox(20);
+        hbBotoes.setAlignment(Pos.CENTER);
+        btnCriar = new Button("Criar");
+        btnCriar.getStyleClass().add("modal-interact-button");
+        btnCancelar = new Button("Cancelar");
+        btnCancelar.getStyleClass().add("modal-interact-button");
+        hbBotoes.getChildren().addAll(btnCriar, btnCancelar);
 
-        VBox rightColumn = createRightColumn();
-        rightColumn.setPrefWidth((MODAL_WIDTH / 2) - 60);
-
-        columnsContainer.getChildren().addAll(leftColumn, rightColumn);
-
-        HBox buttonsBox = new HBox(20);
-        buttonsBox.setAlignment(Pos.CENTER);
-        buttonsBox.setPadding(new Insets(20, 0, 0, 0));
-
-        btnSalvar = new Button("Salvar");
-        btnSalvar.getStyleClass().add("save-button");
-        btnSalvar.setOnAction(e -> {
-            if (eventController != null) {
-                System.out.println("Salvar Clicado");
-            }
-        });
-
-        btnSair = new Button("Sair");
-        btnSair.getStyleClass().add("exit-button");
-        btnSair.setOnAction(e -> close());
-
-        buttonsBox.getChildren().addAll(btnSalvar, btnSair);
-
-        Label idLabel = new Label("id xxxx-x");
-        idLabel.getStyleClass().add("id-label");
-        VBox.setMargin(idLabel, new Insets(10, 0, 0, 0));
-        StackPane bottomPane = new StackPane(buttonsBox);
-        StackPane.setAlignment(idLabel, Pos.CENTER_RIGHT);
-        bottomPane.getChildren().add(idLabel);
-
-
-        rootLayout.getChildren().addAll(title, columnsContainer, bottomPane);
-
-        modalScene = new Scene(rootLayout, MODAL_WIDTH, MODAL_HEIGHT, Color.TRANSPARENT);
-        modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
-        modalStage.setScene(modalScene);
-        modalStage.showAndWait();
+        layout.getChildren().addAll(titulo, hbColunas, hbBotoes);
+        return layout;
     }
 
     private VBox createLeftColumn() {
-        VBox vbox = new VBox(15);
+        VBox vbox = new VBox(5);
         vbox.setAlignment(Pos.TOP_LEFT);
 
-        vbox.getChildren().add(createLabel("Nome do evento"));
-        fldEventName = createTextField("Nome do evento");
-        vbox.getChildren().add(fldEventName);
+        Label lbNomeEvento = new Label("Nome do evento");
+        lbNomeEvento.getStyleClass().add("subtitle-label-modal");
+        vbox.getChildren().add(lbNomeEvento);
 
-        vbox.getChildren().add(createLabel("Descrição"));
-        areaDescription = new TextArea();
-        areaDescription.setPromptText("uma breve descrição sobre o evento");
-        areaDescription.setWrapText(true);
-        areaDescription.setPrefHeight(100);
-        vbox.getChildren().add(areaDescription);
+        fldNomeEvento = new TextField();
+        fldNomeEvento.setPromptText("Nome do evento");
+        fldNomeEvento.getStyleClass().add("modal-field");
+        vbox.getChildren().add(fldNomeEvento);
 
-        vbox.getChildren().add(createLabel("Formato"));
+        Label lbDescricao = new Label ("Descrição");
+        lbDescricao.getStyleClass().add("subtitle-label-modal");
+        vbox.getChildren().add(lbDescricao);
+
+        taDescricao = new TextArea();
+        taDescricao.setPromptText("Um breve detalhamento sobre o evento");
+        taDescricao.setWrapText(true);
+        taDescricao.setPrefHeight(90);
+        taDescricao.getStyleClass().add("modal-field");
+        vbox.getChildren().add(taDescricao);
+
+        Label lbFormato = new Label ("Formato");
+        lbFormato.getStyleClass().add("subtitle-label-modal");
+        vbox.getChildren().add(lbFormato);
+
         groupFormato = new ToggleGroup();
         radioPresencial = new RadioButton("Presencial");
+        radioPresencial.getStyleClass().add("modal-field");
         radioPresencial.setToggleGroup(groupFormato);
         radioOnline = new RadioButton("Online");
+        radioOnline.getStyleClass().add("modal-field");
         radioOnline.setToggleGroup(groupFormato);
         radioHibrido = new RadioButton("Híbrido");
+        radioHibrido.getStyleClass().add("modal-field");
         radioHibrido.setToggleGroup(groupFormato);
-        HBox formatoBox = new HBox(20, radioPresencial, radioOnline, radioHibrido);
-        vbox.getChildren().add(formatoBox);
+        HBox hbFormato = new HBox(20, radioPresencial, radioOnline, radioHibrido);
+        vbox.getChildren().add(hbFormato);
 
-        vbox.getChildren().add(createLabel("Link"));
-        fldLink = createTextField("Link para o evento");
+        Label lbLink = new Label("Link");
+        lbLink.getStyleClass().add("subtitle-label-modal");
+        vbox.getChildren().add(lbLink);
+
+        fldLink = new TextField();
+        fldLink.setPromptText("Link rede social do evento ou orgranizador principal");
+        fldLink.getStyleClass().add("modal-field");
         vbox.getChildren().add(fldLink);
 
-        vbox.getChildren().add(createLabel("Localização"));
-        fldLocalizacao = createTextField("Link do google maps com a localização do evento");
-        vbox.getChildren().add(fldLocalizacao);
+        Label lbLocalizacao=new Label("Localização (Se em ambiente físico ou virtual)");
+        lbLocalizacao.getStyleClass().add("subtitle-label-modal");
+        vbox.getChildren().add(lbLocalizacao);
 
+        taLocalizacao = new TextArea();
+        taLocalizacao.setPromptText("Exemplo: R. Rua Altos Bosques Claros, 12, Jardim das Flores, Bela Vista - SP, 12345-678 ou https://meet.google.com/kpw-iwnw-nir");
+        taLocalizacao.setPrefHeight(60);
+        taLocalizacao.setWrapText(true);
+        taLocalizacao.getStyleClass().add("text-area");
+        vbox.getChildren().add(taLocalizacao);
+        Platform.runLater(() -> {
+            Node promptNode = taLocalizacao.lookup(".prompt-text");
+
+            if (promptNode != null) {
+                promptNode.setStyle("-fx-font-size: 6px;");
+            }
+        });
+
+        Label lbNParticipantes = new Label("Capacidade de participantes");
+        lbNParticipantes.getStyleClass().add("subtitle-label-modal");
+        vbox.getChildren().add(lbNParticipantes);
+
+        HBox hbNParticipantes = new HBox(20);
+        hbNParticipantes.setAlignment(Pos.CENTER_LEFT);
+
+        btnDecrement =new Button("-");
+        btnDecrement.setPrefHeight(30);
+        btnDecrement.setPrefWidth(30);
+        btnDecrement.getStyleClass().add("crement-button");
+        btnIncrement = new Button("+");
+        btnIncrement.setPrefHeight(30);
+        btnIncrement.setPrefWidth(30);
+        btnIncrement.getStyleClass().add("crement-button");
+
+        fldNParticipantes = new TextField("0");
+        fldNParticipantes.setPrefWidth(40);
+        fldNParticipantes.setAlignment(Pos.CENTER);
+        fldNParticipantes.getStyleClass().add("modal-field");
+
+        hbNParticipantes.getChildren().addAll(btnDecrement, fldNParticipantes, btnIncrement);
+        vbox.getChildren().add(hbNParticipantes);
         return vbox;
     }
 
     private VBox createRightColumn() {
-        VBox vbox = new VBox(15);
+        VBox vbox = new VBox(5);
         vbox.setAlignment(Pos.TOP_LEFT);
 
-        vbox.getChildren().add(createLabel("Imagem do evento"));
-        imageUploadBox = new VBox(5);
-        imageUploadBox.setAlignment(Pos.CENTER);
-        imageUploadBox.getStyleClass().add("image-upload-box");
-        imageUploadBox.setPrefHeight(120);
-        try {
-            Image placeholder = new Image(getClass().getResource("/images/upload-icon.png").toExternalForm(), 50, 50, true, true);
-            eventImageView = new ImageView(placeholder);
-        } catch (Exception e) {
-            eventImageView = new ImageView();
-            eventImageView.setFitWidth(50);
-            eventImageView.setFitHeight(50);
+        HBox hbImagem = new HBox(15);
+        hbImagem.setAlignment(Pos.CENTER);
+        Label lbImagemEvento = new Label("Imagem do evento");
+        lbImagemEvento.getStyleClass().add("subtitle-label-modal");
+        vbox.getChildren().add(lbImagemEvento);
+
+        VBox vbPreview = new VBox();
+        vbPreview.setAlignment(Pos.CENTER_LEFT);
+        Image provisoria = new Image(getClass().getResourceAsStream("/images/upload-icon.png"));
+        imgPreview = new ImageView(provisoria);
+        imgPreview.setFitWidth(160);
+        imgPreview.setFitHeight(100);
+        imgPreview.setPreserveRatio(true);
+        imgPreview.getStyleClass().add("image-preview-container");
+        vbPreview.getChildren().add(imgPreview);
+
+        VBox vbImagem = new VBox(5);
+        vbImagem.setAlignment(Pos.CENTER);
+        btnEscolherImagem = new Button("Escolher Arquivo");
+        btnEscolherImagem.getStyleClass().add("modal-interact-button");
+
+        Label lbAvisoImagem = new Label("Anexe uma imagem na\n    (320x200 pixels)");
+        lbAvisoImagem.getStyleClass().add("label-modal");
+        vbImagem.getChildren().addAll(btnEscolherImagem, lbAvisoImagem);
+
+        hbImagem.getChildren().addAll(vbPreview,vbImagem);
+
+        vbox.getChildren().add(hbImagem);
+
+        Label lbDataEvento = new Label("Data do evento");
+        lbDataEvento.getStyleClass().add("subtitle-label-modal");
+        vbox.getChildren().add(lbDataEvento);
+        HBox hbData = new HBox(10);
+        hbData.setAlignment(Pos.CENTER_LEFT);
+
+        VBox vbLabel = new VBox(12);
+        vbLabel.setAlignment(Pos.CENTER_LEFT);
+        vbLabel.setPadding(new Insets(0, 0, 0, 5));
+        Label lbInicio = new Label("Início:");
+        lbInicio.getStyleClass().add("label-modal");
+        Label lbFim = new Label("Fim:");
+        lbFim.getStyleClass().add("label-modal");
+        vbLabel.getChildren().addAll(lbInicio, lbFim);
+
+        VBox vbFldHora = new VBox(5);
+        vbFldHora.setAlignment(Pos.CENTER);
+        fldHoraInicio = new TextField();
+        fldHoraInicio.setPromptText("XX:XX");
+        fldHoraInicio.setPrefHeight(28);
+        fldHoraInicio.setPrefWidth(100);
+        fldHoraInicio.getStyleClass().add("modal-field");
+        fldHoraFinal = new TextField();
+        fldHoraFinal.setPromptText("XX:XX");
+        fldHoraFinal.setPrefHeight(28);
+        fldHoraFinal.setPrefWidth(100);
+        fldHoraFinal.getStyleClass().add("modal-field");
+        vbFldHora.getChildren().addAll(fldHoraInicio, fldHoraFinal);
+
+        VBox hbdataPicker = new VBox(5);
+        hbdataPicker.setAlignment(Pos.CENTER);
+        datePickerStart = new DatePicker();
+        datePickerStart.setPromptText("dd/mm/yyyy");
+        datePickerStart.setPrefHeight(28);
+        datePickerStart.getStyleClass().add("modal-field");
+        LocalDate hoje = LocalDate.now();
+        hoje.minusDays(1);
+        bloquearIntervaloData(datePickerStart,
+                LocalDate.of(hoje.getYear(), hoje.getMonthValue(), hoje.getDayOfMonth()));
+        datePickerEnd = new DatePicker();
+        datePickerEnd.setPromptText("dd/mm/yyyy");
+        datePickerEnd.setPrefHeight(28);
+        datePickerEnd.getStyleClass().add("modal-field");
+        bloquearIntervaloData(datePickerEnd,
+                LocalDate.of(hoje.getYear(), hoje.getMonthValue(), hoje.getDayOfMonth()));
+        hbdataPicker.getChildren().addAll(datePickerStart, datePickerEnd);
+        hbData.getChildren().addAll(vbLabel, vbFldHora, hbdataPicker);
+        vbox.getChildren().add(hbData);
+
+        Label lbTags = new Label("Tags");
+        lbTags.getStyleClass().add("subtitle-label-modal");
+        vbox.getChildren().add(lbTags);
+        Label lbTagsNota = new Label("Selecione os temas que mais se relacionam com o evento");
+
+        lbTagsNota.setWrapText(true);
+        lbTagsNota.setTextAlignment(TextAlignment.LEFT);
+
+        lbTagsNota.getStyleClass().add("label-modal");
+        vbox.getChildren().add(lbTagsNota);
+
+        cbCorporativo = new CheckBox("Corporativo");
+        cbCorporativo.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        cbCorporativo.setPrefHeight(25);
+        cbCorporativo.getStyleClass().add("purple-checkbox");
+
+        cbBeneficente = new CheckBox("Beneficente");
+        cbBeneficente.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        cbBeneficente.setPrefHeight(25);
+        cbBeneficente.getStyleClass().add("purple-checkbox");
+
+        cbEducacional = new CheckBox("Educacional");
+        cbEducacional.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        cbEducacional.setPrefHeight(25);
+        cbEducacional.getStyleClass().add("purple-checkbox");
+
+        cbCultural = new CheckBox("Cultural");
+        cbCultural.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        cbCultural.setPrefHeight(25);
+        cbCultural.getStyleClass().add("purple-checkbox");
+
+        cbEsportivo = new CheckBox("Esportivo");
+        cbEsportivo.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        cbEsportivo.setPrefHeight(25);
+        cbEsportivo.getStyleClass().add("purple-checkbox");
+
+        cbReligioso = new CheckBox("Religioso");
+        cbReligioso.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        cbReligioso.setPrefHeight(25);
+        cbReligioso.getStyleClass().add("purple-checkbox");
+
+        cbSocial = new CheckBox("Social");
+        cbSocial.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        cbSocial.setPrefHeight(25);
+        cbSocial.getStyleClass().add("purple-checkbox");
+
+        for (CheckBox cb : List.of(
+                cbCorporativo,
+                cbBeneficente,
+                cbEducacional,
+                cbCultural,
+                cbEsportivo,
+                cbReligioso,
+                cbSocial)) {
+            cb.setTextFill(Color.WHITE);
         }
-        Label uploadLabel = new Label("Nenhum arquivo selecionado\nFaça upload de uma imagem");
-        uploadLabel.getStyleClass().add("upload-label");
-        imageUploadBox.getChildren().addAll(eventImageView, uploadLabel);
-        imageUploadBox.setOnMouseClicked(e -> System.out.println("Image upload box clicked!"));
-        vbox.getChildren().add(imageUploadBox);
 
-        vbox.getChildren().add(createLabel("Capacidade de participantes"));
-        HBox capacityBox = new HBox(20);
-        capacityBox.setAlignment(Pos.CENTER_LEFT);
-        Button btnDecrement = createCapacityButton("-");
-        Button btnIncrement = createCapacityButton("+");
+        VBox colunaEsquerda = new VBox(10);
+        colunaEsquerda.getChildren().addAll(cbCorporativo, cbBeneficente, cbEducacional,cbCultural);
 
-        fldParticipantCount = new TextField("0");
-        fldParticipantCount.setPrefWidth(100);
-        fldParticipantCount.setAlignment(Pos.CENTER);
-        fldParticipantCount.getStyleClass().add("capacity-field");
+        VBox colunaDireita = new VBox(10);
+        colunaDireita.getChildren().addAll(cbEsportivo, cbReligioso, cbSocial);
 
-        fldParticipantCount.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d*")) {
-                fldParticipantCount.setText(newValue.replaceAll("[^\\d]", ""));
-            }
-        });
+        HBox colunas = new HBox(100);
+        colunas.getChildren().addAll(colunaEsquerda, colunaDireita);
 
-        btnDecrement.setOnAction(e -> updateCapacity(false));
-        btnIncrement.setOnAction(e -> updateCapacity(true));
-        capacityBox.getChildren().addAll(btnDecrement, fldParticipantCount, btnIncrement);
-        vbox.getChildren().add(capacityBox);
-
-        vbox.getChildren().add(createLabel("Data do evento"));
-        HBox startBox = createDateTimeRow("Início:", "horário: XX:XX AM/PM");
-        fldStartTime = (TextField) startBox.lookup("#timeField");
-        datePickerStart = (DatePicker) startBox.lookup("#datePicker");
-        vbox.getChildren().add(startBox);
-
-        HBox endBox = createDateTimeRow("Fim:", "horário: XX:XX AM/PM");
-        fldEndTime = (TextField) endBox.lookup("#timeField");
-        datePickerEnd = (DatePicker) endBox.lookup("#datePicker");
-        vbox.getChildren().add(endBox);
-
-        vbox.getChildren().add(createLabel("Tags"));
-        fldTags = createTextField("");
-        vbox.getChildren().add(fldTags);
-
-        vbox.getChildren().add(createLabel("Hashtags"));
-        fldHashtags = createTextField("");
-        vbox.getChildren().add(fldHashtags);
+        vbox.getChildren().addAll(colunas);
 
         return vbox;
     }
 
-    private Label createLabel(String text) {
-        Label label = new Label(text);
-        label.getStyleClass().add("field-label");
-        return label;
-    }
-
-    private TextField createTextField(String prompt) {
-        TextField textField = new TextField();
-        textField.setPromptText(prompt);
-        textField.setPrefHeight(40);
-        return textField;
-    }
-
-    private Button createCapacityButton(String text) {
-        Button button = new Button(text);
-        button.getStyleClass().add("capacity-button");
-        return button;
-    }
-
-    private HBox createDateTimeRow(String labelText, String timePrompt) {
-        HBox hbox = new HBox(10);
-        hbox.setAlignment(Pos.CENTER_LEFT);
-        Label label = createLabel(labelText);
-
-        TextField timeField = createTextField(timePrompt);
-        timeField.setId("timeField");
-        timeField.setPrefWidth(180);
-
-        DatePicker datePicker = new DatePicker();
-        datePicker.setPromptText("data\nxx/xxx/xxxx");
-        datePicker.setId("datePicker");
-        datePicker.setPrefWidth(180);
-
-        hbox.getChildren().addAll(label, timeField, datePicker);
-        return hbox;
-    }
-
-    private void updateCapacity(boolean increment) {
-        try {
-            int currentValue = Integer.parseInt(fldParticipantCount.getText());
-            if (increment) {
-                currentValue++;
-            } else {
-                if (currentValue > 0) {
-                    currentValue--;
+    /**
+     * Este método bloqueia a seleção de datas do datapicker na interface
+     * @param datePickerStart o campo de data.
+     * @param dataMinima data minima a partir de hoje.
+     */
+    private void bloquearIntervaloData(DatePicker datePickerStart, LocalDate dataMinima) {
+        datePickerStart.setDayCellFactory(dp -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item.isBefore(dataMinima)) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #d3d3d3;");
+                } else {
+                    setDisable(false);
+                    setStyle("-fx-background-color: white;");
                 }
             }
-            fldParticipantCount.setText(String.valueOf(currentValue));
-        } catch (NumberFormatException e) {
-            fldParticipantCount.setText("0");
-        }
+        });
     }
 
+
     public void close() {
-        if (modalStage != null) {
-            modalStage.close();
+        Stage stage = (Stage) this.getScene().getWindow();
+        if (stage != null) {
+            stage.close();
         }
     }
 
     public int getParticipantCount() {
         try {
-            return Integer.parseInt(fldParticipantCount.getText());
+            return Integer.parseInt(fldNParticipantes.getText());
         } catch (NumberFormatException e) {
             return 0;
         }
     }
-    public TextField getEventName() {return fldEventName;}
-    public TextArea getDescription() {return areaDescription;}
+
     public String getFormato() {
         if (groupFormato.getSelectedToggle() != null) {
             RadioButton selectedRadioButton = (RadioButton) groupFormato.getSelectedToggle();
@@ -319,17 +417,49 @@ public class CriaEventoModal {
         }
         return "";
     }
-    public DatePicker getStartDate() {return datePickerStart;}
-    public DatePicker getEndDate() {return datePickerEnd;}
-    public TextField getStartTime() {return fldStartTime;}
-    public TextField getEndTime() {return fldEndTime;}
-    public Scene getModalScene() {return modalScene;}
 
-    public TextField getLink() {return fldLink;}
-    public TextField getLocalizacao() {return fldLocalizacao;}
-    public VBox getImageUploadBox() {return imageUploadBox;}
-    public ImageView getEventImageView() {return eventImageView;}
-    public TextField getFldTags() {return fldTags;}
-    public TextField getFldHashtags() {return fldHashtags;}
-    public Button getBtnSalvar() {return btnSalvar;}
+    /**
+     * Métodos de encapsulamento getters e setters.
+     */
+    public void setPreviewImage(Image image) {
+        this.imgPreview.setImage(image);
+    }
+
+    public File getArquivoSelecionado() {return arquivoSelecionado;}
+    public void setArquivoSelecionado(File arquivoSelecionado) {
+        this.arquivoSelecionado = arquivoSelecionado;
+        btnCriar.setDisable(arquivoSelecionado == null);
+    }
+
+    public Button getBtnEscolherImagem() {return btnEscolherImagem;}
+    public TextField getFldNomeEvento() {return fldNomeEvento;}
+    public TextArea getTaDescricao() {return taDescricao;}
+
+    public Button getBtnDecrement() {return btnDecrement;}
+    public Button getBtnIncrement() {return btnIncrement;}
+
+    public RadioButton getRadioPresencial() {return radioPresencial;}
+    public RadioButton getRadioOnline() {return radioOnline;}
+    public RadioButton getRadioHibrido() {return radioHibrido;}
+
+    public TextField getFldLink() {return fldLink;}
+    public TextArea getTaLocalizacao() {return taLocalizacao;}
+    public Image getImageEvento() {return imageEvento;}
+    public TextField getFldNParticipantes() {return fldNParticipantes;}
+
+    public TextField getFldHoraInicio() {return fldHoraInicio;}
+    public DatePicker getDatePickerStart() {return datePickerStart;}
+    public TextField getFldHoraFinal() {return fldHoraFinal;}
+    public DatePicker getDatePickerEnd() {return datePickerEnd;}
+
+    public CheckBox getCbCorporativo() {return cbCorporativo;}
+    public CheckBox getCbBeneficente() {return cbBeneficente;}
+    public CheckBox getCbEducacional() {return cbEducacional;}
+    public CheckBox getCbCultural() {return cbCultural;}
+    public CheckBox getCbEsportivo() {return cbEsportivo;}
+    public CheckBox getCbReligioso() {return cbReligioso;}
+    public CheckBox getCbSocial() {return cbSocial;}
+
+    public Button getBtnCriar() {return btnCriar;}
+    public Button getBtnCancelar() {return btnCancelar;}
 }

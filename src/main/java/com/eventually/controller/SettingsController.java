@@ -87,6 +87,7 @@ public class SettingsController {
             settingsView.getHlAlterarCidade().setOnAction(e -> navegacaoService.abrirModalMudanca(settingsView, emailRecebido, "cidade"));
             settingsView.getHlAlterarDataNasc().setOnAction(e -> navegacaoService.abrirModalMudanca(settingsView, emailRecebido, "data de nascimento"));
 
+            settingsView.getHlAlterarFoto().setOnAction(e->navegacaoService.abrirMudancaImagemModal(settingsView, emailRecebido, "foto"));
 
             //get all check boxes
         //    settingsView.getHlAlterarPreferencias().setOnAction(e-> confirmarAlteracoes(/"receber valores"/));

@@ -12,7 +12,7 @@ import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
+import java.io.File;
 
 /** PASSÍVEL DE ALTERÇÕES
  * Serviço responsável por gerenciar a navegação entre as diferentes telas da aplicação, centraliza a lógica de
@@ -92,7 +92,7 @@ public class NavegacaoService {
             homeView.setHomeController(homeController);
 
             Scene sceneHomeView = new Scene(homeView, telaService.medirWidth(), telaService.medirHeight());
-            sceneHomeView.getStylesheets().add(getClass().getResource("/styles/home-view.css").toExternalForm());
+            sceneHomeView.getStylesheets().add(getClass().getResource("/styles/home-styles.css").toExternalForm());
 
             primaryStage.setTitle("Eventually - Início");
             primaryStage.setScene(sceneHomeView);
@@ -115,7 +115,7 @@ public class NavegacaoService {
             myEventsView.setMyEventsViewController(myEventsController);
 
             Scene myEventsScene = new Scene(myEventsView, telaService.medirWidth(), telaService.medirHeight());
-            myEventsScene.getStylesheets().add(getClass().getResource("/styles/my-events-view.css").toExternalForm());
+            myEventsScene.getStylesheets().add(getClass().getResource("/styles/my-events-styles.css").toExternalForm());
 
             primaryStage.setTitle("Eventually - Meus Eventos");
             primaryStage.setScene(myEventsScene);
@@ -203,25 +203,49 @@ public class NavegacaoService {
      * Neste método é manipulado o clique no botão "Criar evento", navegando para a tela de criação de eventos e, em
      * caso de erro, é exibida uma mensagem no console.
      */
-    public void processarCriacaoEvento() {
-        sistemaDeLogger.info("Método processarCriacaoEvento() chamado.");
+    public void abrirModalCriarEvento(String emailUsuario) {
+        sistemaDeLogger.info("Método abrirModalCriarEvento() chamado.");
         try {
-            sistemaDeLogger.info("Botão de Criar evento clicado!");
-            //revisar funcionamento
-            CriaEventoModal changeConfirmModal = new CriaEventoModal();
-            changeConfirmModal.showCreateEventModal(primaryStage);
+            CriaEventoModal modal=new CriaEventoModal();
+            CriaEventoController modalController= new CriaEventoController(emailUsuario,modal);
+            modal.setCriaEventoController(modalController);
+            Stage modalStage = new Stage();
+
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(primaryStage);
+
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
+
+            Scene modalScene = new Scene(modal, modalStage.getWidth()/2,  modalStage.getHeight()/2);
+
+            modalStage.setOnShown(event -> {
+                javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+                modalStage.setX((screenBounds.getWidth() - modalStage.getWidth()) / 2);
+                modalStage.setY((screenBounds.getHeight() - modalStage.getHeight()) / 2);
+            });
+
+            modalScene.setFill(Color.TRANSPARENT);
+            modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
+            modalStage.setScene(modalScene);
+
+            modalStage.showAndWait();
         } catch (Exception ex) {
             sistemaDeLogger.error("Erro ao abrir modal para Criar Evento: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
 
+    /**
+     * Neste método é manipulado o clique no botão "Alterar", abre um modal que aguarda alteração para alguma
+     * informação do usuário e, em caso de falha na abertura do modal, é exibida uma mensagem no console.
+     */
     public void abrirModalMudanca(SettingsView settingsView, String email, String valor) {
         sistemaDeLogger.info("Método abrirModalMudanca() chamado.");
         try{
-            ConfirmaMudancaModal modal=new ConfirmaMudancaModal();
-            ConfirmaMudancaController modalController= new ConfirmaMudancaController(settingsView,email,valor,modal,primaryStage);
-            modal.setChangePasswordController(modalController);
+            MudancaModal modal=new MudancaModal();
+            MudancaController modalController= new MudancaController(settingsView,email,valor,modal);
+            modal.setMudancaControlador(modalController);
             Stage modalStage = new Stage();
 
             modalStage.initModality(Modality.APPLICATION_MODAL);
@@ -245,6 +269,51 @@ public class NavegacaoService {
             modalStage.showAndWait();
         } catch (Exception ex) {
             sistemaDeLogger.error("Erro ao abrir modal para mudar informação do usuário: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Neste método é manipulado o clique no botão "Alterar" para imagem, abre um modal que aguarda alteração para icone
+     * do usuário e, em caso de falha na abertura do modal, é exibida uma mensagem no console.
+     */
+    public void abrirMudancaImagemModal(SettingsView settingsView, String email, String valor) {
+        sistemaDeLogger.info("Método abrirModalMudanca() chamado.");
+        try{
+            MudancaImagemModal modalImagem = new MudancaImagemModal();
+            MudancaImagemController modalController = new MudancaImagemController(settingsView,email,valor,modalImagem);
+            modalImagem.setMudancaImagemController(modalController);
+            Stage modalStage = new Stage();
+
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(primaryStage);
+
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
+
+            Scene modalScene = new Scene(modalImagem, modalStage.getWidth()/2,  modalStage.getHeight()/2);
+
+            modalStage.setOnShown(event -> {
+                javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+                modalStage.setX((screenBounds.getWidth() - modalStage.getWidth()) / 2);
+                modalStage.setY((screenBounds.getHeight() - modalStage.getHeight()) / 2);
+            });
+
+            modalScene.setFill(Color.TRANSPARENT);
+            modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
+            modalStage.setScene(modalScene);
+
+            modalStage.showAndWait();
+
+            File imagemSelecionada = modalController.getArquivoFinal();
+
+            if (imagemSelecionada != null) {
+                System.out.println("O usuário selecionou e salvou o arquivo: " + imagemSelecionada.getAbsolutePath());
+            } else {
+                System.out.println("O usuário fechou o modal sem salvar uma imagem.");
+            }
+        } catch (Exception ex) {
+            sistemaDeLogger.error("Erro ao abrir modal para mudar imagem do usuário: " + ex.getMessage());
             ex.printStackTrace();
         }
     }

@@ -71,7 +71,7 @@ public class AlertModal {
 
         Scene modalScene = new Scene(rootLayout, MODAL_WIDTH, MODAL_HEIGHT, Color.TRANSPARENT);
         try {
-            modalScene.getStylesheets().add(getClass().getResource("/styles/my-events-view.css").toExternalForm());
+            modalScene.getStylesheets().add(getClass().getResource("/styles/my-events-styles.css").toExternalForm());
         } catch (Exception e) {
             System.err.println("CSS não encontrado para AlertModal: " + e.getMessage());
         }

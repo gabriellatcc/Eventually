@@ -76,10 +76,14 @@ public class MyEventsController {
             myEventsView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
             myEventsView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
             myEventsView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
-            myEventsView.getBtnNovoEvento().setOnAction(e -> navegacaoService.processarCriacaoEvento());
+            myEventsView.getBtnNovoEvento().setOnAction(e -> navegacaoService.abrirModalCriarEvento(emailRecebido));
 
             myEventsView.getBtnEventosCriados().setOnAction(e -> carregarEventosCriados());
             myEventsView.getBtnEventosFinalizados().setOnAction(e -> carregarEventosFinalizados());
+
+            myEventsView.setNomeUsuario(definirNome(emailRecebido));
+            myEventsView.setEmailUsuario(emailRecebido);
+            myEventsView.setAvatar(definirImagem(emailRecebido));
 
             if (myEventsView.getGrupoDatas() != null) {
                 myEventsView.getGrupoDatas().selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
@@ -96,13 +100,43 @@ public class MyEventsController {
     }
 
     /**
+     * Este método retorna a imagem de perfil do usuário, se foi recém cadastrado no sistema, terá a imagem padrão.
+     * @param email informado no cadastro.
+     * @return retorna a imagem do usuário relativo ao email cadastrado.
+     */
+    private Image definirImagem(String email) {
+        sistemaDeLogger.info("Método definirImagem() chamado.");
+        try {
+            Image imagemUsuario = usuarioSessaoService.procurarImagem(email);
+            return imagemUsuario;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao obter imagem do usuário."+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Este método retorna o nome do usuário e, em caso de falha, é exibida uma mensagem de erro no console.
+     * @param email informado no cadastro.
+     * @return retorna o nome do usuário relativo ao email cadastrado.
+     */
+    private String definirNome(String email) {
+        sistemaDeLogger.info("Método definirNome() chamado.");
+        try {
+            String nome = usuarioSessaoService.procurarNome(email);
+            return nome;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao obter nome do usuário: "+e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * Carrega os dados iniciais do usuário e a lista de eventos na view.
      */
     private void carregarDadosIniciais() {
-        myEventsView.setNomeUsuario(definirNome(emailRecebido));
-        myEventsView.setEmailUsuario(emailRecebido);
-        myEventsView.setAvatar(definirImagem(emailRecebido));
-
         configurarSeletorDeDatas();
         processarSelecaoData(myEventsView.getGrupoDatas().getSelectedToggle());
     }
@@ -193,38 +227,6 @@ public class MyEventsController {
     private List<Evento> buscarEventos(boolean criados, LocalDate data) {
         // IMPLEMENTAR: lógica para buscar eventos
         return new ArrayList<>();
-    }
-
-    /**
-     * Este método retorna a imagem de perfil do usuário.
-     * @param email informado no cadastro.
-     * @return retorna a imagem do usuário relativo ao email cadastrado.
-     */
-    private Image definirImagem(String email) {
-        sistemaDeLogger.info("Método definirImagem() chamado.");
-        try {
-            return usuarioSessaoService.procurarImagem(email);
-        } catch (Exception e) {
-            sistemaDeLogger.error("Erro ao obter imagem do usuário."+e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Este método retorna o nome do usuário.
-     * @param email informado no cadastro.
-     * @return retorna o nome do usuário relativo ao email cadastrado.
-     */
-    public String definirNome(String email) {
-        sistemaDeLogger.info("Método definirNome() chamado.");
-        try {
-            return usuarioSessaoService.procurarNome(email);
-        } catch (Exception e) {
-            sistemaDeLogger.error("Erro ao obter nome do usuário: "+e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
     }
 
     /**

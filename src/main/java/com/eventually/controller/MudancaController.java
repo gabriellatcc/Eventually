@@ -1,17 +1,14 @@
 package com.eventually.controller;
 
-import com.eventually.model.UsuarioModel;
 import com.eventually.service.*;
-import com.eventually.view.ConfirmaMudancaModal;
+import com.eventually.view.MudancaModal;
 import com.eventually.view.SettingsView;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Optional;
 
 /**
  * Classe controladora para o modal de Confirmação de mudança de informação do usuário, gerencia a lógica de validação
@@ -23,38 +20,34 @@ import java.util.Optional;
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-05-29
  */
-public class ConfirmaMudancaController {
-    private final ConfirmaMudancaModal confirmaMudancaModal;
-    private final Stage primaryStage;
+public class MudancaController {
+    private final MudancaModal mudancaModal;
 
     private UsuarioAtualizacaoService usuarioAtualizacaoService;
     private UsuarioSessaoService usuarioSessaoService;
-    private UsuarioCadastroService usuarioCadastroService;
     private SettingsView settingsView;
 
     private String emailRecebido, valorRecebido;
 
     private AlertaService alertaService =new AlertaService();
 
-    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(ConfirmaMudancaController.class);
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(MudancaController.class);
 
     /**
-     * Construtor do ConfirmaMudancaController que obtém a instância única de UsuarioAtualizacaoService e
+     * Construtor do MudancaController que obtém a instância única de UsuarioAtualizacaoService e
      * UsuarioSessaoService para acessar a lista de usuários e inicializa o modal de alteração de informação do usuário.
-     * @param confirmaMudancaModal a instância do modal ConfirmaMudancaModal associada.
+     * @param mudancaModal a instância do modal MudancaModal associada.
      */
-    public ConfirmaMudancaController(SettingsView settingsView, String email, String valor, ConfirmaMudancaModal confirmaMudancaModal, Stage primaryStage) {
-        this.primaryStage = primaryStage;
+    public MudancaController(SettingsView settingsView, String email, String valor, MudancaModal mudancaModal) {
         this.settingsView = settingsView;
         this.usuarioAtualizacaoService = UsuarioAtualizacaoService.getInstancia();
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
-        this.usuarioCadastroService = UsuarioCadastroService.getInstancia();
         sistemaDeLogger.info("Inicializado e conectado ao SettingsView, UsuarioAtualizacaoService, UsuarioCadastroService e UsuarioSessaoService");
 
         this.emailRecebido = email;
         this.valorRecebido = valor;
-        this.confirmaMudancaModal = confirmaMudancaModal;
-        this.confirmaMudancaModal.setChangePasswordController(this);
+        this.mudancaModal = mudancaModal;
+        this.mudancaModal.setMudancaControlador(this);
         configManipuladoresEventoConfirmacaoMudanca();
     }
 
@@ -66,23 +59,23 @@ public class ConfirmaMudancaController {
     private void configManipuladoresEventoConfirmacaoMudanca() {
         sistemaDeLogger.info("Método configManipuladoresEventoConfirmacaoMudanca() chamado.");
         try {
-            confirmaMudancaModal.getLbMensagem().setText("Alterar " + valorRecebido);
-            confirmaMudancaModal.getFldEditado().setPromptText("Digite um novo valor para "+ valorRecebido);
-            confirmaMudancaModal.getBtnSalvarSenha().setOnAction(e -> processarMudanca());
-            confirmaMudancaModal.getBtnFechar().setOnAction(e -> processarFecharModal());
+            mudancaModal.getLbMensagem().setText("Alterar " + valorRecebido);
+            mudancaModal.getFldEditado().setPromptText("Digite um novo valor para "+ valorRecebido);
+            mudancaModal.getBtnSalvarSenha().setOnAction(e -> processarMudanca());
+            mudancaModal.getBtnFechar().setOnAction(e -> processarFecharModal());
         } catch (Exception e) {
-            sistemaDeLogger.error("Erro ao configurar manipuladores de login: " + e.getMessage());
+            sistemaDeLogger.error("Erro ao configurar manipuladores de mudança: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     /**
-     * Manipula a solicitação de alteração de um valor do usuário vinda da confirmaMudancaModal e, em caso de falha,
+     * Manipula a solicitação de alteração de um valor do usuário vinda da mudancaModal e, em caso de falha,
      * uma mensagem de erro é exibida no console.
      */
     public void processarMudanca() {
         sistemaDeLogger.info("Método processarMudanca() chamado.");
-        String novoValorTexto = confirmaMudancaModal.getFldEditado().getText();
+        String novoValorTexto = mudancaModal.getFldEditado().getText();
         try {
             int id = usuarioSessaoService.procurarID(emailRecebido);
             if (id == -1) {
@@ -131,26 +124,33 @@ public class ConfirmaMudancaController {
     }
 
     /**
-     * Atualiza o label correspondente na SettingsView após uma alteração bem-sucedida.
+     * Atualiza o label correspondente na SettingsView após uma alteração bem-sucedida e, em caso de falha, uma
+     * mensagem é exibida no console.
      * @param novoValor o novo texto a ser exibido na interface.
      */
     private void atualizarInterface(String novoValor) {
-        switch (valorRecebido.toLowerCase()) {
-            case "nome":
-                settingsView.getLbNomeUsuario().setText(novoValor);
-                break;
-            case "email":
-                settingsView.getLbEmailUsuario().setText(novoValor);
-                break;
-            case "senha":
-                settingsView.getLbSenhaUsuario().setText("********");
-                break;
-            case "cidade":
-                settingsView.getLbCidadeUsuario().setText(novoValor);
-                break;
-            case "data de nascimento":
-                settingsView.getLbDataNascUsuario().setText(novoValor);
-                break;
+        sistemaDeLogger.info("Método atualizarInterface() chamado.");
+        try {
+            switch (valorRecebido.toLowerCase()) {
+                case "nome":
+                    settingsView.getLbNomeUsuario().setText(novoValor);
+                    break;
+                case "email":
+                    settingsView.getLbEmailUsuario().setText(novoValor);
+                    break;
+                case "senha":
+                    settingsView.getLbSenhaUsuario().setText("********");
+                    break;
+                case "cidade":
+                    settingsView.getLbCidadeUsuario().setText(novoValor);
+                    break;
+                case "data de nascimento":
+                    settingsView.getLbDataNascUsuario().setText(novoValor);
+                    break;
+            }
+        } catch (Exception e) {
+        sistemaDeLogger.error("Algum erro ocorreu na mudança de "+ valorRecebido +": " + e.getMessage());
+        e.printStackTrace();
         }
     }
 
@@ -161,7 +161,7 @@ public class ConfirmaMudancaController {
     private void processarFecharModal() {
         sistemaDeLogger.info("Método processarFecharModal   () chamado.");
         try {
-            confirmaMudancaModal.close();
+            mudancaModal.close();
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao fechar o modal: " + e.getMessage());
         }

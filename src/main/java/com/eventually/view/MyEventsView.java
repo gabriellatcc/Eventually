@@ -12,6 +12,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import java.time.format.DateTimeFormatter;
@@ -29,17 +30,15 @@ public class MyEventsView extends BorderPane {
 
     private BarraBuilder barraBuilder;
 
-    private Button btnNovoEvento;
-    private ToggleButton btnEventosCriados;
-    private ToggleButton btnEventosFinalizados;
+    private Button btnNovoEvento, btnEditarEvento;
+    private ToggleButton btnEventosCriados, btnEventosFinalizados;
+
+    private Label lbNomeUsuario, lbEmailUsuario;
 
     private ImageView avatarView;
     private ToggleGroup grupoDatas;
     private VBox listaEventos;
     private HBox seletorDataContainer;
-
-    private Label lbNomeUsuario;
-    private Label lbEmailUsuario;
 
     /**
      *Construtor da classe {@code UserScheduleView}.
@@ -106,13 +105,10 @@ public class MyEventsView extends BorderPane {
         userInfoText.setAlignment(Pos.CENTER_LEFT);
         userInfoText.getChildren().addAll(lbNomeUsuario, lbEmailUsuario);
 
-        try {
-            Image avatarImage = new Image(getClass().getResourceAsStream("/images/icone-padrao-usuario.png"));
-            avatarView = new ImageView(avatarImage);
-        } catch (Exception e) {
-            System.err.println("Imagem de avatar padrão não encontrada, usando placeholder.");
-            avatarView = new ImageView();
-        }
+        Image avatarImage = new Image(getClass().getResourceAsStream("/images/icone-padrao-usuario.png"));
+        avatarView = new ImageView(avatarImage);
+        System.err.println("Imagem de avatar padrão não encontrada, usando placeholder.");
+        avatarView = new ImageView();
         avatarView.setFitWidth(40);
         avatarView.setFitHeight(40);
         avatarView.setPreserveRatio(true);
@@ -126,6 +122,9 @@ public class MyEventsView extends BorderPane {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
+        subCabecalho.setBorder(new Border(new BorderStroke(Color.GREEN,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+
         subCabecalho.getChildren().addAll(filtroBox, spacer, userDisplayBox);
 
         return subCabecalho;
@@ -138,22 +137,32 @@ public class MyEventsView extends BorderPane {
      */
     private VBox criarListaEventos() {
         listaEventos = new VBox(15);
+        listaEventos.setBorder(new Border(new BorderStroke(Color.DARKBLUE,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         listaEventos.setPadding(new Insets(20, 40, 20, 40));
         listaEventos.getStyleClass().add("event-list-container");
         return listaEventos;
     }
 
+    /**
+     * Este método  constrói um seletor de data da semana atual,
+     * permitindo ao usuário escolher um dos dias da semana (de
+     * segunda a domingo) por meio de botões alternáveis (ToggleButtons).
+     * @return um componente visual do JavaFX (HBox)
+     */
     private HBox criarSeletorDeDatas() {
         seletorDataContainer = new HBox(10);
         seletorDataContainer.setPadding(new Insets(10, 40, 10, 40));
         seletorDataContainer.setAlignment(Pos.CENTER);
+        seletorDataContainer.setBorder(new Border(new BorderStroke(Color.INDIANRED,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+
         seletorDataContainer.getStyleClass().add("date-picker-bar");
         return seletorDataContainer;
     }
 
     /** Esta classe cria um container que exibe a lista de eventos para o dia do mês e ano específicos, ao selecionar
      * outros dias da semana, é limpa a mensagem e exibida outra para o dia especifico.
-     *
      * @param eventosDoDia é a lista de eventos a ser exibida
      */
     public void carregarEventos(List<MyEventsController.Evento> eventosDoDia, EventHandler<ActionEvent> onEditHandler) {
@@ -203,7 +212,7 @@ public class MyEventsView extends BorderPane {
         eventCard.setPadding(new Insets(20));
         HBox.setHgrow(eventCard, Priority.ALWAYS);
 
-        Button btnEditarEvento = new Button("Editar Evento");
+        btnEditarEvento = new Button("Editar Evento");
         btnEditarEvento.getStyleClass().add("edit-event-button");
         btnEditarEvento.setUserData(evento.id());
         btnEditarEvento.setOnAction(onEditHandler);
@@ -242,7 +251,6 @@ public class MyEventsView extends BorderPane {
 
         return centerContent;
     }
-
 
     /**
      * Métodos de encapsulamento getters e setters

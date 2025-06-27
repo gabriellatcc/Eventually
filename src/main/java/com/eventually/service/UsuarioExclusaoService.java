@@ -1,6 +1,5 @@
 package com.eventually.service;
 
-import com.eventually.controller.LoginController;
 import com.eventually.model.UsuarioModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

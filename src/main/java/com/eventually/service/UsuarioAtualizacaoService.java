@@ -1,6 +1,7 @@
 package com.eventually.service;
 
 import com.eventually.model.UsuarioModel;
+import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import java.util.Optional;
  */
 public final class UsuarioAtualizacaoService {
     private static UsuarioAtualizacaoService instancia;
+
     private final UsuarioCadastroService usuarioCadastroService;
     private final UsuarioSessaoService usuarioSessaoService;
     private AlertaService alertaService = new AlertaService();
@@ -35,10 +37,16 @@ public final class UsuarioAtualizacaoService {
      * @return a instância única de {@code UsuarioAtualizacaoService}.
      */
     public static synchronized UsuarioAtualizacaoService getInstancia() {
-        if (instancia == null) {
-            instancia = new UsuarioAtualizacaoService();
+       try{
+            if (instancia == null) {
+                instancia = new UsuarioAtualizacaoService();
+            }
+            return instancia;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao retornar a instância."+e.getMessage());
+            e.printStackTrace();
+            return null;
         }
-        return instancia;
     }
 
     /**
@@ -149,6 +157,22 @@ public final class UsuarioAtualizacaoService {
         } else {
             alertaService.alertarWarn("Edição Inválida", "Data de nascimento inválida (mínimo 12 anos).");
             return false;
+        }
+    }
+
+    /**
+     * Atualiza a foto de um usuário específico.
+     * @param idUsuario o ID do usuário.
+     * @param novaFoto a nova foto para o usuário.
+     * @return true se a atualização foi bem-sucedida, false caso contrário.
+     */
+    public boolean atualizarFoto(int idUsuario, Image novaFoto) {
+        Optional<UsuarioModel> usuarioOpt = buscarUsuarioParaAtualizacao(idUsuario);
+        if (usuarioOpt.isEmpty()) return false;
+        else{
+            usuarioOpt.get().setFotoUsuario(novaFoto);
+            notificarSucesso("Foto", idUsuario);
+            return true;
         }
     }
 

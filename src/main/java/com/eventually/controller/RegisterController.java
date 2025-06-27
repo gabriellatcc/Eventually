@@ -1,7 +1,6 @@
 package com.eventually.controller;
 import com.eventually.dto.CadastrarUsuarioDto;
 import com.eventually.dto.PreferenciasUsuarioDto;
-import com.eventually.model.UsuarioModel;
 import com.eventually.service.*;
 import com.eventually.view.RegisterView;
 import javafx.stage.Stage;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Classe controladora da tela de registro, é responsável pela comunicação com o backend.
@@ -84,15 +82,15 @@ public class RegisterController {
             String cidade = registerView.getFldCidade().getText();
             LocalDate data = registerView.getFldDataNascimento().getValue();
 
-                PreferenciasUsuarioDto preferencias = new PreferenciasUsuarioDto(
-                        registerView.getCbCorporativo().isSelected(),
-                        registerView.getCbBeneficente().isSelected(),
-                        registerView.getCbEducacional().isSelected(),
-                        registerView.getCbCultural().isSelected(),
-                        registerView.getCbEsportivo().isSelected(),
-                        registerView.getCbReligioso().isSelected(),
-                        registerView.getCbSocial().isSelected()
-                );
+            PreferenciasUsuarioDto preferencias = new PreferenciasUsuarioDto(
+                    registerView.getCbCorporativo().isSelected(),
+                    registerView.getCbBeneficente().isSelected(),
+                    registerView.getCbEducacional().isSelected(),
+                    registerView.getCbCultural().isSelected(),
+                    registerView.getCbEsportivo().isSelected(),
+                    registerView.getCbReligioso().isSelected(),
+                    registerView.getCbSocial().isSelected()
+            );
 
             CadastrarUsuarioDto dto = new CadastrarUsuarioDto(nome, email, senha, cidade, data, preferencias);
 

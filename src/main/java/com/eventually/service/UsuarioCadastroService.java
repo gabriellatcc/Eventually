@@ -389,7 +389,7 @@ public final class UsuarioCadastroService {
      * @return Um {@code Set} de objetos {@code UsuarioModel}.
      */
     public Set<UsuarioModel> getAllUsuarios() {
-        sistemaDeLogger.info("Método getAllUsuarios() chamado.");
+        sistemaDeLogger.info("Método getAllEventos() chamado.");
         try {
             Set<UsuarioModel> usuarios = Collections.unmodifiableSet(listaUsuarios);
             System.out.println("Usuários encontrados:");

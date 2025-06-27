@@ -1,25 +1,69 @@
-.root-pane-modal {
+.layout-pane {
     -fx-background-color: white;
-    -fx-font-family: "Poppins", "Arial", sans-serif;
+    -fx-background-radius: 20px;
+    -fx-border-color: #BDBDBD;
+    -fx-border-width: 1px;
+    -fx-border-radius: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 0, 0);
 }
 
-.menu-button {
-    -fx-background-color: #C93ACD;
-    -fx-text-fill: white;
+.image-preview-container {
+    -fx-border-color: #888888;
+    -fx-border-width: 1px;
+    -fx-border-style: dashed;
+    -fx-border-radius: 5px;
+}
+
+.title-label-modal {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5F115A;
+}
+
+.subtitle-label-modal {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8E4A89;
+    -fx-alignment: center;
+}
+.label-modal {
+    -fx-font-size: 16px;
+    -fx-text-fill: #888;
+    -fx-alignment: center;
+}
+
+.text-area  {
+    -fx-prompt-text-fill: #aaaaaa;
+    -fx-background-color: #f4f4f4;
+    -fx-background-radius: 12;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1px;
     -fx-font-size: 14px;
-    -fx-padding: 12px 20px;
-    -fx-background-radius: 25px;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 2);
+    -fx-padding: 8px 12px;
+}
+.text-area:focused {
+    -fx-border-color: #8E2392;
+    -fx-border-width: 2px;
+    -fx-background-color: white;
+}
+.text-area.prompt-text {
+    -fx-font-size: 4px;
 }
 
-.menu-button:hover {
-    -fx-background-color: #D54BD9;
+.modal-field {
+    -fx-background-radius: 12;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1px;
+    -fx-prompt-text-fill: #aaaaaa;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 12px;
 }
-
-.menu-button:focused {
-    -fx-background-color: #E05CE4;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0, 0, 3);
+.modal-field:focused {
+    -fx-border-color: #8E2392;
+    -fx-border-width: 2px;
+    -fx-background-color: white;
 }
 
 .purple-checkbox > .box {
@@ -30,96 +74,54 @@
     -fx-border-width: 3px;
     -fx-border-radius: 3px;
 }
-
+.purple-checkbox > .text {
+    -fx-fill: #000000;
+}
 .purple-checkbox:selected > .box {
     -fx-background-color: #800080;
     -fx-border-color: #800080;
 }
-
 .purple-checkbox > .box > .mark {
     -fx-scale-x: 1.5;
     -fx-scale-y: 1.5;
 }
-
 .purple-checkbox.register-field:focused {
     -fx-border-color: #800080;
     -fx-border-width: 2px;
 }
 
-.title-label-modal {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #5F115A;
-}
-
-.modal-field {
-    -fx-background-color: #f4f4f4;
-    -fx-background-radius: 12;
-    -fx-border-color: #e0e0e0;
-    -fx-border-radius: 12;
-    -fx-border-width: 1px;
-    -fx-prompt-text-fill: #aaaaaa;
-    -fx-font-size: 14px;
-    -fx-padding: 8px 12px;
-}
-
-.modal-field:focused {
-    -fx-border-color: #8E2392;
-    -fx-border-width: 2px;
-    -fx-background-color: white;
-}
-
-.step-label {
-    -fx-font-size: 14px;
-}
-.step-incomplete {
-    -fx-text-fill: #888888;
-}
-.step-complete {
-    -fx-text-fill: #2E7D32;
-    -fx-font-weight: bold;
-}
-
-.password-rule-title {
-    -fx-font-size: 13px;
-    -fx-text-fill: #555555;
-    -fx-font-weight: bold;
-}
-.password-rule {
-    -fx-font-size: 13px;
-}
-.rule-invalid {
-    -fx-text-fill: #999999;
-}
-.rule-valid {
-    -fx-text-fill: #2E7D32;
-    -fx-font-weight: bold;
-}
-.modal-save-button, .modal-close-button {
+.modal-interact-button{
     -fx-pref-height: 40px;
     -fx-font-size: 14px;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-radius: 20px;
     -fx-cursor: hand;
-}
-
-.modal-save-button {
     -fx-background-color: #8E2392;
     -fx-pref-width: 160px;
 }
-.modal-save-button:hover {
+.modal-interact-button:hover {
     -fx-background-color: #A329A8;
 }
-.modal-save-button:disabled {
+.modal-interact-button:disabled {
     -fx-background-color: #cccccc;
     -fx-opacity: 0.7;
 }
 
-.modal-close-button {
-    -fx-background-color: #757575;
-    -fx-pref-width: 120px;
+.crement-button{
+    -fx-pref-height: 30px;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+    -fx-background-color: #8E2392;
+    -fx-pref-width: 30px;
 }
-.modal-close-button:hover {
-    -fx-background-color: #8E8E8E;
+.crement-button:hover {
+    -fx-background-color: #A329A8;
+}
+.crement-button:disabled {
+    -fx-background-color: #cccccc;
+    -fx-opacity: 0.7;
 }

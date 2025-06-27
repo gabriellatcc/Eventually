@@ -88,12 +88,8 @@ public class HomeView extends BorderPane {
         lbEmailUsuario = new Label();
         lbEmailUsuario.getStyleClass().add("user-display-label");
 
-        try {
-            Image avatarImage = new Image(getClass().getResourceAsStream("/images/icone-padrao-usuario.png"));
-            avatarView = new ImageView(avatarImage);
-        } catch (Exception e) {
-            avatarView = new ImageView();
-        }
+        Image avatarImage = new Image(getClass().getResourceAsStream("/images/icone-padrao-usuario.png"));
+        avatarView = new ImageView(avatarImage);
         avatarView.setFitWidth(40);
         avatarView.setFitHeight(40);
         avatarView.setPreserveRatio(true);
@@ -156,6 +152,7 @@ public class HomeView extends BorderPane {
         gridEventos.getStyleClass().add("events-grid");
 
         ColumnConstraints col1 = new ColumnConstraints();
+
         ColumnConstraints col2 = new ColumnConstraints();
         ColumnConstraints col3 = new ColumnConstraints();
         col1.setPercentWidth(33.33);
@@ -191,66 +188,13 @@ public class HomeView extends BorderPane {
 
         for (int i = 0; i < eventos.size(); i++) {
             Evento evento = eventos.get(i);
-            VBox cardEvento = criarCardEvento(
-                    evento.titulo(),
-                    evento.local(),
-                    evento.dataHora(),
-                    evento.categoria()
-            );
+
+            VBox cardEvento = new EventoHCard();
 
             int row = i / 3;
             int col = i % 3;
             gridEventos.add(cardEvento, col, row);
         }
-    }
-
-    /**
-     * Este método cria um card individual para um evento.
-     * @param titulo o título do evento
-     * @param local o local do evento
-     * @param dataHora a data e hora do evento
-     * @param categoria a categoria do evento
-     * @return um VBox representando o card do evento
-     */
-    private VBox criarCardEvento(String titulo, String local, String dataHora, String categoria) {
-        VBox cardEvento = new VBox(10);
-        cardEvento.setPadding(new Insets(0));
-        cardEvento.getStyleClass().add("event-card");
-        cardEvento.setPrefHeight(220);
-
-        Region areaImagem = new Region();
-        areaImagem.setPrefHeight(100);
-        areaImagem.getStyleClass().add("event-card-content");
-
-        VBox areaTexto = new VBox(5);
-        areaTexto.setPadding(new Insets(10, 15, 15, 15));
-
-        Label lbDataHora = new Label(dataHora);
-        lbDataHora.getStyleClass().add("event-date-time");
-
-        Label lbTitulo = new Label(titulo);
-        lbTitulo.getStyleClass().add("event-title");
-
-        Label lbLocal = new Label(local);
-        lbLocal.getStyleClass().add("event-location");
-
-        HBox areaInferior = new HBox();
-        areaInferior.setAlignment(Pos.CENTER_LEFT);
-        areaInferior.setPadding(new Insets(5, 0, 0, 0));
-
-        Label lbCategoria = new Label(categoria);
-        lbCategoria.getStyleClass().add("event-category");
-        lbCategoria.getStyleClass().add("category-" + categoria.toLowerCase());
-
-        areaInferior.getChildren().add(lbCategoria);
-
-        VBox.setVgrow(areaImagem, Priority.SOMETIMES);
-
-        areaTexto.getChildren().addAll(lbDataHora, lbTitulo, lbLocal, areaInferior);
-
-        cardEvento.getChildren().addAll(areaImagem, areaTexto);
-
-        return cardEvento;
     }
 
     /**

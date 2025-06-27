@@ -19,7 +19,6 @@ import javafx.scene.shape.Rectangle;
  * @since 2025-06-22
  */
 public class EventoHCard extends VBox {
-
     private static final double CARD_WIDTH = 320;
     private static final double CARD_HEIGHT = 280;
     private static final double IMAGE_HEIGHT = 200;

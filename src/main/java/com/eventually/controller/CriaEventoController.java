@@ -1,8 +1,18 @@
 package com.eventually.controller;
 
+import com.eventually.dto.CriarEventoDto;
+import com.eventually.dto.PreferenciaFormatoDto;
+import com.eventually.dto.PreferenciasUsuarioDto;
+import com.eventually.service.AlertaService;
+import com.eventually.service.EventoCriacaoService;
 import com.eventually.view.CriaEventoModal;
-import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
 import javafx.stage.Window;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 import java.time.LocalDate;
 
 /** PASSÍVEL DE ALTERAÇÕES
@@ -14,108 +24,183 @@ import java.time.LocalDate;
  * @since 2025-06-19
  */
 public class CriaEventoController {
-    private final CriaEventoModal view;
+    private final CriaEventoModal criaEventoModal;
+    private EventoCriacaoService eventoCriacaoService;
+
+    private String emailRecebido;
+
+    private File arquivoFinal;
+    private Image imageFinal;
+
+    private AlertaService alerta =new AlertaService();
+
+    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(CriaEventoController.class);
 
     /**
      * Construtor do CriaEventoController.
-     * @param view A instância da CriaEventoModal associada.
+     * @param criaEventoModal A instância da CriaEventoModal associada.
      */
-    public CriaEventoController(CriaEventoModal view) {
-        this.view = view;
+    public CriaEventoController(String email, CriaEventoModal criaEventoModal) {
+        this.eventoCriacaoService = EventoCriacaoService.getInstancia();
+        sistemaDeLogger.info("Inicializado e conectado ao EventoCriacaoService.");
+
+        this.emailRecebido = email;
+        this.criaEventoModal = criaEventoModal;
+        this.criaEventoModal.setCriaEventoController(this);
+        configManipuladoresEventoCriaEvento();
     }
 
     /**
-     * Exibe um Alert de erro simples.
-     * @param title O título da janela de alerta.
-     * @param message A mensagem a ser exibida no alerta.
+     * Configura os manipuladores de evento para os componentes do modal criação de evento.
+     * Este método associa as ações dos botões e do modal e, em caso de falha na configuração
+     * de algum manipulador de evento, uma mensagem de erro é exibida no console.
      */
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-
-        if (view != null && view.getModalScene() != null) {
-            Window window = view.getModalScene().getWindow();
-            if (window != null && window.isShowing()) {
-                alert.initOwner(window);
-            }
-        }
-        alert.showAndWait();
-    }
-
-    /**
-     * Exibe um Alert de informação simples.
-     * @param title O título da janela de alerta.
-     * @param message A mensagem a ser exibida no alerta.
-     */
-    private void showInfo(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-
-        if (view != null && view.getModalScene() != null) {
-            Window window = view.getModalScene().getWindow();
-            if (window != null && window.isShowing()) {
-                alert.initOwner(window);
-            }
-        }
-        alert.showAndWait();
-    }
-
-    /**
-    public void handleCreateEventRequest() {
-        if (view == null || eventService == null) {
-            System.err.println("CriaEventoController: View ou Service não configurado.");
-            showAlert("Erro Crítico", "Ocorreu um erro interno. Controller não inicializado corretamente.");
-            return;
-        }
-        String eventName = view.getEventName().getText();
-        String description = view.getDescription().getText();
-        String formato = view.getFormato();
-        int capacity = view.getParticipantCount();
-        LocalDate startDate = view.getStartDate().getValue();
-        LocalDate endDate = view.getEndDate().getValue();
-        String startTime = view.getStartTime().getText();
-        String endTime = view.getEndTime().getText();
-
-        if (eventName.isEmpty() || description.isEmpty() || formato.isEmpty()) {
-            showAlert("Erro de Validação", "Nome, descrição e formato do evento são obrigatórios.");
-            return;
-        }
-
-        if (capacity <= 0) {
-            showAlert("Erro de Validação", "A capacidade de participantes deve ser maior que zero.");
-            return;
-        }
-
-        if (startDate == null || endDate == null || startTime.isEmpty() || endTime.isEmpty()) {
-            showAlert("Erro de Validação", "As datas e horários de início e fim são obrigatórios.");
-            return;
-        }
-
-        if (endDate.isBefore(startDate)) {
-            showAlert("Erro de Validação", "A data de término não pode ser anterior à data de início.");
-            return;
-        }
-
+    private void configManipuladoresEventoCriaEvento() {
+        sistemaDeLogger.info("Método configManipuladoresEventoCriaEvento() chamado.");
         try {
-            boolean success = eventService.createEvent(
-                    eventName, description, formato, capacity, startDate, startTime, endDate, endTime
+            criaEventoModal.getFldNParticipantes().textProperty().addListener((observable, oldValue, newValue) -> {
+                if (!newValue.matches("\\d*")) {
+                    criaEventoModal.getFldNParticipantes().setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            });
+            criaEventoModal.getBtnEscolherImagem().setOnAction(event -> processarEscolherImagem());
+
+            criaEventoModal.getBtnDecrement().setOnAction(e -> atualizarCapacidade(false));
+            criaEventoModal.getBtnIncrement().setOnAction(e -> atualizarCapacidade(true));
+            criaEventoModal.getBtnCriar().setOnAction(e-> processarCriarEvento());
+            criaEventoModal.getBtnCancelar().setOnAction(e -> processarFecharModal());
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao configurar manipuladores de criação de evento: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void processarCriarEvento() {
+        sistemaDeLogger.info("Método processarCriarEvento() chamado.");
+        try {
+            String nomeEvento = criaEventoModal.getFldNomeEvento().getText();
+            String descricaoEvento = criaEventoModal.getTaDescricao().getText();
+            PreferenciaFormatoDto preferenciaFormato = new PreferenciaFormatoDto(
+                    criaEventoModal.getRadioPresencial().isSelected(),
+                    criaEventoModal.getRadioOnline().isSelected(),
+                    criaEventoModal.getRadioHibrido().isSelected()
             );
 
-            if (success) {
-                showInfo("Sucesso", "Evento criado com sucesso!");
-                view.close();
-            } else {
-                showAlert("Erro ao Criar Evento", "Não foi possível criar o evento. Verifique os dados ou tente novamente.");
-            }
+            String linkEvento = criaEventoModal.getFldLink().getText();
+            String localizacaoEvento = criaEventoModal.getTaLocalizacao().getText();
+            Image fotoEvento = criaEventoModal.getImageEvento();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Erro de Sistema", "Ocorreu um erro inesperado: " + e.getMessage());
+            int nParticipantes = criaEventoModal.getParticipantCount();
+            String horaInicial = criaEventoModal.getFldHoraInicio().getText();
+            LocalDate diaInicial = criaEventoModal.getDatePickerStart().getValue();
+            String horaFinal = criaEventoModal.getFldHoraFinal().getText();
+            LocalDate diaFinal = criaEventoModal.getDatePickerEnd().getValue();
+
+            PreferenciasUsuarioDto preferenciasEvento = new PreferenciasUsuarioDto(
+                    criaEventoModal.getCbCorporativo().isSelected(),
+                    criaEventoModal.getCbBeneficente().isSelected(),
+                    criaEventoModal.getCbEducacional().isSelected(),
+                    criaEventoModal.getCbCultural().isSelected(),
+                    criaEventoModal.getCbEsportivo().isSelected(),
+                    criaEventoModal.getCbReligioso().isSelected(),
+                    criaEventoModal.getCbSocial().isSelected()
+            );
+
+            CriarEventoDto dto= new CriarEventoDto(emailRecebido, nomeEvento, descricaoEvento, preferenciaFormato,nParticipantes,horaInicial,diaInicial,horaFinal,diaFinal,preferenciasEvento);
+
+            boolean criacaoFoiOk = eventoCriacaoService.criarEventoSeValido(dto, linkEvento, localizacaoEvento, fotoEvento);
+
+            if (criacaoFoiOk) {
+                sistemaDeLogger.info("Evento criado com sucesso.");
+            }
+        } catch (Exception ex) {
+            sistemaDeLogger.error("Erro ao criar o evento: " + ex.getMessage());
+            ex.printStackTrace();
+            alerta.alertarErro("Erro ao criar o evento.");
         }
     }
+
+    private void atualizarCapacidade(boolean incrementa) {
+        try {
+            int currentValue = Integer.parseInt(criaEventoModal.getFldNParticipantes().getText());
+            if (incrementa) {
+                currentValue++;
+            } else {
+                if (currentValue > 0) {
+                    currentValue--;
+                }
+            }
+            criaEventoModal.getFldNParticipantes().setText(String.valueOf(currentValue));
+        } catch (NumberFormatException e) {
+            criaEventoModal.getFldNParticipantes().setText("0");
+        }
+    }
+
+    /**
+     * Lida com o clique no botão "Escolher Arquivo", abre um FileChooser para que o usuário possa selecionar um
+     * arquivo de imagem, valida se a imagem selecionada tem exatamente 200x200 pixels e, em caso de falha, exibe uma
+     * mensagem no console.
      */
+    private void processarEscolherImagem() {
+        sistemaDeLogger.info("Método processarEscolherImagem() chamado.");
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Selecione uma Imagem (200x200 pixels)");
+
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Imagens", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp"),
+                    new FileChooser.ExtensionFilter("Todos os Arquivos", "*.*")
+            );
+
+            Window ownerWindow = criaEventoModal.getScene().getWindow();
+            File arquivoSelecionado = fileChooser.showOpenDialog(ownerWindow);
+
+            if (arquivoSelecionado != null) {
+                Image imagemSelecionada = new Image(arquivoSelecionado.toURI().toString());
+
+                double larguraImagem = imagemSelecionada.getWidth();
+                double alturaImagem = imagemSelecionada.getHeight();
+                double proporcaoDesejada = 16.0 / 10.0;
+                double proporcaoImagem = larguraImagem / alturaImagem;
+                double tolerancia = 0.01;
+
+                if (Math.abs(proporcaoImagem - proporcaoDesejada) <= tolerancia) {
+                    sistemaDeLogger.info("Imagem válida (proporção 16:10) selecionada: " + arquivoSelecionado.getName() + " (" + (int)larguraImagem + "x" + (int)alturaImagem + ")");
+                    imageFinal = imagemSelecionada;
+                    criaEventoModal.setPreviewImage(imageFinal);
+                    criaEventoModal.setArquivoSelecionado(arquivoSelecionado);
+                } else {
+                    sistemaDeLogger.warn("Imagem com proporção inválida selecionada: " +
+                            (int) imagemSelecionada.getWidth() + "x" + (int) imagemSelecionada.getHeight() +
+                            " (proporção: " + String.format("%.2f", proporcaoImagem) + ", esperada: " + proporcaoDesejada + ")");
+
+                    criaEventoModal.setPreviewImage(null);
+                    criaEventoModal.setArquivoSelecionado(null);
+                    this.imageFinal = null;
+                    this.arquivoFinal = null;
+
+                    String mensagem = String.format("A imagem selecionada tem proporção %.2f, mas a proporção esperada é %.1f:%1.f.",
+                            proporcaoImagem, 16.0, 10.0);
+                    alerta.alertarWarn("Imagem com Proporção Inválida",mensagem);
+                }
+            }
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao processar a escolha da imagem: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Fecha o modal e, em caso de falha uma mensagem de erro é exibida no console.
+     * @return nulo para que o modal finalize sua exibição e operação.
+     */
+    private void processarFecharModal() {
+        sistemaDeLogger.info("Método processarFecharModal() chamado.");
+        try {
+            criaEventoModal.close();
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao fechar o modal: " + e.getMessage());
+        }
+    }
+
 }

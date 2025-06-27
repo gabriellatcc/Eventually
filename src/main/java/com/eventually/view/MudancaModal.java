@@ -1,6 +1,6 @@
 package com.eventually.view;
 
-import com.eventually.controller.ConfirmaMudancaController;
+import com.eventually.controller.MudancaController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -20,24 +20,25 @@ import javafx.stage.Stage;
  * @version 1.05
  * @since 29-05-2025
  */
-public class ConfirmaMudancaModal extends Parent {
-    private ConfirmaMudancaController cpController;
+public class MudancaModal extends Parent {
+    private MudancaController cpController;
 
     private Label lbMensagem;
+
     private TextField fldEditado;
-    private Button btnSalvarSenha;
-    private Button btnFechar;
+
+    private Button btnSalvarSenha, btnFechar;
 
     /**
      * Construtor padrão da classe.
      */
-    public ConfirmaMudancaModal() {setup();}
+    public MudancaModal() {setup();}
 
     /**
      * Define o controlador para este modal.
      * @param cpController o controlador a ser usado.
      */
-    public void setChangePasswordController(ConfirmaMudancaController cpController) {this.cpController = cpController;}
+    public void setMudancaControlador(MudancaController cpController) {this.cpController = cpController;}
 
     /**
      * Exibe a janela modal configurada para alteração de valor do usuário.
@@ -47,6 +48,9 @@ public class ConfirmaMudancaModal extends Parent {
         this.getChildren().add(layout);
     }
 
+    /**
+     * Configura a interface gráfica do modal.
+     */
     private VBox criarLayoutPrincipal() {
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.CENTER);
@@ -76,21 +80,11 @@ public class ConfirmaMudancaModal extends Parent {
         hbBotoes.setAlignment(Pos.CENTER);
 
         btnSalvarSenha = new Button("Salvar");
-        btnSalvarSenha.setStyle(
-                "-fx-font-size: 14px;" +
-                        "-fx-background-color: #4CAF50;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-background-radius: 5px;"
-        );
+        btnSalvarSenha.getStyleClass().add("save-button");
         btnSalvarSenha.setPrefWidth(100);
 
         btnFechar = new Button("Fechar");
-        btnFechar.setStyle(
-                "-fx-font-size: 14px;" +
-                        "-fx-background-color: #f44336;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-background-radius: 5px;"
-        );
+        btnFechar.getStyleClass().add("close-button");
         btnFechar.setPrefWidth(100);
 
         hbBotoes.getChildren().addAll(btnSalvarSenha, btnFechar);
@@ -100,6 +94,9 @@ public class ConfirmaMudancaModal extends Parent {
         return layout;
     }
 
+    /**
+     * Fecha a janela do modal.
+     */
     public void close() {
         Stage stage = (Stage) this.getScene().getWindow();
         if (stage != null) {

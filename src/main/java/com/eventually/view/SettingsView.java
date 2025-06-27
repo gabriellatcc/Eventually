@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.slf4j.Logger;
@@ -100,7 +101,12 @@ public class SettingsView extends BorderPane {
 
         btnDeleteAccount = new Button("Excluir conta");
         btnDeleteAccount.getStyleClass().add("delete-account-button");
-        btnDeleteAccount.setStyle("-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-font-weight: bold;");
+        btnDeleteAccount.setStyle(
+                "-fx-font-size: 14px;" +
+                        "-fx-background-color: #f44336;" +
+                        "-fx-text-fill: white;" +
+                        "-fx-background-radius: 5px;"
+        );
         btnDeleteAccount.setPrefWidth(150);
 
         HBox hbBtnExclusao = new HBox(btnDeleteAccount);
@@ -302,14 +308,24 @@ public class SettingsView extends BorderPane {
         avatarView.setFitWidth(100);
         avatarView.setPreserveRatio(true);
 
-        StackPane photoPlaceholder = new StackPane(avatarView);
+        StackPane photoPlaceholder = new StackPane();
+        photoPlaceholder.getChildren().add(avatarView);
         photoPlaceholder.setPrefSize(100,100);
         photoPlaceholder.setMinSize(100,100);
         photoPlaceholder.setMaxSize(100,100);
+        photoPlaceholder.setStyle(
+                "-fx-background-color: C7C7C7;" +
+                        "-fx-background-radius: 20;" +
+                        "-fx-border-width: 4px;" +
+                        "-fx-border-radius: 20;"
+        );
 
-        photoPlaceholder.setStyle("-fx-border-color: lightgray; -fx-border-width: 1; -fx-background-color: #f0f0f0;");
+        Rectangle rect = new Rectangle(100, 100);
+        rect.setArcWidth(20);
+        rect.setArcHeight(20);
+        photoPlaceholder.setClip(rect);
 
-        Label photoInfo = new Label("A imagem anexada deve ter\nXX x XX pixels (YY MB)");
+        Label photoInfo = new Label("A imagem anexada deve ter\n200 x 200 pixels ");
         photoInfo.setFont(Font.font("Arial", 10));
         photoInfo.setTextFill(Color.GRAY);
         photoInfo.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
@@ -352,6 +368,7 @@ public class SettingsView extends BorderPane {
     public List<CheckBox> getThemeCheckBoxes() {return themeCheckBoxes;}
     public void setThemeCheckBoxes(List<CheckBox> themeCheckBoxes) {this.themeCheckBoxes = themeCheckBoxes;}
 
+    public ImageView getAvatarView() {return avatarView;}
     public void setAvatarImagem(Image avatarImagem) {
         if(this.avatarView != null && avatarImagem != null) {
             this.avatarView.setImage(avatarImagem);
