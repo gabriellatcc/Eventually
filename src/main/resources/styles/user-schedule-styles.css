@@ -28,7 +28,7 @@
 }
 
 .topbar {
-    -fx-background-color: #5F115A;
+    -fx-background-color: #7A2074;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 3);
 }
 
@@ -45,7 +45,6 @@
 
 .sub-header-controls {
     -fx-background-color: white;
-    -fx-height:
 }
 
 

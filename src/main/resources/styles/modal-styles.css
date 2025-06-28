@@ -17,7 +17,7 @@
 .title-label-modal {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: #5F115A;
+    -fx-text-fill: #7A2074;
 }
 
 .subtitle-label-modal {
@@ -124,4 +124,35 @@
 .crement-button:disabled {
     -fx-background-color: #cccccc;
     -fx-opacity: 0.7;
+}
+
+.modal-save-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12px 20px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+.modal-save-button:hover {
+    -fx-background-color: #45a049;
+}
+.modal-save-button:disabled {
+    -fx-opacity: 0.6;
+    -fx-cursor: default;
+}
+
+.modal-close-button {
+    -fx-background-color: #f44336;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 12px 20px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.modal-close-button:hover {
+    -fx-background-color: #da190b;
 }

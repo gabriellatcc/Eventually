@@ -27,7 +27,7 @@
 }
 
 .topbar {
-    -fx-background-color: #5F115A;
+    -fx-background-color: #7A2074;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 3);
 }
 
@@ -44,7 +44,7 @@
 .greeting-label {
     -fx-font-family: "Poppins Bold", "Arial Bold";
     -fx-font-size: 32px;
-    -fx-text-fill: #5F115A;
+    -fx-text-fill: #7A2074;
 }
 
 .user-display-box {
