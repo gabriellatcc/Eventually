@@ -1,5 +1,6 @@
 package com.eventually.view;
 
+import com.eventually.service.TelaService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -38,6 +39,9 @@ import com.eventually.controller.LoginController;
  * @since 2025-05-14
  */
 public class LoginView extends BorderPane {
+    private LoginController loginController;
+
+    private final TelaService telaService;
 
     private TextField emailField;
     private PasswordField passwordField;
@@ -45,13 +49,12 @@ public class LoginView extends BorderPane {
     private Button btnRegistrar;
     private Hyperlink esqueceuSenhaLink;
 
-    private LoginController loginController;
-
     /**
      * Construtor que inicializa a interface de login.
      * Recebe o LoginController via injeção de dependência.
      */
     public LoginView() {
+        this.telaService = new TelaService();
         setupUI();
     }
 
@@ -97,12 +100,12 @@ public class LoginView extends BorderPane {
     private StackPane criarPainelDireito() {
         StackPane paneDireitoLogin = new StackPane();
         paneDireitoLogin.setPrefWidth(300);
-        paneDireitoLogin.setPrefHeight(900);
+        paneDireitoLogin.setPrefHeight(telaService.medirHeight());
         javafx.scene.shape.Polygon trapezoid = new javafx.scene.shape.Polygon();
         trapezoid.getPoints().addAll(new Double[]{
                 300.0, 0.0,
-                300.0, 900.0,
-                0.0, 900.0,
+                300.0, telaService.medirHeight(),
+                0.0, telaService.medirHeight(),
                 80.0, 0.0
         });
         javafx.scene.paint.LinearGradient gradient = new javafx.scene.paint.LinearGradient(

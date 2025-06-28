@@ -1,5 +1,11 @@
+.root {
+    -fx-font-family: "Poppins", "Arial", sans-serif;
+    -fx-background-color: white;
+}
+
 .main-view {
     -fx-background-color: white;
+    -fx-font-family: "Poppins", "Arial", sans-serif;
 }
 
 .sidebar {
@@ -34,11 +40,14 @@
 
 .center-content-area {
     -fx-background-color: white;
+    -fx-alignment: center;
 }
 
 .sub-header-controls {
     -fx-background-color: white;
+    -fx-height:
 }
+
 
 .top-button {
     -fx-background-color: #8E2392;
@@ -57,7 +66,7 @@
 .user-display-box {
     -fx-background-color: #f0f0f0;
     -fx-background-radius: 25px;
-    -fx-padding: 5px 15px;
+    -fx-padding: 5px 5px 5px 15px;
 }
 
 .user-display-label {
@@ -140,7 +149,6 @@
     -fx-background-radius: 25px;
     -fx-cursor: hand;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 3);
 }
 
 .new-event-button-bottom:hover {

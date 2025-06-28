@@ -1,6 +1,7 @@
 package com.eventually.view;
 
 import com.eventually.controller.RegisterController;
+import com.eventually.service.TelaService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -33,6 +34,8 @@ import java.util.Map;
  * @since 2025-05-14
  */
 public class RegisterView extends BorderPane {
+    private final TelaService telaService;
+
     private RegisterController registerController;
 
     private TextField fldNome;
@@ -50,6 +53,7 @@ public class RegisterView extends BorderPane {
     private Hyperlink voltarLoginLink;
 
     public RegisterView() {
+        this.telaService = new TelaService();
         setupUI();
     }
 
@@ -116,12 +120,12 @@ public class RegisterView extends BorderPane {
     private StackPane criarBasePainelDireito() {
         StackPane paneDireitoRegistro = new StackPane();
         paneDireitoRegistro.setPrefWidth(300);
-        paneDireitoRegistro.setPrefHeight(900);
+        paneDireitoRegistro.setPrefHeight(telaService.medirHeight());
         javafx.scene.shape.Polygon trapezoid = new javafx.scene.shape.Polygon();
         trapezoid.getPoints().addAll(new Double[]{
                 300.0, 0.0,
-                300.0, 900.0,
-                0.0, 900.0,
+                300.0, telaService.medirHeight(),
+                0.0, telaService.medirHeight(),
                 80.0, 0.0
         });
 
