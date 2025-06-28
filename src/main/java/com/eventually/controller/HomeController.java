@@ -14,8 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
@@ -181,25 +183,82 @@ public class HomeController {
      * @return Uma lista de eventos para exibição.
      */
     private List<HomeView.Evento> buscarEventosDeExemplo() {
+        List<HomeView.Evento> eventosParaView = new ArrayList<>();
 
-        EventoModel evento = new EventoModel(
-                null,                                     // UsuarioModel organizador
-                "Conferência Tech Inovação 2025",                // String nomeEvento
-                "Um evento para discutir o futuro da tecnologia.", // String descricao
-                FormatoSelecionado.PRESENCIAL,                   // FormatoSelecionado formato
-                "https://teams.microsoft.com/link/para/reuniao", // String linkAcesso (mesmo sendo presencial)
-                "Centro de Convenções Anhembi, São Paulo, SP",   // String localizacao
-                null,                                      // Image fotoEvento
-                200,                                             // int nParticipantes (capacidade máxima)
-                LocalDate.of(2025, 10, 20),                      // LocalDate dataInicial
-                "09:00",                                         // String horaInicial
-                LocalDate.of(2025, 10, 22),                      // LocalDate dataFinal
-                "18:00",                                         // String horaFinal
-                null,                                     // Set<TemaPreferencia> temasEvento
-                null,                                   // List<UsuarioModel> participantes
-                true,                                            // boolean estadoDoEvento (true = Ativo)
-                false                                            // boolean isFinalizado (false = Ainda não ocorreu)
+        EventoModel evento1 = new EventoModel(
+                null, "Conferência Tech Inovação", "Discussão sobre o futuro da tecnologia.",
+                FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções, SP", null, 200,
+                LocalDate.of(2025, 8, 15), "09:00",
+                LocalDate.of(2025, 8, 16), "18:00",
+                null, null, true, false
         );
-        return new ArrayList<>();
+        eventosParaView.add(converterParaView(evento1));
+
+
+        EventoModel evento2 = new EventoModel(
+                null, "Workshop de Design UX/UI", "Aprenda na prática os fundamentos de UX.",
+                FormatoSelecionado.ONLINE, "https://zoom.us/j/123456", "Online", null, 50,
+                LocalDate.of(2025, 9, 5), "19:00",
+                LocalDate.of(2025, 9, 5), "22:00",
+                null, null, true, false
+        );
+        eventosParaView.add(converterParaView(evento2));
+
+
+        EventoModel evento3 = new EventoModel(
+                null, "Festival de Música Indie", "Bandas independentes em um evento único.",
+                FormatoSelecionado.HIBRIDO, null, "Parque Ibirapuera, SP", null, 1000,
+                LocalDate.of(2025, 9, 28), "14:00",
+                LocalDate.of(2025, 9, 28), "23:00",
+                null, null, true, false
+        );
+        eventosParaView.add(converterParaView(evento3));
+
+        EventoModel evento4 = new EventoModel(
+                null, "Feira de Tecnologia e Inovação", "Apresentação de startups e novas tecnologias do mercado.",
+                FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções Expo Center Norte, SP", null, 5000,
+                LocalDate.of(2025, 10, 15), "09:00",
+                LocalDate.of(2025, 10, 17), "18:00",
+                null, null, true, true
+        );
+        eventosParaView.add(converterParaView(evento4));
+
+        EventoModel evento5 = new EventoModel(
+                null, "Workshop de Fotografia com Celular", "Aprenda a tirar fotos incríveis usando apenas o seu smartphone.",
+                FormatoSelecionado.ONLINE, "https://zoom.us/j/1234567890", "Plataforma Zoom", null, 150,
+                LocalDate.of(2025, 11, 22), "19:00",
+                LocalDate.of(2025, 11, 22), "21:30",
+                null, null, true, false
+        );
+        eventosParaView.add(converterParaView(evento5));
+
+        EventoModel evento6 = new EventoModel(
+                null, "Festival Gastronômico Sabores do Vale", "Chefs renomados da região do Vale do Paraíba em um só lugar.",
+                FormatoSelecionado.PRESENCIAL, null, "Parque do Povo, Presidente Prudente, SP", null, 2500,
+                LocalDate.of(2025, 12, 5), "17:00",
+                LocalDate.of(2025, 12, 7), "23:00",
+                null, null, true, true
+        );
+        eventosParaView.add(converterParaView(evento6));
+
+        return eventosParaView;
     }
+
+    /**
+     * Converte um EventoModel em um registro HomeView.Evento para popular a UI.
+     * @param model O modelo de dados do evento.
+     * @return Um registro pronto para a view.
+     */
+    private HomeView.Evento converterParaView(EventoModel model) {
+        String titulo = model.getNomeEvento();
+        String local = model.getLocalizacao();
+        String categoria = model.getFormato().toString();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd 'de' MMM", new Locale("pt", "BR"));
+        String dataFormatada = model.getDataInicial().format(formatter).toUpperCase();
+        String dataHora = String.format("%s - %s", dataFormatada, model.getHoraInicial());
+
+        return new HomeView.Evento(titulo, local, dataHora, categoria);
+    }
+
 }

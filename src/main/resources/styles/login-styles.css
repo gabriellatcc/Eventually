@@ -9,13 +9,13 @@
 }
 
 .login-field:focused {
-    -fx-border-color: #800080;
+    -fx-border-color: #7a2074;
     -fx-border-width: 3px;
     -fx-border-radius: 3px;
 }
 
 .login-button {
-    -fx-background-color: #800080;
+    -fx-background-color: #7a2074;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 14px;

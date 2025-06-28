@@ -1,14 +1,23 @@
 package com.eventually.view;
 
+import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
+/**
+ * Classe construtora de barra superior e lateral do sistema.
+ * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
+ * @version 1.02
+ * @since 2025-06-24
+ */
 public class BarraBuilder {
     private Button btnInicio;
     private Button btnMeusEventos;
@@ -27,9 +36,14 @@ public class BarraBuilder {
         barraSuperior.setAlignment(Pos.CENTER);
         barraSuperior.getStyleClass().add("topbar");
 
-        Label logo = new Label("Eventually");
-        logo.getStyleClass().add("logo");
-        barraSuperior.getChildren().add(logo);
+        Image logoImagem = new Image(getClass().getResourceAsStream("/images/eventually-logo.png"));
+        ImageView logoView = new ImageView(logoImagem);
+
+        logoView.setFitHeight(50);
+
+        logoView.setPreserveRatio(true);
+
+        barraSuperior.getChildren().add(logoView);
         return barraSuperior;
     }
 

@@ -18,7 +18,7 @@
 }
 
 .menu-button:hover {
-    -fx-background-color: #D54BD9;
+    -fx-background-color: #E05CE4;
 }
 
 .menu-button:focused {
@@ -79,7 +79,7 @@
 
 .filter-description-label {
     -fx-font-size: 14px;
-    -fx-text-fill: #777;
+    -fx-text-fill: #888888;
 }
 
 .event-card {

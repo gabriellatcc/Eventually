@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import java.util.List;
@@ -72,7 +73,6 @@ public class HomeView extends BorderPane {
         HBox cabecalhoPrincipal = new HBox();
         cabecalhoPrincipal.setPadding(new Insets(20, 40, 10, 40));
         cabecalhoPrincipal.setAlignment(Pos.CENTER_LEFT);
-        cabecalhoPrincipal.getStyleClass().add("main-header");
 
         HBox saudacaoBox = new HBox(8);
         saudacaoBox.setAlignment(Pos.BASELINE_LEFT);
@@ -141,23 +141,25 @@ public class HomeView extends BorderPane {
 
     /**
      * Este método cria o grid de eventos que será exibido na área principal.
-     * Os eventos são organizados em uma grade de 3 colunas.
+     * Os eventos são organizados em uma grade de 4 colunas.
      * @return um componente ScrollPane contendo o grid de eventos
      */
     private ScrollPane criarGridEventos() {
         gridEventos = new GridPane();
         gridEventos.setPadding(new Insets(0, 40, 20, 40));
-        gridEventos.setHgap(20);
-        gridEventos.setVgap(20);
+        gridEventos.setHgap(25);
+        gridEventos.setVgap(25);
         gridEventos.getStyleClass().add("events-grid");
 
-        ColumnConstraints col1 = new ColumnConstraints();
+        gridEventos.getColumnConstraints().clear();
 
-        ColumnConstraints col2 = new ColumnConstraints();
-        ColumnConstraints col3 = new ColumnConstraints();
+        ColumnConstraints col1 = new ColumnConstraints();
         col1.setPercentWidth(33.33);
+        ColumnConstraints col2 = new ColumnConstraints();
         col2.setPercentWidth(33.33);
+        ColumnConstraints col3 = new ColumnConstraints();
         col3.setPercentWidth(33.33);
+
         gridEventos.getColumnConstraints().addAll(col1, col2, col3);
 
         scrollEventos = new ScrollPane(gridEventos);
@@ -188,8 +190,15 @@ public class HomeView extends BorderPane {
 
         for (int i = 0; i < eventos.size(); i++) {
             Evento evento = eventos.get(i);
+            EventoHCard cardEvento = new EventoHCard();
 
-            VBox cardEvento = new EventoHCard();
+            cardEvento.setLblTitulo(evento.titulo());
+            cardEvento.setLblLocal(evento.local());
+            cardEvento.setLblDataHora(evento.dataHora());
+            cardEvento.setLblTipo(evento.categoria());
+
+            cardEvento.setBorder(new Border(new BorderStroke(Color.DARKBLUE,
+                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
             int row = i / 3;
             int col = i % 3;

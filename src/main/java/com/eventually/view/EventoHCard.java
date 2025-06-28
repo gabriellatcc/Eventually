@@ -37,11 +37,16 @@ public class EventoHCard extends VBox {
     }
 
     private void setupUI() {
+        this.setBorder(new Border(new BorderStroke(Color.RED,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
         this.setPrefSize(CARD_WIDTH, CARD_HEIGHT);
-        this.getStyleClass().add("event-h-card");
+        this.getStylesheets().add(getClass().getResource("/styles/event-h-card.css").toExternalForm());
+
         this.setAlignment(Pos.TOP_CENTER);
 
         StackPane imageContainer = new StackPane();
+        imageContainer.setBorder(new Border(new BorderStroke(Color.DEEPPINK,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         imageContainer.setPrefSize(CARD_WIDTH, IMAGE_HEIGHT);
         imageContainer.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
 
@@ -57,25 +62,41 @@ public class EventoHCard extends VBox {
         imageContainer.getChildren().add(imagemEventoView);
 
         VBox infoPane = new VBox(5);
+        infoPane.setBorder(new Border(new BorderStroke(Color.GREEN,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         infoPane.setPadding(new Insets(10, 15, 15, 15));
         infoPane.getStyleClass().add("hcard-info-pane");
 
         lblDataHora = new Label("SEX 14, MAR 2025 - 18:20");
+        lblDataHora.setBorder(new Border(new BorderStroke(Color.GRAY,
+                BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         lblDataHora.getStyleClass().add("hcard-date");
 
         lblTitulo = new Label("Título do evento");
+        lblTitulo.setBorder(new Border(new BorderStroke(Color.BLACK,
+                BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         lblTitulo.getStyleClass().add("hcard-title");
 
         lblLocal = new Label("Local do evento");
+        lblLocal.setBorder(new Border(new BorderStroke(Color.BROWN,
+                BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+
         lblLocal.getStyleClass().add("hcard-location");
 
         lblTipo = new Label("Tipo do evento");
+        lblTipo.setBorder(new Border(new BorderStroke(Color.TEAL,
+                BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         lblTipo.getStyleClass().add("hcard-type");
 
         VBox titleLocationBox = new VBox(0, lblTitulo, lblLocal);
+        titleLocationBox.setBorder(new Border(new BorderStroke(Color.ORANGE,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox bottomInfoBox = new HBox(10, titleLocationBox, spacer, lblTipo);
+        bottomInfoBox.setBorder(new Border(new BorderStroke(Color.LIGHTGOLDENRODYELLOW,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         bottomInfoBox.setAlignment(Pos.BOTTOM_LEFT);
 
         infoPane.getChildren().addAll(lblDataHora, bottomInfoBox);

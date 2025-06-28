@@ -9,7 +9,7 @@
 }
 
 .register-field:focused {
-    -fx-border-color: #800080;
+    -fx-border-color: #7A2074;
     -fx-border-width: 3px;
     -fx-border-radius: 3px;
 }
@@ -18,14 +18,14 @@
     -fx-pref-width: 25px;
     -fx-pref-height: 25px;
     -fx-background-color: transparent;
-    -fx-border-color: #800080;
+    -fx-border-color: #7A2074;
     -fx-border-width: 3px;
     -fx-border-radius: 3px;
 }
 
 .purple-checkbox:selected > .box {
-    -fx-background-color: #800080;
-    -fx-border-color: #800080;
+    -fx-background-color: #7A2074;
+    -fx-border-color: #7A2074;
 }
 
 .purple-checkbox > .box > .mark {
@@ -34,13 +34,13 @@
 }
 
 .purple-checkbox.register-field:focused {
-    -fx-border-color: #800080;
+    -fx-border-color: #7A2074;
     -fx-border-width: 2px;
 }
 
 .login-button {
-    -fx-background-color: #800080;
-    -fx-text-fill: white;
+    -fx-background-color: #7A2074;
+    -fx-text-fill: #cccccc;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
     -fx-background-radius: 5px;
@@ -52,7 +52,7 @@
 }
 
 .register-button {
-    -fx-background-color: #800080;
+    -fx-background-color: #7A2074;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
