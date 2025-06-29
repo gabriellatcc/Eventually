@@ -19,7 +19,7 @@ import java.util.Locale;
  * Classe controladora da tela de programação do usuário, é responsável pela comunicação
  * da tela de programação com o backend.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.02
+ * @version 1.03
  * @since 2025-04-25
  */
 public class UserScheduleController {
@@ -71,7 +71,7 @@ public class UserScheduleController {
 
             userScheduleView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
 
-            userScheduleView.getBtnNovoEvento().setOnAction(e -> navegacaoService.abrirModalCriarEvento(emailRecebido));
+          //  userScheduleView.getBtnNovoEvento().setOnAction(e -> navegacaoService.abrirModalCriarEvento(emailRecebido, this::processarCarregamentoEventos));
 
             userScheduleView.getLbEmailUsuario().setText(emailRecebido);
             userScheduleView.getLbNomeUsuario().setText(definirNome(emailRecebido));
@@ -84,6 +84,7 @@ public class UserScheduleController {
                     }
                 });
             }
+
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores de programação: "+e.getMessage());
             e.printStackTrace();

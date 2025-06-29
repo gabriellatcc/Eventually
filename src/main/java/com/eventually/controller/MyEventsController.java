@@ -24,7 +24,7 @@ import java.util.Locale;
  * com o backend.
  * Contém métodos privados para que os acesso sejam somente por esta classe.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.01
+ * @version 1.02
  * @since 2025-06-18
  */
 public class MyEventsController {
@@ -76,7 +76,7 @@ public class MyEventsController {
             myEventsView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
             myEventsView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
             myEventsView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
-            myEventsView.getBtnNovoEvento().setOnAction(e -> navegacaoService.abrirModalCriarEvento(emailRecebido));
+           // myEventsView.getBtnNovoEvento().setOnAction(e -> navegacaoService.abrirModalCriarEvento(emailRecebido));
 
             myEventsView.getBtnEventosCriados().setOnAction(e -> carregarEventosCriados());
             myEventsView.getBtnEventosFinalizados().setOnAction(e -> carregarEventosFinalizados());

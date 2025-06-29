@@ -1,7 +1,6 @@
 package com.eventually.view;
 
 import com.eventually.controller.SettingsController;
-import com.eventually.service.UsuarioAtualizacaoService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -24,7 +23,7 @@ import java.util.List;
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
  * @author Yuri Garcia Maia (Criação)
  * @since 22-05-2025
- * @version 1.02
+ * @version 1.03
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, lógica e da estrutura da classe)
  * @since 22-05-2025
  */

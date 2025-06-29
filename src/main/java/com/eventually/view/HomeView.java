@@ -18,7 +18,7 @@ import java.util.List;
  * Esta classe é responsável por exibir a página principal
  * com filtros de eventos e listagem de eventos disponíveis.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.03
+ * @version 1.04
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-05-29
@@ -40,7 +40,7 @@ public class HomeView extends BorderPane {
 
     private HomeController homeController;
 
-    public record Evento(String titulo, String local, String dataHora, String categoria) {}
+    public record Evento(String titulo, String local, String dataHora, String categoria, Image imagem) {}
 
     /**
      * Construtor da classe {@code HomeView}.
@@ -191,14 +191,13 @@ public class HomeView extends BorderPane {
         for (int i = 0; i < eventos.size(); i++) {
             Evento evento = eventos.get(i);
             EventoHCard cardEvento = new EventoHCard();
+            cardEvento.getStylesheets().add(getClass().getResource("/styles/event-h-card.css").toExternalForm());
 
             cardEvento.setLblTitulo(evento.titulo());
             cardEvento.setLblLocal(evento.local());
             cardEvento.setLblDataHora(evento.dataHora());
             cardEvento.setLblTipo(evento.categoria());
-
-            cardEvento.setBorder(new Border(new BorderStroke(Color.DARKBLUE,
-                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+            cardEvento.setImagem(evento.imagem());
 
             int row = i / 3;
             int col = i % 3;

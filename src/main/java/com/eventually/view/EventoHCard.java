@@ -13,10 +13,13 @@ import javafx.scene.shape.Rectangle;
  * Representa um card de evento.
  * Este componente encapsula a exibição de uma imagem e informações de um evento,
  * como título, data, local e tipo.
- *
+ * @version 1.01
  * @author Yuri Garcia Maia
- * @version 1.0
  * @since 2025-06-22
+ * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
+ * @since 2025-06-28
+ *
+ *
  */
 public class EventoHCard extends VBox {
     private static final double CARD_WIDTH = 320;
@@ -40,7 +43,6 @@ public class EventoHCard extends VBox {
         this.setBorder(new Border(new BorderStroke(Color.RED,
                 BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
         this.setPrefSize(CARD_WIDTH, CARD_HEIGHT);
-        this.getStylesheets().add(getClass().getResource("/styles/event-h-card.css").toExternalForm());
 
         this.setAlignment(Pos.TOP_CENTER);
 

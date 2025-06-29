@@ -1,4 +1,15 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins Bold';
+    src: url('../fonts/Poppins-Bold.ttf');
+}
+
 .register-field {
+    -fx-font-family: 'Poppins';
     -fx-background-color: white;
     -fx-background-radius: 5px;
     -fx-border-radius: 5px;
@@ -23,6 +34,11 @@
     -fx-border-radius: 3px;
 }
 
+.purple-checkbox > .text {
+    -fx-font-family: 'Poppins';
+    -fx-fill: white;
+}
+
 .purple-checkbox:selected > .box {
     -fx-background-color: #7A2074;
     -fx-border-color: #7A2074;
@@ -39,6 +55,7 @@
 }
 
 .login-button {
+    -fx-font-family: 'Poppins Bold';
     -fx-background-color: #7A2074;
     -fx-text-fill: #cccccc;
     -fx-font-weight: bold;
@@ -52,6 +69,7 @@
 }
 
 .register-button {
+    -fx-font-family: 'Poppins Bold';
     -fx-background-color: #7A2074;
     -fx-text-fill: white;
     -fx-font-weight: bold;
@@ -64,11 +82,12 @@
     -fx-cursor: hand;
 }
 .error-label {
+    -fx-font-family: 'Poppins';
     -fx-font-size: 0.9em;
 }
 .form-field {
+    -fx-font-family: "Poppins";
     -fx-text-fill: lightgray;
     -fx-font-size: 14px;
     -fx-font-weight: normal;
-    -fx-font-family: "System";
 }

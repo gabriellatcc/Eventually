@@ -1,6 +1,7 @@
 package com.eventually.service;
 
 import com.eventually.dto.CriarEventoDto;
+import com.eventually.dto.PreferenciasUsuarioDto;
 import com.eventually.model.FormatoSelecionado;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.model.EventoModel;
@@ -9,6 +10,10 @@ import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 /**
@@ -17,7 +22,7 @@ import java.util.*;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.02
+ * @version 1.03
  * @since 2025-05-15
  */
 public final class EventoCriacaoService {
@@ -37,9 +42,59 @@ public final class EventoCriacaoService {
     private EventoCriacaoService() {
         listaEventos = new HashSet<>();
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
-        //evento teste abaixo:
+        //eventos teste abaixo:
 
-        //evento teste acima
+        Set<TemaPreferencia> preferenciasEvento = new HashSet<>();
+        preferenciasEvento.add(TemaPreferencia.CORPORATIVO);
+        preferenciasEvento.add(TemaPreferencia.CULTURAL);
+        preferenciasEvento.add(TemaPreferencia.SOCIAL);
+
+        EventoModel evento1 = new EventoModel(
+                null, "Conferência Tech Inovação", "Discussão sobre o futuro da tecnologia.",
+                FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções, SP", null, 200,
+                LocalDate.of(2025, 8, 15), "09:00",
+                LocalDate.of(2025, 8, 16), "18:00",
+                preferenciasEvento, null, true, false
+        );
+        listaEventos.add(evento1);
+
+        EventoModel evento2 = new EventoModel(
+                null, "Workshop de Design UX/UI", "Aprenda na prática os fundamentos de UX.",
+                FormatoSelecionado.ONLINE, "https://zoom.us/j/123456", "Online", null, 50,
+                LocalDate.of(2025, 9, 5), "19:00",
+                LocalDate.of(2025, 9, 5), "22:00",
+                preferenciasEvento, null, true, false
+        );
+        listaEventos.add(evento2);
+
+        EventoModel evento3 = new EventoModel(
+                null, "Festival de Música Indie", "Bandas independentes em um evento único.",
+                FormatoSelecionado.HIBRIDO, null, "Parque Ibirapuera, SP", null, 1000,
+                LocalDate.of(2025, 9, 28), "14:00",
+                LocalDate.of(2025, 9, 28), "23:00",
+                preferenciasEvento, null, true, false
+        );
+        listaEventos.add(evento3);
+
+        EventoModel evento4 = new EventoModel(
+                null, "Feira de Tecnologia e Inovação", "Apresentação de startups e novas tecnologias do mercado.",
+                FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções Expo Center Norte, SP", null, 5000,
+                LocalDate.of(2025, 10, 15), "09:00",
+                LocalDate.of(2025, 10, 17), "18:00",
+                preferenciasEvento, null, true, true
+        );
+        listaEventos.add(evento4);
+
+        EventoModel evento5 = new EventoModel(
+                null, "Workshop de Fotografia com Celular", "Aprenda a tirar fotos incríveis usando apenas o seu smartphone.",
+                FormatoSelecionado.ONLINE, "https://zoom.us/j/1234567890", "Plataforma Zoom", null, 150,
+                LocalDate.of(2025, 11, 22), "19:00",
+                LocalDate.of(2025, 11, 22), "21:30",
+                null, null, true, false
+        );
+        listaEventos.add(evento5);
+
+        //eventos teste acima
 
         sistemaDeLogger.info("Inicializado e lista de eventos criada. HashSet size: " + listaEventos.size());
     }
@@ -64,7 +119,7 @@ public final class EventoCriacaoService {
     }
 
     /**
-     * Este método é responsável por garantir que a lista de usuários seja inicializada, carrega dados iniciais e/ou
+     * Este método é responsável por garantir que a lista de eventos seja inicializada, carrega dados iniciais e/ou
      * confirma a criação e, em caso de falha, exibe uma mensagem no console.
      */
     public void criarLista() {
@@ -72,9 +127,9 @@ public final class EventoCriacaoService {
         try{
             if (listaEventos == null) {
                 listaEventos = new HashSet<>();
-                sistemaDeLogger.info("Método criarLista() inicializou a lista de usuários.");
+                sistemaDeLogger.info("Método criarLista() inicializou a lista de eventos.");
             } else {
-                sistemaDeLogger.info("Método criarLista() chamado, lista de usuários já está pronta. Tamanho atual: " + listaEventos.size());
+                sistemaDeLogger.info("Método criarLista() chamado, lista de eventos já está pronta. Tamanho atual: " + listaEventos.size());
             }
         } catch (RuntimeException e) {
             sistemaDeLogger.error("Erro ao inicializar a lista: "+e.getMessage());
@@ -113,10 +168,14 @@ public final class EventoCriacaoService {
         sistemaDeLogger.info("Método criarEvento() chamado.");
         try {
             Set<TemaPreferencia> temasPreferidos = MapeamentoPreferenciasService.mapearPreferencias(dto.preferenciasEvento());
-
+            UsuarioModel usuario = usuarioSessaoService.procurarUsuario(dto.emailOrganizador());
+            if (usuario == null) {
+                sistemaDeLogger.error("Não foi possível criar o evento pois o usuário organizador não foi encontrado: " + dto.emailOrganizador());
+                alertaService.alertarErro("Usuário organizador não encontrado. Não foi possível criar o evento.");
+                return;
+            }
             FormatoSelecionado formatoEnum = FormatoSelecionadoService.mapearFormato(dto.preferenciaFormato());
 
-            UsuarioModel usuario = usuarioSessaoService.procurarUsuario(dto.emailOrganizador());
             EventoModel novoEvento = new EventoModel(
                     usuario,
                     dto.tituloEvento(),
@@ -225,5 +284,89 @@ public final class EventoCriacaoService {
                 .filter(evento -> evento.getNomeEvento().equalsIgnoreCase(nome))
                 .findFirst();
         return eventoModelOptional.isPresent();
+    }
+
+    public boolean isRegraTituloValido(String titulo) {
+        if (titulo == null || titulo.trim().isEmpty()) {
+            alertaService.alertarCampoVazio("TÍTULO DO EVENTO");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isRegraDatasValidas(LocalDate diaInicial, String horaInicialStr, LocalDate diaFinal, String horaFinalStr) {
+        if (diaInicial == null || diaFinal == null || horaInicialStr == null || horaFinalStr.trim().isEmpty() || horaInicialStr.trim().isEmpty()) {
+            alertaService.alertarErro("Todas as datas e horas devem ser preenchidas.");
+            return false;
+        }
+        try {
+            LocalTime horaInicial = LocalTime.parse(horaInicialStr);
+            LocalTime horaFinal = LocalTime.parse(horaFinalStr);
+
+            LocalDateTime inicioEvento = diaInicial.atTime(horaInicial);
+            LocalDateTime fimEvento = diaFinal.atTime(horaFinal);
+
+            if (inicioEvento.isBefore(LocalDateTime.now())) {
+                alertaService.alertarWarn("Data inválida", "A data de início do evento não pode ser no passado.");
+                return false;
+            }
+            if (fimEvento.isBefore(inicioEvento)) {
+                alertaService.alertarWarn("Data inválida", "A data final do evento deve ser após a data de início.");
+                return false;
+            }
+            return true;
+        } catch (DateTimeParseException e) {
+            alertaService.alertarErro("Use o formato HH:MM para as horas.");
+            return false;
+        }
+    }
+
+    public boolean isRegraFormatoValido(String formato) {
+        if (formato == null || formato.trim().isEmpty()){
+            alertaService.alertarWarn("Formato obrigatório", "Selecione um formato para o evento (Presencial, Online ou Híbrido).");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isRegraLocalizacaoValida(FormatoSelecionado formato, String localizacao) {
+        if (formato == FormatoSelecionado.PRESENCIAL || formato == FormatoSelecionado.HIBRIDO) {
+            if (localizacao == null || localizacao.trim().isEmpty()) {
+                alertaService.alertarCampoVazio("LOCALIZAÇÃO (obrigatório para eventos presenciais/híbridos)");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isRegraLinkValido(FormatoSelecionado formato, String link) {
+        if (formato == FormatoSelecionado.ONLINE || formato == FormatoSelecionado.HIBRIDO) {
+            if (link == null || link.trim().isEmpty()) {
+                alertaService.alertarCampoVazio("LINK (obrigatório para eventos online/híbridos)");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isRegraTemasValido(PreferenciasUsuarioDto temasSelecionados) {
+        boolean algumSelecionado = temasSelecionados.corporativo() || temasSelecionados.beneficente() ||
+                temasSelecionados.educacional() || temasSelecionados.cultural() ||
+                temasSelecionados.esportivo() || temasSelecionados.religioso() ||
+                temasSelecionados.social();
+
+        if (!algumSelecionado) {
+            alertaService.alertarWarn("Tema obrigatório", "Selecione pelo menos um tema para o evento.");
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isRegraFotoValida(Image fotoEvento) {
+        if (fotoEvento == null) {
+            alertaService.alertarCampoVazio("IMAGEM DO EVENTO");
+            return false;
+        }
+        return true;
     }
 }

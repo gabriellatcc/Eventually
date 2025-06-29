@@ -1,3 +1,13 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins Bold';
+    src: url('../fonts/Poppins-Bold.ttf');
+}
+
 .layout-pane {
     -fx-background-color: white;
     -fx-background-radius: 20px;
@@ -15,24 +25,28 @@
 }
 
 .title-label-modal {
+    -fx-font-family: 'Poppins Bold';
     -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-text-fill: #7A2074;
 }
 
 .subtitle-label-modal {
+    -fx-font-family: 'Poppins Bold';
     -fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: #8E4A89;
     -fx-alignment: center;
 }
 .label-modal {
+    -fx-font-family: 'Poppins';
     -fx-font-size: 16px;
     -fx-text-fill: #888888;
     -fx-alignment: center;
 }
 
 .text-area  {
+    -fx-font-family: 'Poppins';
     -fx-prompt-text-fill: #aaaaaa;
     -fx-background-color: #f4f4f4;
     -fx-background-radius: 12;
@@ -52,6 +66,7 @@
 }
 
 .modal-field {
+    -fx-font-family: 'Poppins';
     -fx-background-radius: 12;
     -fx-border-color: #e0e0e0;
     -fx-border-radius: 12;
@@ -75,6 +90,7 @@
     -fx-border-radius: 3px;
 }
 .purple-checkbox > .text {
+    -fx-font-family: 'Poppins';
     -fx-fill: #000000;
 }
 .purple-checkbox:selected > .box {
@@ -91,6 +107,7 @@
 }
 
 .modal-interact-button{
+    -fx-font-family: 'Poppins Bold';
     -fx-pref-height: 40px;
     -fx-font-size: 14px;
     -fx-text-fill: white;
@@ -109,6 +126,7 @@
 }
 
 .crement-button{
+    -fx-font-family: 'Poppins Bold';
     -fx-pref-height: 30px;
     -fx-font-size: 14px;
     -fx-text-fill: white;
@@ -127,6 +145,7 @@
 }
 
 .modal-save-button {
+    -fx-font-family: 'Poppins Bold';
     -fx-background-color: #4CAF50;
     -fx-text-fill: white;
     -fx-font-size: 14px;
@@ -144,6 +163,7 @@
 }
 
 .modal-close-button {
+    -fx-font-family: 'Poppins Bold';
     -fx-background-color: #f44336;
     -fx-text-fill: white;
     -fx-font-size: 14px;

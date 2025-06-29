@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * Serviço responsável por exibir mensagens de alerta ao usuário,
  * utilizando os tipos padrão da interface JavaFX.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.02
+ * @version 1.03
  * @since 2025-05-15
  */
 public class AlertaService {
@@ -56,6 +56,33 @@ public class AlertaService {
             stage.getIcons().add(icon);
         } catch (Exception e) {
             sistemaDeLog.error("Erro ao carregar o ícone para o alerta de aviso: " + e.getMessage());
+            e.printStackTrace();
+        }
+        alert.showAndWait();
+    }
+    /**
+     * Exibe um alerta do tipo {@link Alert.AlertType#INFORMATION} para mensagens de sucesso, com ícone personalizado.
+     * @param titulo   o título da janela de alerta (ex: "Sucesso!").
+     * @param mensagem a mensagem a ser exibida no corpo do alerta (ex: "Operação concluída com êxito.").
+     */
+    public static void alertarSucesso(String titulo, String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        try {
+            Image icon = new Image(AlertaService.class.getResourceAsStream("/images/sucesso-icone.png"));
+
+            ImageView imageView = new ImageView(icon);
+            imageView.setFitWidth(48);
+            imageView.setFitHeight(48);
+
+            alert.setGraphic(imageView);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.getIcons().add(icon);
+
+        } catch (Exception e) {
+            sistemaDeLog.error("Erro ao carregar o ícone para o alerta de sucesso: " + e.getMessage());
             e.printStackTrace();
         }
         alert.showAndWait();

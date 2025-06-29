@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.02
+ * @version 1.03
  * @since 2025-05-15
  */
 public final class UsuarioCadastroService {
@@ -403,6 +403,7 @@ public final class UsuarioCadastroService {
             return null;
         }
     }
+
     /**
      * Valida a regra de negócio que impede e-mails duplicados.
      * Consulta o banco de dados para verificar a existência do e-mail.

@@ -1,3 +1,13 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins Bold';
+    src: url('../fonts/Poppins-Bold.ttf');
+}
+
 .root {
     -fx-font-family: "Poppins", "Arial", sans-serif;
     -fx-background-color: white;
@@ -13,6 +23,7 @@
 }
 
 .menu-button {
+    -fx-font-family: 'Poppins';
     -fx-background-color: #C93ACD;
     -fx-text-fill: white;
     -fx-font-size: 14px;
@@ -32,6 +43,7 @@
 }
 
 .logo {
+    -fx-font-family: 'Poppins Bold';
     -fx-text-fill: white;
     -fx-font-size: 24px;
     -fx-font-weight: bold;
@@ -46,6 +58,7 @@
 }
 
 .top-button {
+    -fx-font-family: 'Poppins';
     -fx-background-color: #8E2392;
     -fx-text-fill: white;
     -fx-font-size: 14px;
@@ -60,6 +73,7 @@
 }
 
 .new-event-button {
+    -fx-font-family: 'Poppins';
     -fx-background-color: #4CAF50;
     -fx-text-fill: white;
     -fx-font-size: 14px;
@@ -80,6 +94,7 @@
 }
 
 .user-display-label {
+    -fx-font-family: 'Poppins';
     -fx-text-fill: #333333;
     -fx-font-size: 14px;
 }
@@ -100,6 +115,7 @@
 }
 
 .date-button {
+    -fx-font-family: 'Poppins';
     -fx-background-color: transparent;
     -fx-text-fill: #333333;
     -fx-font-size: 12px;
@@ -127,24 +143,28 @@
 }
 
 .event-title {
+    -fx-font-family: 'Poppins Bold';
     -fx-text-fill: white;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
 .event-location {
+    -fx-font-family: 'Poppins';
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-opacity: 0.9;
 }
 
 .event-date {
+    -fx-font-family: 'Poppins Bold';
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
 }
 
 .event-time {
+    -fx-font-family: 'Poppins Bold';
     -fx-text-fill: white;
     -fx-font-size: 16px;
     -fx-font-weight: bold;

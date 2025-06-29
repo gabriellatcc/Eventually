@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Regular.ttf');
+}
+
 .event-h-card {
     -fx-background-color: white;
     -fx-background-radius: 15px;
@@ -9,12 +14,14 @@
 }
 
 .hcard-date {
+    -fx-font-family: 'Poppins';
     -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-text-fill: #7A2074;
 }
 
 .hcard-title {
+    -fx-font-family: 'Poppins';
     -fx-font-size: 22px;
     -fx-font-weight: bold;
     -fx-text-fill: #333333;
@@ -22,11 +29,13 @@
 }
 
 .hcard-location {
+    -fx-font-family: 'Poppins';
     -fx-font-size: 14px;
     -fx-text-fill: #888888;
 }
 
 .hcard-type {
+    -fx-font-family: 'Poppins';
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-text-fill: #8E4A89;

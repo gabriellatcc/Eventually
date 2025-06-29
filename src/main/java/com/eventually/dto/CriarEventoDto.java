@@ -16,14 +16,14 @@ import java.util.Objects;
  * @param diaFinal o dia de término do evento a ser validado.
  * @param preferenciasEvento as preferências de tema do evento a serem validadas
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação, estrutura e refatoração da parte lógica da classe)
- * @version 1.00
+ * @version 1.01
  * @since 2025-06-24
  */
 public record CriarEventoDto(String emailOrganizador, String tituloEvento, String descricaoEvento, PreferenciaFormatoDto preferenciaFormato,
                              int nParticipantes, String horaInicial, LocalDate diaInicial, String horaFinal, LocalDate diaFinal,
                              PreferenciasUsuarioDto preferenciasEvento) {
     public CriarEventoDto {
-        Objects.requireNonNull(emailOrganizador());
+        Objects.nonNull(emailOrganizador());
         Objects.requireNonNull(tituloEvento);
         Objects.requireNonNull(descricaoEvento);
         Objects.requireNonNull(preferenciaFormato);

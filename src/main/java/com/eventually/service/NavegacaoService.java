@@ -19,7 +19,7 @@ import java.io.File;
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.02
+ * @version 1.03
  * @since 2025-06-19
  */
 public class NavegacaoService {
@@ -203,11 +203,12 @@ public class NavegacaoService {
      * Neste método é manipulado o clique no botão "Criar evento", navegando para a tela de criação de eventos e, em
      * caso de erro, é exibida uma mensagem no console.
      */
-    public void abrirModalCriarEvento(String emailUsuario) {
+    public void abrirModalCriarEvento(String emailUsuario, Runnable onSucesso) {
         sistemaDeLogger.info("Método abrirModalCriarEvento() chamado.");
         try {
             CriaEventoModal modal=new CriaEventoModal();
             CriaEventoController modalController= new CriaEventoController(emailUsuario,modal);
+            modalController.setOnSucesso(onSucesso);
             modal.setCriaEventoController(modalController);
             Stage modalStage = new Stage();
 

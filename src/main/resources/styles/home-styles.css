@@ -1,5 +1,15 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins Bold';
+    src: url('../fonts/Poppins-Bold.ttf');
+}
+
 .root {
-    -fx-font-family: "Poppins", "Arial", sans-serif;
+    -fx-font-family: 'Poppins', "Arial", sans-serif;
     -fx-background-color: white;
 }
 
@@ -8,6 +18,7 @@
 }
 
 .menu-button {
+    -fx-font-family: 'Poppins';
     -fx-background-color: #C93ACD;
     -fx-text-fill: white;
     -fx-font-size: 14px;
@@ -22,8 +33,8 @@
 }
 
 .menu-button:focused {
-     -fx-background-color: #E05CE4;
-     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0, 0, 3);
+    -fx-background-color: #E05CE4;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0, 0, 3);
 }
 
 .topbar {
@@ -32,6 +43,7 @@
 }
 
 .logo {
+    -fx-font-family: 'Poppins Bold';
     -fx-text-fill: white;
     -fx-font-size: 24px;
     -fx-font-weight: bold;
@@ -39,6 +51,33 @@
 
 .center-content-area, .events-scroll-pane, .events-grid {
     -fx-background-color: white;
+}
+.events-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-pref-width: 10;
+}
+.events-scroll-pane .scroll-bar .increment-button, .events-scroll-pane .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+}
+.events-scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: #f0f0f0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+.events-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #cccccc;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8px;
+}
+.events-scroll-pane .scroll-bar:vertical:hover .thumb {
+    -fx-background-color: #b3b3b3;
+}
+.events-scroll-pane .scroll-bar:vertical:pressed .thumb {
+    -fx-background-color: #999999;
 }
 
 .greeting-label {
@@ -54,6 +93,7 @@
 }
 
 .user-display-label {
+    -fx-font-family: 'Poppins';
     -fx-text-fill: #333333;
     -fx-font-size: 14px;
 }
@@ -64,6 +104,7 @@
 }
 
 .filters-button, .create-event-button {
+    -fx-font-family: 'Poppins Bold';
     -fx-background-color: #8E2392;
     -fx-text-fill: white;
     -fx-font-size: 14px;
@@ -72,61 +113,22 @@
     -fx-cursor: hand;
     -fx-font-weight: bold;
 }
-
 .filters-button:hover, .create-event-button:hover {
     -fx-background-color: #A329A8;
 }
 
 .filter-description-label {
+    -fx-font-family: 'Poppins';
     -fx-font-size: 14px;
     -fx-text-fill: #888888;
 }
-
-.event-card {
-    -fx-background-color: white;
-    -fx-background-radius: 15px;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
-    -fx-border-color: #f0f0f0;
-    -fx-border-width: 1px;
-    -fx-border-radius: 15px;
-}
-
-.event-card-content {
-    -fx-background-color: #e9d1e8;
-    -fx-background-radius: 15 15 0 0;
-}
-
-.event-date-time {
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #8E2392;
-}
-
-.event-title {
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #333;
-}
-
-.event-location {
-    -fx-font-size: 14px;
-    -fx-text-fill: #666;
-}
-
-.event-category {
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-    -fx-padding: 4px 10px;
-    -fx-background-radius: 15px;
-    -fx-text-fill: white;
-}
-
 .category-educacional { -fx-background-color: #2196F3; }
 .category-religioso { -fx-background-color: #FFC107; }
 .category-corporativo { -fx-background-color: #333333; }
 .category-social { -fx-background-color: #E91E63; }
 
 .placeholder-label {
+    -fx-font-family: 'Poppins';
     -fx-font-size: 16px;
     -fx-text-fill: #888;
     -fx-padding: 40;

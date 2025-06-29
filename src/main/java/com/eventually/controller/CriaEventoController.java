@@ -18,7 +18,7 @@ import java.time.LocalDate;
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe responsável pela comunicação do modal de "Criar evento" com o backend.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.02
+ * @version 1.03
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
  * @since 2025-06-19
@@ -31,6 +31,8 @@ public class CriaEventoController {
 
     private File arquivoFinal;
     private Image imageFinal;
+
+    private Runnable onSucessoCallback;
 
     private AlertaService alerta =new AlertaService();
 
@@ -50,6 +52,13 @@ public class CriaEventoController {
         configManipuladoresEventoCriaEvento();
     }
 
+    /**
+     * Define uma ação (callback) a ser executada quando o evento é criado com sucesso.
+     * @param callback A ação a ser executada.
+     */
+    public void setOnSucesso(Runnable callback) {
+        this.onSucessoCallback = callback;
+    }
     /**
      * Configura os manipuladores de evento para os componentes do modal criação de evento.
      * Este método associa as ações dos botões e do modal e, em caso de falha na configuração
@@ -88,7 +97,8 @@ public class CriaEventoController {
 
             String linkEvento = criaEventoModal.getFldLink().getText();
             String localizacaoEvento = criaEventoModal.getTaLocalizacao().getText();
-            Image fotoEvento = criaEventoModal.getImageEvento();
+
+            Image fotoEvento = this.imageFinal;
 
             int nParticipantes = criaEventoModal.getParticipantCount();
             String horaInicial = criaEventoModal.getFldHoraInicio().getText();
@@ -112,6 +122,10 @@ public class CriaEventoController {
 
             if (criacaoFoiOk) {
                 sistemaDeLogger.info("Evento criado com sucesso.");
+                if (onSucessoCallback != null) {
+                    onSucessoCallback.run();
+                }
+                processarFecharModal();
             }
         } catch (Exception ex) {
             sistemaDeLogger.error("Erro ao criar o evento: " + ex.getMessage());

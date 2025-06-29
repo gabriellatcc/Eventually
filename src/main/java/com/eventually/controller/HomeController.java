@@ -4,9 +4,7 @@ import com.eventually.model.EventoModel;
 import com.eventually.model.FormatoSelecionado;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.model.UsuarioModel;
-import com.eventually.service.AlertaService;
-import com.eventually.service.NavegacaoService;
-import com.eventually.service.UsuarioSessaoService;
+import com.eventually.service.*;
 import com.eventually.view.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -18,12 +16,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.02
+ * @version 1.03
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -35,7 +34,8 @@ public class HomeController {
 
     private UsuarioSessaoService usuarioSessaoService;
     private NavegacaoService navegacaoService;
-    // private EventoService eventoService;
+    private EventoCriacaoService eventoCriacaoService;
+    private EventoLeituraService eventoLeituraService;
 
     private String emailRecebido;
 
@@ -52,8 +52,10 @@ public class HomeController {
      */
     public HomeController(String email, HomeView homeView, Stage primaryStage) {
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
+        this.eventoCriacaoService = EventoCriacaoService.getInstancia();
+        this.eventoLeituraService = EventoLeituraService.getInstancia();
 
-        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService.");
+        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService, EventoCriacaoService e EventoLeituraService.");
 
         this.emailRecebido = email;
 
@@ -80,7 +82,9 @@ public class HomeController {
 
             homeView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
 
-            homeView.getBtnCriarEvento().setOnAction(e -> navegacaoService.abrirModalCriarEvento(emailRecebido));
+            homeView.getBtnCriarEvento().setOnAction(e ->
+                    navegacaoService.abrirModalCriarEvento(emailRecebido, this::processarCarregamentoEventos)
+            );
             homeView.getBtnFiltros().setOnAction(e -> processarFiltros());
 
             homeView.getLbEmailUsuario().setText(emailRecebido);
@@ -165,83 +169,22 @@ public class HomeController {
     public void processarCarregamentoEventos() {
         sistemaDeLogger.info("Método processarCarregamentoEventos() chamado.");
         try {
-            sistemaDeLogger.info("Carregando eventos da página inicial");
-            // List<HomeView.Evento> eventos = eventoService.buscarTodosEventos();
-            List<HomeView.Evento> eventos = buscarEventosDeExemplo();
+            sistemaDeLogger.info("Carregando eventos reais do serviço...");
 
+            Set<EventoModel> todosOsEventosModel = eventoCriacaoService.getAllEventos();
 
-            homeView.setEventos(eventos);
+            List<HomeView.Evento> eventosParaView = new ArrayList<>();
 
+            for (EventoModel model : todosOsEventosModel) {
+                eventosParaView.add(converterParaView(model));
+            }
+
+            homeView.setEventos(eventosParaView);
         } catch (Exception ex) {
             sistemaDeLogger.error("Erro ao carregar eventos: " + ex.getMessage());
             ex.printStackTrace();
+            homeView.setEventos(new ArrayList<>());
         }
-    }
-
-    /**
-     * Simula a busca de eventos no backend.
-     * @return Uma lista de eventos para exibição.
-     */
-    private List<HomeView.Evento> buscarEventosDeExemplo() {
-        List<HomeView.Evento> eventosParaView = new ArrayList<>();
-
-        EventoModel evento1 = new EventoModel(
-                null, "Conferência Tech Inovação", "Discussão sobre o futuro da tecnologia.",
-                FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções, SP", null, 200,
-                LocalDate.of(2025, 8, 15), "09:00",
-                LocalDate.of(2025, 8, 16), "18:00",
-                null, null, true, false
-        );
-        eventosParaView.add(converterParaView(evento1));
-
-
-        EventoModel evento2 = new EventoModel(
-                null, "Workshop de Design UX/UI", "Aprenda na prática os fundamentos de UX.",
-                FormatoSelecionado.ONLINE, "https://zoom.us/j/123456", "Online", null, 50,
-                LocalDate.of(2025, 9, 5), "19:00",
-                LocalDate.of(2025, 9, 5), "22:00",
-                null, null, true, false
-        );
-        eventosParaView.add(converterParaView(evento2));
-
-
-        EventoModel evento3 = new EventoModel(
-                null, "Festival de Música Indie", "Bandas independentes em um evento único.",
-                FormatoSelecionado.HIBRIDO, null, "Parque Ibirapuera, SP", null, 1000,
-                LocalDate.of(2025, 9, 28), "14:00",
-                LocalDate.of(2025, 9, 28), "23:00",
-                null, null, true, false
-        );
-        eventosParaView.add(converterParaView(evento3));
-
-        EventoModel evento4 = new EventoModel(
-                null, "Feira de Tecnologia e Inovação", "Apresentação de startups e novas tecnologias do mercado.",
-                FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções Expo Center Norte, SP", null, 5000,
-                LocalDate.of(2025, 10, 15), "09:00",
-                LocalDate.of(2025, 10, 17), "18:00",
-                null, null, true, true
-        );
-        eventosParaView.add(converterParaView(evento4));
-
-        EventoModel evento5 = new EventoModel(
-                null, "Workshop de Fotografia com Celular", "Aprenda a tirar fotos incríveis usando apenas o seu smartphone.",
-                FormatoSelecionado.ONLINE, "https://zoom.us/j/1234567890", "Plataforma Zoom", null, 150,
-                LocalDate.of(2025, 11, 22), "19:00",
-                LocalDate.of(2025, 11, 22), "21:30",
-                null, null, true, false
-        );
-        eventosParaView.add(converterParaView(evento5));
-
-        EventoModel evento6 = new EventoModel(
-                null, "Festival Gastronômico Sabores do Vale", "Chefs renomados da região do Vale do Paraíba em um só lugar.",
-                FormatoSelecionado.PRESENCIAL, null, "Parque do Povo, Presidente Prudente, SP", null, 2500,
-                LocalDate.of(2025, 12, 5), "17:00",
-                LocalDate.of(2025, 12, 7), "23:00",
-                null, null, true, true
-        );
-        eventosParaView.add(converterParaView(evento6));
-
-        return eventosParaView;
     }
 
     /**
@@ -251,14 +194,32 @@ public class HomeController {
      */
     private HomeView.Evento converterParaView(EventoModel model) {
         String titulo = model.getNomeEvento();
-        String local = model.getLocalizacao();
-        String categoria = model.getFormato().toString();
+
+        String local;
+        if (model.getFormato() == FormatoSelecionado.ONLINE) {
+            local = "Evento Online";
+        } else {
+            local = model.getLocalizacao();
+        }
+
+        String categoria;
+        Set<TemaPreferencia> temas = model.getTemasEvento();
+
+        if (temas == null || temas.isEmpty()) {
+            categoria = "Geral";
+        } else {
+            categoria = temas.stream()
+                    .findFirst()
+                    .map(t -> t.toString().substring(0, 1).toUpperCase() + t.toString().substring(1).toLowerCase())
+                    .get();
+        }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd 'de' MMM", new Locale("pt", "BR"));
         String dataFormatada = model.getDataInicial().format(formatter).toUpperCase();
         String dataHora = String.format("%s - %s", dataFormatada, model.getHoraInicial());
 
-        return new HomeView.Evento(titulo, local, dataHora, categoria);
-    }
+        Image imagem = model.getFotoEvento();
 
+        return new HomeView.Evento(titulo, local, dataHora, categoria, imagem);
+    }
 }

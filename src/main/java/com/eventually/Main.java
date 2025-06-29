@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * Classe principal da aplicação Eventually.
  * Esta classe estende {@code javafx.application.Application} e é responsável
  * por inicializar e exibir a interface gráfica do usuário.
- * @version 1.03
+ * @version 1.04
  * @author Yuri Garcia Maia
  * @since 2025-04-06
  * @author Gabriella Tavares Costa Corrêa (Documentação, revisão da estrutura e lógica da classe)
@@ -20,6 +20,7 @@ public class Main extends Application {
     private Stage primaryStage;
 
     private UsuarioCadastroService usuarioCadastroService;
+    private EventoCriacaoService eventoCriacaoService;
     private NavegacaoService navegacaoService;
 
     private static final Logger sistemaDeLogger = LoggerFactory.getLogger(Main.class);
@@ -38,6 +39,8 @@ public class Main extends Application {
             this.primaryStage = primaryStage;
             this.usuarioCadastroService = UsuarioCadastroService.getInstancia();
             usuarioCadastroService.criarLista();
+            this.eventoCriacaoService = EventoCriacaoService.getInstancia();
+            eventoCriacaoService.criarLista();
             this.navegacaoService = new NavegacaoService(primaryStage);
             navegacaoService.navegarParaLogin();
 

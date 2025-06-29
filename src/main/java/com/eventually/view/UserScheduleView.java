@@ -5,7 +5,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,13 +14,12 @@ import javafx.scene.shape.Circle;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Locale;
 
 /**
  * Esta classe representa a visualização da tela de programação de eventos do usuário
  * @author Yuri Garcia Maia
- * @version 1.06
+ * @version 1.07
  * @author Gabriela Tavares Costa Corrêa (Documentação e revisão da classe)
  * @since 2025-04-06
  */

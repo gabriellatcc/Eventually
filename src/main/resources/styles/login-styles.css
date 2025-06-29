@@ -1,4 +1,15 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Poppins Bold';
+    src: url('../fonts/Poppins-Bold.ttf');
+}
+
 .login-field {
+    -fx-font-family: 'Poppins';
     -fx-background-color: white;
     -fx-background-radius: 5px;
     -fx-border-radius: 5px;
@@ -15,6 +26,7 @@
 }
 
 .login-button {
+    -fx-font-family: 'Poppins Bold';
     -fx-background-color: #7a2074;
     -fx-text-fill: white;
     -fx-font-weight: bold;
@@ -28,6 +40,7 @@
 }
 
 .register-button {
+    -fx-font-family: 'Poppins';
     -fx-background-color: transparent;
     -fx-text-fill: white;
     -fx-font-size: 12px;
@@ -41,10 +54,14 @@
     -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-cursor: hand;
 }
+
 .error-label {
+    -fx-font-family: 'Poppins';
     -fx-font-size: 0.9em;
 }
+
 .form-field {
 }
+
 .submit-button {
 }
