@@ -178,6 +178,7 @@ public class NavegacaoService {
      */
     public void abrirModalEncerrarSessao() {
         LogoutConfirmModal confirmModal = new LogoutConfirmModal();
+
         boolean usuarioConfirmou = confirmModal.showAndWait(primaryStage);
         if (usuarioConfirmou) {
             processarSaida();

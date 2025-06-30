@@ -33,11 +33,7 @@ public class AlertModal {
         modalStage.initModality(Modality.APPLICATION_MODAL);
         modalStage.initOwner(parentStage);
         modalStage.initStyle(StageStyle.TRANSPARENT);
-        try {
-            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
-        } catch (Exception e) {
-            System.err.println("Ícone do app não encontrado para AlertModal: " + e.getMessage());
-        }
+        modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
 
         final double MODAL_WIDTH = 400;
         final double MODAL_HEIGHT = 250;
@@ -70,11 +66,8 @@ public class AlertModal {
         rootLayout.getChildren().addAll(titleLabel, messageLabel, btnOk);
 
         Scene modalScene = new Scene(rootLayout, MODAL_WIDTH, MODAL_HEIGHT, Color.TRANSPARENT);
-        try {
-            modalScene.getStylesheets().add(getClass().getResource("/styles/my-events-styles.css").toExternalForm());
-        } catch (Exception e) {
-            System.err.println("CSS não encontrado para AlertModal: " + e.getMessage());
-        }
+
+        modalScene.getStylesheets().add(getClass().getResource("/styles/my-events-styles.css").toExternalForm());
 
         modalStage.setScene(modalScene);
         modalStage.showAndWait();

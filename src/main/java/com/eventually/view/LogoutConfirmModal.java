@@ -21,7 +21,6 @@ import javafx.stage.StageStyle;
  * @since 2025-06-22
  */
 public class LogoutConfirmModal {
-
     private boolean result = false;
 
     /**
@@ -35,19 +34,15 @@ public class LogoutConfirmModal {
         modalStage.initModality(Modality.APPLICATION_MODAL);
         modalStage.initOwner(parentStage);
         modalStage.initStyle(StageStyle.TRANSPARENT);
-        try {
-            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
-        } catch (Exception e) {
-            System.err.println("Ícone do app não encontrado para LogoutConfirmModal: " + e.getMessage());
-        }
+        modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
 
         final double MODAL_WIDTH = 400;
-        final double MODAL_HEIGHT = 280;
+        final double MODAL_HEIGHT = 250;
 
         VBox rootLayout = new VBox(20);
         rootLayout.setAlignment(Pos.CENTER);
         rootLayout.setPadding(new Insets(30));
-        rootLayout.getStyleClass().add("root-pane");
+        rootLayout.getStyleClass().add("layout-pane");
 
         Rectangle rect = new Rectangle(MODAL_WIDTH, MODAL_HEIGHT);
         rect.setArcWidth(40);
@@ -55,18 +50,18 @@ public class LogoutConfirmModal {
         rootLayout.setClip(rect);
 
         Label title = new Label("Encerrar sessão?");
-        title.getStyleClass().add("title-label");
+        title.getStyleClass().add("title-label-modal");
         title.setStyle("-fx-font-size: 26px;");
 
         Label message = new Label("Tem certeza que deseja\nencerrar a sessão?");
-        message.getStyleClass().add("field-label");
+        message.getStyleClass().add("label-modal");
         message.setStyle("-fx-font-weight: normal; -fx-text-alignment: center; -fx-font-size: 16px;");
 
         HBox buttonsBox = new HBox(20);
         buttonsBox.setAlignment(Pos.CENTER);
 
         Button btnSim = new Button("Sim");
-        btnSim.getStyleClass().add("save-button");
+        btnSim.getStyleClass().add("modal-interact-button");
         btnSim.setPrefWidth(120);
         btnSim.setOnAction(e -> {
             result = true;
@@ -74,7 +69,7 @@ public class LogoutConfirmModal {
         });
 
         Button btnCancelar = new Button("Cancelar");
-        btnCancelar.getStyleClass().add("exit-button");
+        btnCancelar.getStyleClass().add("modal-interact-button");
         btnCancelar.setPrefWidth(120);
         btnCancelar.setOnAction(e -> {
             result = false;
@@ -83,14 +78,11 @@ public class LogoutConfirmModal {
 
         buttonsBox.getChildren().addAll(btnSim, btnCancelar);
 
-        Label idLabel = new Label("id xxxx-x");
-        idLabel.getStyleClass().add("id-label");
-        idLabel.setPadding(new Insets(10, 0, 0, 0));
-
-        rootLayout.getChildren().addAll(title, message, buttonsBox, idLabel);
+        rootLayout.getChildren().addAll(title, message, buttonsBox);
 
         Scene modalScene = new Scene(rootLayout, MODAL_WIDTH, MODAL_HEIGHT, Color.TRANSPARENT);
         modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
+
         modalStage.setScene(modalScene);
         modalStage.showAndWait();
 

@@ -123,7 +123,6 @@ public class LoginController {
                 sistemaDeLog.info("Email não cadastrado ou senha incorretos.");
                 AlertModal alertModal = new AlertModal();
                 alertModal.show(primaryStage, "Erro de Login", "Senha incorreta ou email não cadastrado.");
-
             }
         } catch (Exception e) {
             sistemaDeLog.error("Erro ao configurar manipulador de login: "+e.getMessage());
