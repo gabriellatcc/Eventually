@@ -22,7 +22,7 @@ import java.util.*;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.03
+ * @version 1.04
  * @since 2025-05-15
  */
 public final class EventoCriacaoService {
@@ -32,6 +32,7 @@ public final class EventoCriacaoService {
     private static int proximoId = 1;
 
     private UsuarioSessaoService usuarioSessaoService;
+
     private AlertaService alertaService = new AlertaService();
 
     private static final Logger sistemaDeLogger = LoggerFactory.getLogger(EventoCriacaoService.class);
@@ -41,7 +42,6 @@ public final class EventoCriacaoService {
      */
     private EventoCriacaoService() {
         listaEventos = new HashSet<>();
-
         sistemaDeLogger.info("Inicializado e lista de eventos criada. HashSet size: " + listaEventos.size());
     }
 
@@ -113,7 +113,10 @@ public final class EventoCriacaoService {
         sistemaDeLogger.info("Método criarEvento() chamado.");
         try {
             Set<TemaPreferencia> temasPreferidos = MapeamentoPreferenciasService.mapearPreferencias(dto.preferenciasEvento());
+
+            usuarioSessaoService = UsuarioSessaoService.getInstancia();
             UsuarioModel usuario = usuarioSessaoService.procurarUsuario(dto.emailOrganizador());
+
             if (usuario == null) {
                 sistemaDeLogger.error("Não foi possível criar o evento pois o usuário organizador não foi encontrado: " + dto.emailOrganizador());
                 alertaService.alertarErro("Usuário organizador não encontrado. Não foi possível criar o evento.");
