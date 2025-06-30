@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * Classe controladora da tela de programação do usuário, é responsável pela comunicação
  * da tela de programação com o backend.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.04
+ * @version 1.05
  * @since 2025-04-25
  */
 public class UserScheduleController {
@@ -33,7 +33,6 @@ public class UserScheduleController {
 
     private NavegacaoService navegacaoService;
     private UsuarioSessaoService usuarioSessaoService;
-    private UsuarioCadastroService usuarioCadastroService;
     private String emailRecebido;
 
     private AlertaService alertaService =new AlertaService();
@@ -47,8 +46,7 @@ public class UserScheduleController {
      */
     public UserScheduleController(String email, UserScheduleView userScheduleView, Stage primaryStage) {
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
-        this.usuarioCadastroService = UsuarioCadastroService.getInstancia();
-        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService e UsuarioCadastroService.");
+        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService.");
 
         this.emailRecebido = email;
 

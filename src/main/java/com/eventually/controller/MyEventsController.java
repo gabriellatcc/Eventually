@@ -1,12 +1,15 @@
 package com.eventually.controller;
 
 import com.eventually.model.EventoModel;
+import com.eventually.model.FormatoSelecionado;
 import com.eventually.service.AlertaService;
 import com.eventually.service.EventoCriacaoService;
 import com.eventually.service.NavegacaoService;
 import com.eventually.service.UsuarioSessaoService;
 import com.eventually.view.*;
 import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -14,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -23,7 +27,7 @@ import java.util.stream.Collectors;
  * com o backend.
  * Contém métodos privados para que os acesso sejam somente por esta classe.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.01
+ * @version 1.02
  * @since 2025-06-18
  */
 public class MyEventsController {
@@ -32,7 +36,6 @@ public class MyEventsController {
 
     private NavegacaoService navegacaoService;
     private UsuarioSessaoService usuarioSessaoService;
-    private EventoCriacaoService eventoCriacaoService;
 
     private String emailRecebido;
 
@@ -48,9 +51,7 @@ public class MyEventsController {
      */
     public MyEventsController(String email ,MyEventsView myEventsView, Stage primaryStage) {
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
-        this.eventoCriacaoService = EventoCriacaoService.getInstancia();
-
-        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService e UsuarioSessaoService.");
+        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService.");
 
         this.emailRecebido = email;
 
@@ -61,6 +62,7 @@ public class MyEventsController {
         this.navegacaoService = new NavegacaoService(primaryStage);
 
         configManipuladoresDeEventoMeusEventos();
+        configurarSeletorEventos();
     }
 
     /**
@@ -80,34 +82,12 @@ public class MyEventsController {
             myEventsView.setNomeUsuario(definirNome(emailRecebido));
             myEventsView.setEmailUsuario(emailRecebido);
             myEventsView.setAvatar(definirImagem(emailRecebido));
+
+            processarCarregamentoEventos();
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores da tela de Meus Eventos: "+e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    private MyEventsView.EventoME converterModeloParaRecord(EventoModel model) {
-        DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
-        String horaInicialStr = model.getHoraInicial().format(formatoHora);
-        String horaFinalStr = model.getHoraFinal().format(formatoHora);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd 'de' MMM", new Locale("pt", "BR"));
-        String dataFormatadaI = model.getDataInicial().format(formatter).toUpperCase();
-        String dataFormatada2 = model.getDataFinal().format(formatter).toUpperCase();
-
-        int capacidade = model.getnParticipantes();
-
-        String n = String.valueOf(capacidade);
-
-        return new MyEventsView.EventoME(
-                model.getNomeEvento(),
-                model.getLocalizacao(),
-                horaInicialStr,
-                horaFinalStr,
-                dataFormatadaI,
-                dataFormatada2,
-                n
-        );
     }
 
     /**
@@ -143,5 +123,147 @@ public class MyEventsController {
     private void processarNavegacaoMeusEventos() {
         sistemaDeLogger.info("Botão 'Meus Eventos' clicado, mas já estamos na tela.");
         alertaService.alertarInfo("Você já está na tela de Meus Eventos!");
+    }
+
+    private void configurarSeletorEventos() {
+        ToggleGroup grupoTipoEvento = myEventsView.getGroupFiltroEventos();
+
+        if (grupoTipoEvento == null) {
+            sistemaDeLogger.error("O ToggleGroup para seleção de eventos não foi encontrado na MyEventsView!");
+            return;
+        }
+
+        grupoTipoEvento.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+            if (newToggle == null) {
+                myEventsView.setEventos(new ArrayList<>());
+                return;
+            }
+
+            if (newToggle == myEventsView.getBtnEventosCriados()) {
+                sistemaDeLogger.info("Botão 'Eventos Criados' selecionado. Carregando eventos do organizador.");
+                carregarEventosParaOrganizador();
+            } else if (newToggle == myEventsView.getBtnInscricoes()) {
+                sistemaDeLogger.info("Botão 'Inscrições' selecionado. Carregando eventos inscritos.");
+                carregarEventosParaInscrito();
+            }
+        });
+
+        myEventsView.getBtnEventosCriados().setSelected(true);
+    }
+
+    private void carregarEventosParaOrganizador() {
+        List<EventoModel> todosOsEventos = new ArrayList<>();
+        List<EventoModel> listaDeEventosCriados = usuarioSessaoService.procurarEventosCriados(emailRecebido);
+
+        if (listaDeEventosCriados != null) todosOsEventos.addAll(listaDeEventosCriados);
+
+        List<EventoModel> eventosFiltrados = todosOsEventos.stream()
+                .filter(evento -> evento.getDataInicial() != null && evento.getDataFinal() != null)
+                .collect(Collectors.toList());
+
+        List<MyEventsView.EventoMM> eventosParaView = eventosFiltrados.stream()
+                .map(this::converterParaView)
+                .collect(Collectors.toList());
+
+        myEventsView.setEventos(eventosParaView);
+    }
+
+    private void carregarEventosParaInscrito() {
+        List<EventoModel> todosOsEventos = new ArrayList<>();
+        List<EventoModel> listaDeEventosInscritos = usuarioSessaoService.procurarEventosInscritos(emailRecebido);
+
+        if (listaDeEventosInscritos != null) todosOsEventos.addAll(listaDeEventosInscritos);
+
+        List<EventoModel> eventosFiltrados = todosOsEventos.stream()
+                .filter(evento -> evento.getDataInicial() != null && evento.getDataFinal() != null)
+                .collect(Collectors.toList());
+
+        List<MyEventsView.EventoMM> eventosParaView = eventosFiltrados.stream()
+                .map(this::converterParaView)
+                .collect(Collectors.toList());
+
+        myEventsView.setEventos(eventosParaView);
+    }
+
+
+    /**
+     * Converte um EventoModel em um registro HomeView.EventoUS para popular a UI.
+     * (Este método não precisou de alterações)
+     * @param model O modelo de dados do evento.
+     * @return Um registro pronto para a view.
+     */
+    private MyEventsView.EventoMM converterParaView(EventoModel model) {
+        String titulo = model.getNomeEvento();
+
+        String local = (model.getFormato() == FormatoSelecionado.ONLINE) ? "Evento Online" : model.getLocalizacao();
+
+        String categoria = model.getTemasEvento().stream()
+                .findFirst()
+                .map(t -> t.toString().substring(0, 1).toUpperCase() + t.toString().substring(1).toLowerCase())
+                .orElse("Geral");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", new Locale("pt", "BR"));
+        String dataFormatada = model.getDataInicial().format(formatter);
+        String dataHora = String.format("%s - %s", dataFormatada, model.getHoraInicial().format(DateTimeFormatter.ofPattern("HH:mm")));
+        return new MyEventsView.EventoMM(titulo, local, dataHora, categoria);
+    }
+
+    private void processarCarregamentoEventos() {
+        sistemaDeLogger.info("Carregando eventos reais do serviço...");
+
+        List<MyEventsView.EventoMM> eventosParaView = new ArrayList<>();
+
+        List<EventoModel> listaDeEventosCriados = usuarioSessaoService.procurarEventosCriados(emailRecebido);
+        List<EventoModel> listaDeEventosInscritos = usuarioSessaoService.procurarEventosInscritos(emailRecebido);
+
+        int quantidadeCriados = (listaDeEventosCriados != null) ? listaDeEventosCriados.size() : 0;
+        int quantidadeInscritos = (listaDeEventosInscritos != null) ? listaDeEventosInscritos.size() : 0;
+        int valoreventos = quantidadeCriados + quantidadeInscritos;
+
+        List<EventoModel> todosOsEventos = new ArrayList<>();
+        todosOsEventos.addAll(listaDeEventosCriados);
+        todosOsEventos.addAll(listaDeEventosInscritos);
+
+        for (int i = 0; i < valoreventos; i++) {
+            eventosParaView.add(converterParaView(todosOsEventos.get(i)));
+            EventoMECartao cartao = new EventoMECartao();
+
+            cartao.setLblTitulo(todosOsEventos.get(i).getNomeEvento());
+            cartao.setLblLocal(todosOsEventos.get(i).getLocalizacao());
+            cartao.setLblCapacidadeValor(String.valueOf(todosOsEventos.get(i).getnParticipantes()));
+            configurarDataDoCartao(cartao, todosOsEventos.get(i));
+
+            myEventsView.getListaEventos().getChildren().add(cartao);
+        }
+    }
+
+    /**
+     * Método auxiliar para formatar e configurar as datas no cartão do evento.
+     * @param cartao O cartão a ser configurado.
+     * @param evento O evento com os dados de data/hora.
+     */
+    private void configurarDataDoCartao(EventoMECartao cartao, EventoModel evento) {
+        Locale brasil = new Locale("pt", "BR");
+        DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("EEE dd, MMM yyyy", brasil);
+        DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
+
+        LocalDate dataInicial = evento.getDataInicial();
+        LocalDate dataFinal = evento.getDataFinal();
+
+        if (dataInicial.equals(dataFinal)) {
+            String dataFormatada = dataInicial.format(formatoData);
+
+            String horaInicialFormatada = evento.getHoraInicial().format(formatoHora);
+            String horaFinalFormatada = evento.getHoraFinal().format(formatoHora);
+            String horarioCompleto = horaInicialFormatada + " - " + horaFinalFormatada;
+
+            cartao.setDataUnica(dataFormatada, horarioCompleto);
+
+        } else {
+            String dataHoraInicio = dataInicial.format(formatoData) + " " + evento.getHoraInicial().format(formatoHora);
+            String dataHoraFim = dataFinal.format(formatoData) + " " + evento.getHoraFinal().format(formatoHora);
+
+            cartao.setDataMultipla(dataHoraInicio, dataHoraFim);
+        }
     }
 }

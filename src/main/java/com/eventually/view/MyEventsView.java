@@ -17,15 +17,15 @@ import java.util.Locale;
 
 /**
  * Esta classe representa a visualização da tela de programação de eventos do usuário
- * @version 1.06
+ * @version 1.07
  * @author Gabriela Tavares Costa Corrêa (Criação, documentação e revisão da classe)
  * @since 2025-04-06
  */
 public class MyEventsView extends BorderPane {
     private MyEventsController myEventsController;
+
     private BarraBuilder barraBuilder;
 
-    private Button btnEditarEvento;
     private ToggleButton btnEventosCriados, btnInscricoes;
 
     private Label lbNomeUsuario, lbEmailUsuario;
@@ -36,21 +36,18 @@ public class MyEventsView extends BorderPane {
     private ToggleGroup groupFiltroEventos;
 
     private ScrollPane scrollEventos;
-    private GridPane gridEventos;
 
-    public record EventoME(String titulo,
-                         String local,
-                         String horaInicial,
-                         String horaFinal,
-                         String dataFormatadaI,
-                         String dataFormatada2,
-                         String nCapacidade) {}
+    public record EventoMM(String titulo, String local, String dataHora, String categoria) {}
+
+
     /**
-     *Construtor da classe {@code UserScheduleView}.
+     *Construtor da classe {@code MyEventsView}.
      */
     public MyEventsView() {
         setupUI();
     }
+
+    public void setMyEventsViewController(MyEventsController myEventsController) {this.myEventsController = myEventsController;}
 
     /**
      * Inicializa e organiza os elementos visuais da tela principal chamando métodos
@@ -69,8 +66,6 @@ public class MyEventsView extends BorderPane {
         setTop(barraSuperior);
         setCenter(conteudoCentral);
     }
-
-    public void setMyEventsViewController(MyEventsController myEventsController) {this.myEventsController = myEventsController;}
 
     /**
      * Este método constrói um subcabeçalho da interface gráfica, contendo botões de
@@ -131,110 +126,54 @@ public class MyEventsView extends BorderPane {
         return cabecalho;
     }
 
-    /**
-     * Método auxiliar para formatar a data no padrão "SEX, 28 DE JUN".
-     * @param data A data a ser formatada.
-     * @return A data formatada como String.
-     */
-    private String formatarDataParaCard(LocalDate data) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd 'de' MMM", new Locale("pt", "BR"));
-        return data.format(formatter).toUpperCase();
-    }
-
-    /**
-     * Este método cria o grid de eventos que será exibido na área principal.
-     * Os eventos são organizados em uma grade de 4 colunas.
-     * @return um componente ScrollPane contendo o grid de eventos
-     */
-    private ScrollPane criarGridEventos() {
-        gridEventos = new GridPane();
-        gridEventos.setPadding(new Insets(10, 40, 20, 40));
-        gridEventos.setHgap(25);
-        gridEventos.setVgap(25);
-        gridEventos.getStyleClass().add("events-grid");
-
-        gridEventos.getColumnConstraints().clear();
-
-        ColumnConstraints col1 = new ColumnConstraints();
-        col1.setPercentWidth(100);
-
-        gridEventos.getColumnConstraints().addAll(col1);
-
-        scrollEventos = new ScrollPane(gridEventos);
+    private ScrollPane criarAreaEventos() {
+        listaEventos = new VBox(15);
+        listaEventos.setAlignment(Pos.TOP_CENTER);
+        listaEventos.getStyleClass().add("event-list-container");
+        listaEventos.setPadding(new Insets(20, 40, 20, 40));
+        scrollEventos = new ScrollPane(listaEventos);
         scrollEventos.setFitToWidth(true);
         scrollEventos.getStyleClass().add("events-scroll-pane");
         scrollEventos.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollEventos.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
+        VBox.setVgrow(scrollEventos, Priority.ALWAYS);
+
         return scrollEventos;
     }
 
     /**
-     * Limpa o grid e exibe os eventos fornecidos.
+     * Limpa o grid e exibe os eventoUS fornecidos.
      * Este método é chamado pelo HomeController para popular a interface.
-     * @param eventos A lista de eventos a serem exibidos.
+     * @param eventoUS A lista de eventoUS a serem exibidos.
      */
-    public void setEventos(List<MyEventsView.EventoME> eventos) {
-        gridEventos.getChildren().clear();
+    public void setEventos(List<MyEventsView.EventoMM> eventoUS) {
+        listaEventos.getChildren().clear();
 
-        if (eventos == null || eventos.isEmpty()) {
-            Label placeholder = new Label("Nenhum evento disponível no momento.");
+        if (eventoUS == null || eventoUS.isEmpty()) {
+            Label placeholder = new Label("Nenhum evento disponível para a sessão selecionada.");
             placeholder.getStyleClass().add("placeholder-label");
-            StackPane placeholderPane = new StackPane(placeholder);
-            placeholderPane.setAlignment(Pos.CENTER);
-            gridEventos.add(placeholderPane, 0, 0, 3, 1);
+            listaEventos.getChildren().add(placeholder);
             return;
         }
 
-        for (int i = 0; i < eventos.size(); i++) {
-            MyEventsView.EventoME evento = eventos.get(i);
+        for (MyEventsView.EventoMM eventoMe: eventoUS) {
             EventoMECartao cardEvento = new EventoMECartao();
-            cardEvento.getStylesheets().add(getClass().getResource("/styles/event-list-card.css").toExternalForm());
 
-            cardEvento.setLblTitulo(evento.titulo());
-            cardEvento.setLblLocal(evento.local());
-            cardEvento.setLblCapacidadeValor(evento.nCapacidade());
+            cardEvento.setLblTitulo(eventoMe.titulo());
+            cardEvento.setLblLocal(eventoMe.local());
 
-            if (evento.dataFormatadaI().equals(evento.dataFormatada2())) {
-                String dataFormatada = formatarDataParaCard(LocalDate.parse(evento.dataFormatadaI()));
-                String horario = evento.horaInicial() + " - " + evento.dataFormatada2();
-                cardEvento.setDataUnica(dataFormatada, horario);
+            String[] dataHoraParts = eventoMe.dataHora().split(" - ");
+            if (dataHoraParts.length == 2) {
+                cardEvento.setLblDataLinha1(dataHoraParts[0]);
+                cardEvento.setLblDataLinha2(dataHoraParts[1]);
             } else {
-                String inicioFormatado = formatarDataParaCard(LocalDate.parse(evento.dataFormatadaI())) + " às " + evento.horaInicial();
-                String fimFormatado = formatarDataParaCard(LocalDate.parse(evento.dataFormatada2())) + " às " + evento.horaFinal();
-                cardEvento.setDataMultipla(inicioFormatado, fimFormatado);
+                cardEvento.setLblDataLinha1(eventoMe.dataHora());
+                cardEvento.setLblDataLinha2("");
             }
 
-            int row = i / 1;
-            int col = i % 1;
-            gridEventos.add(cardEvento, col, row);
+            listaEventos.getChildren().add(cardEvento);
         }
-    }
-
-    /** Este método cria a classe do container que representa a lista de eventos
-     * da interface gráfica. Essa lista será preenchida com eventos correspondentes
-     * à data atualmente selecionada.
-     * @return a lista de eventos a serem exibidos no dia selecionado
-     */
-    private VBox criarListaEventos() {
-        listaEventos = new VBox(15);
-        listaEventos.setAlignment(Pos.CENTER);
-        listaEventos.getStyleClass().add("event-list-container");
-        listaEventos.setPadding(new Insets(20, 40, 20, 40));
-        listaEventos.setBorder(new Border(new BorderStroke(Color.GREEN,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        carregarEventos();
-        return listaEventos;
-    }
-
-    /** Esta classe cria um container que exibe a lista de eventos para o dia do mês e ano específicos, ao selecionar
-     * outros dias da semana, é limpa a mensagem e exibida outra para o dia especifico.
-     */
-    private void carregarEventos() {
-        listaEventos.getChildren().clear();
-
-        Label placeholder = new Label("Eventos para " + lbEmailUsuario);
-        listaEventos.getChildren().add(placeholder);
     }
 
     /**
@@ -244,15 +183,11 @@ public class MyEventsView extends BorderPane {
      */
     private VBox criarContainerCentral() {
         HBox controlesSubCabecalho = criarCabecalhoPrincipal();
-        VBox listaEventosVBox = criarListaEventos();
-
-        ScrollPane gridEventosPane = criarGridEventos();
+        ScrollPane areaEventos = criarAreaEventos();
 
         VBox centerContent = new VBox(0);
         centerContent.getStyleClass().add("center-content-area");
-        centerContent.getChildren().addAll(controlesSubCabecalho, gridEventosPane);
-
-        VBox.setVgrow(gridEventosPane, Priority.ALWAYS);
+        centerContent.getChildren().addAll(controlesSubCabecalho, areaEventos);
 
         return centerContent;
     }
@@ -261,6 +196,9 @@ public class MyEventsView extends BorderPane {
      * Métodos de encapsulamento getters e setters
      */
     public BarraBuilder getBarraBuilder() {return barraBuilder;}
+    public VBox getListaEventos() { return listaEventos; }
+
+    public ToggleGroup getGroupFiltroEventos() {return groupFiltroEventos;}
 
     public Label getLbNomeUsuario() {return lbNomeUsuario;}
     public Label getLbEmailUsuario() { return lbEmailUsuario; }

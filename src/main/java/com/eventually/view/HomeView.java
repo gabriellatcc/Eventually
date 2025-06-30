@@ -17,7 +17,7 @@ import java.util.List;
  * Esta classe é responsável por exibir a página principal
  * com filtros de eventoHS e listagem de evento disponíveis.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.05
+ * @version 1.06
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-05-29
@@ -117,7 +117,7 @@ public class HomeView extends BorderPane {
         btnFiltros = new Button("🔍 Filtros");
         btnFiltros.getStyleClass().add("filters-button");
 
-        lbEncontrarEventos = new Label("Encontre eventoHS por filtro");
+        lbEncontrarEventos = new Label("Encontre eventos por filtro");
         lbEncontrarEventos.getStyleClass().add("filter-description-label");
 
         btnCriarEvento = new Button("+ Criar evento");
