@@ -11,13 +11,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
 /**
  * Esta classe representa a visualização da tela de programação de eventos do usuário
- * @version 1.07
+ * @version 1.08
  * @author Gabriela Tavares Costa Corrêa (Criação, documentação e revisão da classe)
  * @since 2025-04-06
  */
@@ -37,8 +38,17 @@ public class MyEventsView extends BorderPane {
 
     private ScrollPane scrollEventos;
 
-    public record EventoMM(String titulo, String local, String dataHora, String categoria) {}
-
+    public record EventoMM(
+            String titulo,
+            String local,
+            String categoria,
+            int nParticipantes,
+            int nInscritos,
+            LocalDate dataInicial,
+            LocalTime horaInicial,
+            LocalDate dataFinal,
+            LocalTime horaFinal
+    ){}
 
     /**
      *Construtor da classe {@code MyEventsView}.
@@ -74,7 +84,7 @@ public class MyEventsView extends BorderPane {
      */
     private HBox criarCabecalhoPrincipal() {
         HBox cabecalho = new HBox(15);
-        cabecalho.setPadding(new Insets(10, 40, 10, 40));
+        cabecalho.setPadding(new Insets(20, 40, 10, 40));
         cabecalho.setAlignment(Pos.CENTER_LEFT);
         cabecalho.getStyleClass().add("sub-header-controls");
 
@@ -118,8 +128,10 @@ public class MyEventsView extends BorderPane {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        cabecalho.setBorder(new Border(new BorderStroke(Color.GREEN,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        Color corDaBorda = Color.web("#f1f1f1");
+        BorderWidths larguraDaBorda = new BorderWidths(0, 0, 3, 0);
+        cabecalho.setBorder(new Border(new BorderStroke(corDaBorda,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, larguraDaBorda)));
 
         cabecalho.getChildren().addAll(filtroBox, spacer, userDisplayBox);
 
@@ -157,20 +169,25 @@ public class MyEventsView extends BorderPane {
             return;
         }
 
+        Locale brasil = new Locale("pt", "BR");
+        DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("EEE dd, MMM yyyy", brasil);
+        DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
+
         for (MyEventsView.EventoMM eventoMe: eventoUS) {
             EventoMECartao cardEvento = new EventoMECartao();
+
+            String inscritos = String.valueOf(eventoMe.nInscritos());
+            String max = String.valueOf(eventoMe.nParticipantes());
+            cardEvento.setLblCapacidadeValor(inscritos+"/"+max);
 
             cardEvento.setLblTitulo(eventoMe.titulo());
             cardEvento.setLblLocal(eventoMe.local());
 
-            String[] dataHoraParts = eventoMe.dataHora().split(" - ");
-            if (dataHoraParts.length == 2) {
-                cardEvento.setLblDataLinha1(dataHoraParts[0]);
-                cardEvento.setLblDataLinha2(dataHoraParts[1]);
-            } else {
-                cardEvento.setLblDataLinha1(eventoMe.dataHora());
-                cardEvento.setLblDataLinha2("");
-            }
+            String dataHoraInicio = eventoMe.dataInicial().format(formatoData) + " " + eventoMe.horaInicial().format(formatoHora);
+            String dataHoraFim = eventoMe.dataFinal().format(formatoData) + " " + eventoMe.horaFinal().format(formatoHora);
+
+            cardEvento.setLblDataLinha1(dataHoraInicio);
+            cardEvento.setLblDataLinha2(dataHoraFim);
 
             listaEventos.getChildren().add(cardEvento);
         }

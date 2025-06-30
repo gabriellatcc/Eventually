@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * Classe controladora da tela de programação do usuário, é responsável pela comunicação
  * da tela de programação com o backend.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.06
+ * @version 1.07
  * @since 2025-04-25
  */
 public class UserScheduleController {
@@ -67,6 +67,7 @@ public class UserScheduleController {
     private void configManipuladoresEventoProg() {
         sistemaDeLogger.info("Método configManipuladoresEventoProg() chamado.");
         try {
+            userScheduleView.getBarraBuilder().getBtnProgramacao().setDisable(true);
             userScheduleView.getBarraBuilder().getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
             userScheduleView.getBarraBuilder().getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
             userScheduleView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
@@ -185,10 +186,7 @@ public class UserScheduleController {
 
         List<EventoModel> eventosFiltrados = todosOsEventos.stream()
                 .filter(evento -> {
-                    if (evento.getDataInicial() == null || evento.getDataFinal() == null) {
-                        return false;
-                    }
-
+                    if (evento.getDataInicial() == null || evento.getDataFinal() == null) {return false;}
                     boolean comecaNoDia = evento.getDataInicial().equals(dataAlvo);
                     boolean terminaNoDia = evento.getDataFinal().equals(dataAlvo);
                     boolean estaNoMeio = dataAlvo.isAfter(evento.getDataInicial()) && dataAlvo.isBefore(evento.getDataFinal());
@@ -220,11 +218,21 @@ public class UserScheduleController {
                 .map(t -> t.toString().substring(0, 1).toUpperCase() + t.toString().substring(1).toLowerCase())
                 .orElse("Geral");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", new Locale("pt", "BR"));
-        String dataFormatada = model.getDataInicial().format(formatter);
-        String dataHora = String.format("%s - %s", dataFormatada, model.getHoraInicial().format(DateTimeFormatter.ofPattern("HH:mm")));
+        List<UsuarioModel> listaInscritos = model.getParticipantes();
+        int nInscritos = (listaInscritos != null) ? listaInscritos.size() : 0;
+        int nParticipantes = model.getnParticipantes();
 
-        return new UserScheduleView.EventoUS(titulo, local, dataHora, categoria);
+        return new UserScheduleView.EventoUS(
+                titulo,
+                local,
+                categoria,
+                nParticipantes,
+                nInscritos,
+                model.getDataInicial(),
+                model.getHoraInicial(),
+                model.getDataFinal(),
+                model.getHoraFinal()
+        );
     }
 
     private void processarCarregamentoEventos() {
@@ -285,5 +293,4 @@ public class UserScheduleController {
             cartao.setDataMultipla(dataHoraInicio, dataHoraFim);
         }
     }
-
 }

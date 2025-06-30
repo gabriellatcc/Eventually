@@ -2,6 +2,7 @@ package com.eventually.controller;
 
 import com.eventually.model.EventoModel;
 import com.eventually.model.FormatoSelecionado;
+import com.eventually.model.UsuarioModel;
 import com.eventually.service.AlertaService;
 import com.eventually.service.EventoCriacaoService;
 import com.eventually.service.NavegacaoService;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
  * com o backend.
  * Contém métodos privados para que os acesso sejam somente por esta classe.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.03
+ * @version 1.04
  * @since 2025-06-18
  */
 public class MyEventsController {
@@ -72,6 +73,8 @@ public class MyEventsController {
     private void configManipuladoresDeEventoMeusEventos() {
         sistemaDeLogger.info("Método configManipuladoresDeEventoMeusEventos() chamado.");
         try {
+            myEventsView.getBarraBuilder().getBtnMeusEventos().setDisable(true);
+
             myEventsView.getBarraBuilder().getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
             myEventsView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
             myEventsView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
@@ -196,10 +199,21 @@ public class MyEventsController {
                 .map(t -> t.toString().substring(0, 1).toUpperCase() + t.toString().substring(1).toLowerCase())
                 .orElse("Geral");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", new Locale("pt", "BR"));
-        String dataFormatada = model.getDataInicial().format(formatter);
-        String dataHora = String.format("%s - %s", dataFormatada, model.getHoraInicial().format(DateTimeFormatter.ofPattern("HH:mm")));
-        return new MyEventsView.EventoMM(titulo, local, dataHora, categoria);
+        List<UsuarioModel> listaInscritos = model.getParticipantes();
+        int nInscritos = (listaInscritos != null) ? listaInscritos.size() : 0;
+        int nParticipantes = model.getnParticipantes();
+
+        return new MyEventsView.EventoMM(
+                titulo,
+                local,
+                categoria,
+                nParticipantes,
+                nInscritos,
+                model.getDataInicial(),
+                model.getHoraInicial(),
+                model.getDataFinal(),
+                model.getHoraFinal()
+        );
     }
 
     private void processarCarregamentoEventos() {
@@ -224,9 +238,15 @@ public class MyEventsController {
 
             cartao.setLblTitulo(todosOsEventos.get(i).getNomeEvento());
             cartao.setLblLocal(todosOsEventos.get(i).getLocalizacao());
-            cartao.setLblCapacidadeValor(String.valueOf(todosOsEventos.get(i).getnParticipantes()));
-            configurarDataDoCartao(cartao, todosOsEventos.get(i));
 
+            List<UsuarioModel> listaDeInscritos = todosOsEventos.get(i).getParticipantes();
+            int numeroDeInscritos = (listaDeInscritos == null) ? 0 : listaDeInscritos.size();
+            String inscritos = String.valueOf(numeroDeInscritos);
+            String max = String.valueOf(todosOsEventos.get(i).getnParticipantes());
+
+            cartao.setLblCapacidadeValor(inscritos+"/"+max);
+            configurarDataDoCartao(cartao, todosOsEventos.get(i));
+            //se o cartao exibir errado o erro vai estar aqui!
             myEventsView.getListaEventos().getChildren().add(cartao);
         }
     }

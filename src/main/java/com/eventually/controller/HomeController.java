@@ -20,7 +20,7 @@ import java.util.Set;
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.05
+ * @version 1.04
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -71,6 +71,8 @@ public class HomeController {
     private void configManipuladoresEventoInicio() {
         sistemaDeLogger.info("Método configManipuladoresEventoInicio() chamado.");
         try {
+            homeView.getBarraBuilder().getBtnInicio().setDisable(true);
+
             homeView.getBarraBuilder().getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
             homeView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
             homeView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
