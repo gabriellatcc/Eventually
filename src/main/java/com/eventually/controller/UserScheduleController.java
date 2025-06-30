@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * Classe controladora da tela de programação do usuário, é responsável pela comunicação
  * da tela de programação com o backend.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.05
+ * @version 1.06
  * @since 2025-04-25
  */
 public class UserScheduleController {
@@ -69,7 +69,6 @@ public class UserScheduleController {
         try {
             userScheduleView.getBarraBuilder().getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
             userScheduleView.getBarraBuilder().getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
-            userScheduleView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> processarNavegacaoProgramacao());
             userScheduleView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
 
             userScheduleView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
@@ -124,21 +123,6 @@ public class UserScheduleController {
             sistemaDeLogger.error("Erro ao obter nome do usuário: "+e.getMessage());
             e.printStackTrace();
             return null;
-        }
-    }
-
-    /**
-     * Este método exibe mensagem informando que o usuário já está na tela de programação e, em caso de falha na exibição
-     * do aviso, é exibida uma mensagem de erro no console.
-     */
-    private void processarNavegacaoProgramacao() {
-        sistemaDeLogger.info("Método processarNavegacaoProgramacao() chamado.");
-        try{
-            sistemaDeLogger.info("Botão de Programação clicado!");
-            alertaService.alertarInfo("Você já está na tela de programação!");
-        } catch (Exception ex) {
-            sistemaDeLogger.error("Erro ao ir para tela de programação: "+ex.getMessage());
-            ex.printStackTrace();
         }
     }
 

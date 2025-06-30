@@ -21,7 +21,7 @@ import java.util.Locale;
 /**
  * Esta classe representa a visualização da tela de programação de eventos do usuário
  * @author Yuri Garcia Maia
- * @version 1.08
+ * @version 1.09
  * @author Gabriela Tavares Costa Corrêa (Documentação e revisão da classe)
  * @since 2025-04-06
  */
@@ -30,9 +30,9 @@ public class UserScheduleView extends BorderPane {
 
     private BarraBuilder barraBuilder;
 
-    private Label lbNomeUsuario;
+    private Label lbNomeUsuario, lbEmailUsuario;
     private ImageView avatarView;
-    private Label lbEmailUsuario;
+
     private Label lbCabecalhoData;
 
     private ToggleGroup grupoDatas;
@@ -41,7 +41,6 @@ public class UserScheduleView extends BorderPane {
     private LocalDate dataSelecionada;
 
     private ScrollPane scrollEventos;
-    private StackPane pane;
 
     private HBox seletorDataContainer;
 
@@ -116,6 +115,12 @@ public class UserScheduleView extends BorderPane {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         cabecalhoPrincipal.getChildren().addAll(lbCabecalhoData, spacer, userDisplayBox);
+
+        Color corDaBorda = Color.web("#f1f1f1");
+        BorderWidths larguraDaBorda = new BorderWidths(0, 0, 3, 0);
+        cabecalhoPrincipal.setBorder(new Border(new BorderStroke(corDaBorda,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, larguraDaBorda)));
+
         return cabecalhoPrincipal;
     }
 
@@ -204,12 +209,9 @@ public class UserScheduleView extends BorderPane {
 
         ScrollPane areaEventos = criarAreaEventos();
 
-        VBox centerContent = new VBox(0);
+        VBox centerContent = new VBox(10);
         centerContent.getStyleClass().add("center-content-area");
         centerContent.getChildren().addAll(cabecalhoPrincipal, seletorDeDatas, areaEventos);
-
-        centerContent.setBorder(new Border(new BorderStroke(Color.BLUE,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
         return centerContent;
     }

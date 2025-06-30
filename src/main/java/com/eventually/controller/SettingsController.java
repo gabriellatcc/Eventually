@@ -14,7 +14,7 @@ import java.util.Set;
  * Classe controladora da tela de Configurações do usuário, é responsável pela comunicação da tela de de configurações
  * com o backend.
  * Contém todos os métodos como privados para que seu acesso seja somente por esta classe.
- * @version 1.01
+ * @version 1.02
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-22
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
@@ -62,8 +62,6 @@ public class SettingsController {
     private void configManiouladoresEventoConfig() {
         sistemaDeLogger.info("Método configManiouladoresEventoConfig() chamado.");
         try {
-            settingsView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> processarNavegacaoConfiguracoes());
-
             settingsView.getBarraBuilder().getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
             settingsView.getBarraBuilder().getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
             settingsView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
@@ -208,21 +206,6 @@ public class SettingsController {
             sistemaDeLogger.error("Erro ao obter data de nascimento do usuário: "+e.getMessage());
             e.printStackTrace();
             return null;
-        }
-    }
-
-    /**
-     * Este método exibe mensagem informando que o usuário já está na tela de configurações e, em caso de falha na exibição
-     * do alerta, é exibida uma mensagem de erro.
-     */
-    private void processarNavegacaoConfiguracoes() {
-        sistemaDeLogger.info("Método processarNavegacaoConfiguracoes() chamado.");
-        try{
-            sistemaDeLogger.info("Botão de configurções clicado!");
-            alertaService.alertarInfo("Você já está na tela de configurações!");
-        } catch (Exception e) {
-            sistemaDeLogger.error("Erro ao ir para tela de configurações: "+e.getMessage());
-            e.printStackTrace();
         }
     }
 

@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * com o backend.
  * Contém métodos privados para que os acesso sejam somente por esta classe.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.02
+ * @version 1.03
  * @since 2025-06-18
  */
 public class MyEventsController {
@@ -72,7 +72,6 @@ public class MyEventsController {
     private void configManipuladoresDeEventoMeusEventos() {
         sistemaDeLogger.info("Método configManipuladoresDeEventoMeusEventos() chamado.");
         try {
-            myEventsView.getBarraBuilder().getBtnMeusEventos().setOnAction(e -> processarNavegacaoMeusEventos());
             myEventsView.getBarraBuilder().getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
             myEventsView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
             myEventsView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
@@ -118,11 +117,6 @@ public class MyEventsController {
             sistemaDeLogger.error("Erro ao obter nome do usuário.", e);
             return null;
         }
-    }
-
-    private void processarNavegacaoMeusEventos() {
-        sistemaDeLogger.info("Botão 'Meus Eventos' clicado, mas já estamos na tela.");
-        alertaService.alertarInfo("Você já está na tela de Meus Eventos!");
     }
 
     private void configurarSeletorEventos() {

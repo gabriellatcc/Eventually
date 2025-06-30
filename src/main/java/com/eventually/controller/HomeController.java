@@ -20,7 +20,7 @@ import java.util.Set;
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.04
+ * @version 1.05
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -71,7 +71,6 @@ public class HomeController {
     private void configManipuladoresEventoInicio() {
         sistemaDeLogger.info("Método configManipuladoresEventoInicio() chamado.");
         try {
-            homeView.getBarraBuilder().getBtnInicio().setOnAction(e -> processarNavegacaoInicio());
             homeView.getBarraBuilder().getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
             homeView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> navegacaoService.navegarParaProgramacao(emailRecebido));
             homeView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
@@ -123,21 +122,6 @@ public class HomeController {
             sistemaDeLogger.error("Erro ao obter nome do usuário: "+e.getMessage());
             e.printStackTrace();
             return null;
-        }
-    }
-
-    /**
-     * Este método exibe mensagem informando que o usuário já está na tela de iníco e, em caso de falha na exibição
-     * do aviso, é exibida uma mensagem de erro no console.
-     */
-    private void processarNavegacaoInicio() {
-        sistemaDeLogger.info("Método processarNavegacaoInicio() chamado.");
-        try{
-            sistemaDeLogger.info("Botão de Início clicado");
-            alertaService.alertarInfo("Você já está na tela de Início!");
-        } catch (Exception ex) {
-            sistemaDeLogger.error("Erro ao ir para tela de início: "+ex.getMessage());
-            ex.printStackTrace();
         }
     }
 
