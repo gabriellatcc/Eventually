@@ -1,10 +1,13 @@
 package com.eventually.service;
+import com.eventually.model.EventoModel;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.model.UsuarioModel;
 import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -14,7 +17,7 @@ import java.util.Set;
  * fornecendo acesso a informações como nome, ID, email, senha e outros atributos do {@link UsuarioModel} (por enquanto, em memória).
  * A classe acessa a coleção de usuários diretamente através do {@link UsuarioCadastroService}.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.03
+ * @version 1.04
  * @since 2025-04-22
  */
 public final class UsuarioSessaoService {
@@ -136,6 +139,68 @@ public final class UsuarioSessaoService {
             e.printStackTrace();
             alertaService.alertarErro("Erro ao procurar o ID do usuário.");
             throw new IllegalArgumentException("ID não obtido");
+        }
+    }
+
+    /**
+     * Procura e retorna a lista de eventos organizados por um usuário específico, identificado pelo email e, em caso
+     * de falha ou se o usuário não for encontrado, retorna uma lista vazia.
+     * @param email o email do usuário cujos eventos organizados devem ser procurados.
+     * @return uma {@code List<EventoModel>} com os eventos organizados pelo usuário. Retorna uma lista vazia se o usuário
+     * não for encontrado ou se ocorrer um erro.
+     */
+    public List<EventoModel> procurarEventosCriados(String email) {
+        sistemaDeLogger.info("Método procurarEventosCriados() chamado para o email: {}", email);
+        try {
+            if (email == null || email.trim().isEmpty()) {
+                alertaService.alertarWarn("Busca Inválida", "Email não pode ser vazio para procurar os eventos do usuário.");
+                return new ArrayList<>();
+            }
+
+            UsuarioModel usuario = procurarUsuario(email);
+
+            if (usuario != null) {
+                return usuario.getEventosOrganizados();
+            } else {
+                alertaService.alertarErro("Usuário com o email informado não foi encontrado ao buscar eventos.");
+                return new ArrayList<>();
+            }
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao procurar os eventos do usuário pelo email: " + e.getMessage());
+            e.printStackTrace();
+            alertaService.alertarErro("Erro ao procurar os eventos organizados pelo usuário.");
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Procura e retorna a lista de eventos inscritos por um usuário específico, identificado pelo email e, em caso
+     * de falha ou se o usuário não for encontrado, retorna uma lista vazia.
+     * @param email o email do usuário cujos eventos organizados devem ser procurados.
+     * @return uma {@code List<EventoModel>} com os eventos inscritos pelo usuário. Retorna uma lista vazia se o usuário
+     * não for encontrado ou se ocorrer um erro.
+     */
+    public List<EventoModel> procurarEventosInscritos(String email) {
+        sistemaDeLogger.info("Método procurarEventosInscritos() chamado para o email: {}", email);
+        try {
+            if (email == null || email.trim().isEmpty()) {
+                alertaService.alertarWarn("Busca Inválida", "Email não pode ser vazio para procurar os eventos do usuário.");
+                return new ArrayList<>();
+            }
+
+            UsuarioModel usuario = procurarUsuario(email);
+
+            if (usuario != null) {
+                return usuario.getEventosParticipa();
+            } else {
+                alertaService.alertarErro("Usuário com o email informado não foi encontrado ao buscar eventos.");
+                return new ArrayList<>();
+            }
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao procurar os eventos do usuário inscrito pelo email: " + e.getMessage());
+            e.printStackTrace();
+            alertaService.alertarErro("Erro ao procurar os eventos inscritos pelo usuário.");
+            return new ArrayList<>();
         }
     }
 

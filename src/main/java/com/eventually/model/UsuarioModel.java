@@ -10,7 +10,7 @@ import java.util.*;
  * email, senha, localização, data de nascimento, foto de usuário, eventos que participa,
  * eventos organizados, temas preferidos.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.05
+ * @version 1.06
  * @since 2025-04-08
  */
 public class UsuarioModel {
@@ -27,7 +27,7 @@ public class UsuarioModel {
     private boolean estadoDoUsuario=true;
 
     public UsuarioModel(String nomePessoa, String email, String senha, String localizacaoUsuario,
-                        LocalDate dataNascimento, Image fotoUsuario, List<EventoModel> eventosOrganizados, List<EventoModel> eventosParticipa,
+                        LocalDate dataNascimento, Image fotoUsuario, List<EventoModel> eventosCriados, List<EventoModel> eventosInscritos,
                         Set<TemaPreferencia> temasPreferidos, boolean estadoDoUsuario)
     {
         this.nomePessoa = nomePessoa;
@@ -36,8 +36,8 @@ public class UsuarioModel {
         this.localizacaoUsuario = localizacaoUsuario;
         this.dataNascimento = dataNascimento;
         this.fotoUsuario = new Image(getClass().getResourceAsStream("/images/icone-padrao-usuario.png"));
-        this.eventosOrganizados = new ArrayList<EventoModel>();
-        this.eventosParticipa = new ArrayList<EventoModel>();
+        this.eventosOrganizados = eventosCriados;
+        this.eventosParticipa = eventosInscritos;
         this.temasPreferidos = temasPreferidos;
         this.estadoDoUsuario = true; //comeca ativa
     }
@@ -91,20 +91,5 @@ public class UsuarioModel {
         return Objects.hash(idUsuario);
     }
 
-    @Override
-    public String toString() {
-        return "UsuarioModel{" +
-                "idUsuario=" + idUsuario +
-                ", nomePessoa='" + nomePessoa + '\'' +
-                ", email='" + email + '\'' +
-                ", senha='" + senha + '\'' +
-                ", localizacaoUsuario='" + localizacaoUsuario + '\'' +
-                ", dataNascimento=" + dataNascimento +
-                ", fotoUsuario=" + fotoUsuario +
-                ", eventosParticipa=" + eventosParticipa +
-                ", eventosOrganizados=" + eventosOrganizados +
-                ", temasPreferidos=" + temasPreferidos +
-                ", estadoDoUsuario=" + estadoDoUsuario +
-                '}';
-    }
+
 }

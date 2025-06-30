@@ -6,12 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 /**
- * Esta classe é um Singleton e atua como a camada de leitura (READ) para a entidade Evento.
+ * Esta classe é um Singleton e atua como a camada de leitura (READ) para a entidade EventoH.
  * É responsável por buscar eventos e seus atributos específicos através de um ID.
  * A classe acessa a coleção de eventos diretamente através do {@link EventoCriacaoService}.
  * @author Gabriella Tavares Costa Corrêa (Adaptação baseada na UsuarioSessaoService)
@@ -78,7 +79,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().getNomeEvento();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar o nome do evento com ID: " + id, e);
@@ -99,7 +100,7 @@ public final class EventoLeituraService {
             if (evento.isPresent()) {
                 return evento.get().getDescricao();
             }
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
                 sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar a descrição do evento com ID: " + id, e);
@@ -120,7 +121,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().getOrganizador();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar o organizador do evento com ID: " + id, e);
@@ -141,7 +142,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().getFormato();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar o formato do evento com ID: " + id, e);
@@ -162,7 +163,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().getLinkAcesso();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar o Link do evento com ID: " + id, e);
@@ -183,7 +184,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().getLocalizacao();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar a Localização do evento com ID: " + id, e);
@@ -204,7 +205,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().getFotoEvento();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar a foto do evento com ID: " + id, e);
@@ -225,7 +226,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().getnParticipantes();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return 0;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar o número de participantes do evento com ID: " + id, e);
@@ -246,7 +247,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().getDataInicial();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar a data incial do evento com ID: " + id, e);
@@ -261,13 +262,13 @@ public final class EventoLeituraService {
      * @param id o ID do evento.
      * @return a hora inicial do evento, ou {@code null} se não for encontrada.
      */
-    public String procurarHoraInicial(int id) {
+    public LocalTime procurarHoraInicial(int id) {
         try{
             Optional<EventoModel> evento = procurarEventoPorId(id);
 
             if (evento.isPresent()) {return evento.get().getHoraInicial();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar a hora incial do evento com ID: " + id, e);
@@ -288,7 +289,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().getDataFinal();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar a data final do evento com ID: " + id, e);
@@ -303,13 +304,13 @@ public final class EventoLeituraService {
      * @param id o ID do evento.
      * @return a hora final do evento, ou {@code null} se não for encontrada.
      */
-    public String procurarHoraFinal(int id) {
+    public LocalTime procurarHoraFinal(int id) {
         try{
             Optional<EventoModel> evento = procurarEventoPorId(id);
 
             if (evento.isPresent()) {return evento.get().getHoraFinal();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar a hora final do evento com ID: " + id, e);
@@ -330,7 +331,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().getTemasEvento();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar temas do evento com ID: " + id, e);
@@ -351,7 +352,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().getParticipantes();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar os participantes do evento com ID: " + id, e);
@@ -372,7 +373,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().isEstadoDoEvento();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return false;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar o estado do evento com ID: " + id, e);
@@ -393,7 +394,7 @@ public final class EventoLeituraService {
 
             if (evento.isPresent()) {return evento.get().isFinalizado();}
 
-            alertaService.alertarErro("Evento com o ID informado não foi encontrado.");
+            alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return false;
         } catch (Exception e) {
             sistemaDeLogger.error("Ocorreu um erro inesperado ao procurar estado de finalização do evento com ID: " + id, e);

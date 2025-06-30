@@ -3,7 +3,6 @@ package com.eventually.controller;
 import com.eventually.model.EventoModel;
 import com.eventually.model.FormatoSelecionado;
 import com.eventually.model.TemaPreferencia;
-import com.eventually.model.UsuarioModel;
 import com.eventually.service.*;
 import com.eventually.view.*;
 import javafx.scene.image.Image;
@@ -11,7 +10,6 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,7 @@ import java.util.Set;
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.03
+ * @version 1.04
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -32,10 +30,9 @@ public class HomeController {
     private final HomeView homeView;
     private final Stage primaryStage;
 
-    private UsuarioSessaoService usuarioSessaoService;
     private NavegacaoService navegacaoService;
+    private UsuarioSessaoService usuarioSessaoService;
     private EventoCriacaoService eventoCriacaoService;
-    private EventoLeituraService eventoLeituraService;
 
     private String emailRecebido;
 
@@ -53,9 +50,8 @@ public class HomeController {
     public HomeController(String email, HomeView homeView, Stage primaryStage) {
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
         this.eventoCriacaoService = EventoCriacaoService.getInstancia();
-        this.eventoLeituraService = EventoLeituraService.getInstancia();
 
-        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService, EventoCriacaoService e EventoLeituraService.");
+        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService e EventoCriacaoService.");
 
         this.emailRecebido = email;
 
@@ -82,9 +78,7 @@ public class HomeController {
 
             homeView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
 
-            homeView.getBtnCriarEvento().setOnAction(e ->
-                    navegacaoService.abrirModalCriarEvento(emailRecebido, this::processarCarregamentoEventos)
-            );
+            homeView.getBtnCriarEvento().setOnAction(e -> navegacaoService.abrirModalCriarEvento(emailRecebido, this::processarCarregamentoEventos));
             homeView.getBtnFiltros().setOnAction(e -> processarFiltros());
 
             homeView.getLbEmailUsuario().setText(emailRecebido);
@@ -173,7 +167,7 @@ public class HomeController {
 
             Set<EventoModel> todosOsEventosModel = eventoCriacaoService.getAllEventos();
 
-            List<HomeView.Evento> eventosParaView = new ArrayList<>();
+            List<HomeView.EventoH> eventosParaView = new ArrayList<>();
 
             for (EventoModel model : todosOsEventosModel) {
                 eventosParaView.add(converterParaView(model));
@@ -188,16 +182,16 @@ public class HomeController {
     }
 
     /**
-     * Converte um EventoModel em um registro HomeView.Evento para popular a UI.
+     * Converte um EventoModel em um registro HomeView.EventoH para popular a UI.
      * @param model O modelo de dados do evento.
      * @return Um registro pronto para a view.
      */
-    private HomeView.Evento converterParaView(EventoModel model) {
+    private HomeView.EventoH converterParaView(EventoModel model) {
         String titulo = model.getNomeEvento();
 
         String local;
         if (model.getFormato() == FormatoSelecionado.ONLINE) {
-            local = "Evento Online";
+            local = "EventoH Online";
         } else {
             local = model.getLocalizacao();
         }
@@ -220,6 +214,6 @@ public class HomeController {
 
         Image imagem = model.getFotoEvento();
 
-        return new HomeView.Evento(titulo, local, dataHora, categoria, imagem);
+        return new HomeView.EventoH(titulo, local, dataHora, categoria, imagem);
     }
 }

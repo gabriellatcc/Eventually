@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe responsável pela comunicação do modal de "Criar evento" com o backend.
@@ -101,9 +102,15 @@ public class CriaEventoController {
             Image fotoEvento = this.imageFinal;
 
             int nParticipantes = criaEventoModal.getParticipantCount();
-            String horaInicial = criaEventoModal.getFldHoraInicio().getText();
+
+            String textoDaHora1 = criaEventoModal.getFldHoraInicio().getText();
+            LocalTime horaInicial = LocalTime.parse(textoDaHora1);
+
             LocalDate diaInicial = criaEventoModal.getDatePickerStart().getValue();
-            String horaFinal = criaEventoModal.getFldHoraFinal().getText();
+
+            String textoDaHora2 = criaEventoModal.getFldHoraFinal().getText();
+            LocalTime horaFinal = LocalTime.parse(textoDaHora2);
+
             LocalDate diaFinal = criaEventoModal.getDatePickerEnd().getValue();
 
             PreferenciasUsuarioDto preferenciasEvento = new PreferenciasUsuarioDto(
@@ -121,7 +128,7 @@ public class CriaEventoController {
             boolean criacaoFoiOk = eventoCriacaoService.criarEventoSeValido(dto, linkEvento, localizacaoEvento, fotoEvento);
 
             if (criacaoFoiOk) {
-                sistemaDeLogger.info("Evento criado com sucesso.");
+                sistemaDeLogger.info("EventoH criado com sucesso.");
                 if (onSucessoCallback != null) {
                     onSucessoCallback.run();
                 }

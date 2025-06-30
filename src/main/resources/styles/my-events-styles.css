@@ -93,7 +93,7 @@
 
 .user-email-label {
     -fx-font-family: 'Poppins';
-    -fx-text-fill: #7777777;
+    -fx-text-fill: #777777;
     -fx-font-size: 12px;
 }
 
@@ -193,4 +193,36 @@
 
 .new-event-button-bottom:hover {
     -fx-background-color: #39823c;
+}
+
+.events-scroll-pane, .events-grid {
+    -fx-background-color: white;
+}
+
+.events-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-pref-width: 10;
+}
+.events-scroll-pane .scroll-bar .increment-button, .events-scroll-pane .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+}
+.events-scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: #f0f0f0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+.events-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #cccccc;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8px;
+}
+.events-scroll-pane .scroll-bar:vertical:hover .thumb {
+    -fx-background-color: #b3b3b3;
+}
+.events-scroll-pane .scroll-bar:vertical:pressed .thumb {
+    -fx-background-color: #999999;
 }

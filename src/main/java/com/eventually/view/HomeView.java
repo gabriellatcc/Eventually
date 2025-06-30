@@ -7,7 +7,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import java.util.List;
@@ -16,31 +15,30 @@ import java.util.List;
  * PASSÍVEL DE ALTERAÇÕES
  * Classe da tela inicial do sistema.
  * Esta classe é responsável por exibir a página principal
- * com filtros de eventos e listagem de eventos disponíveis.
+ * com filtros de eventoHS e listagem de evento disponíveis.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.04
+ * @version 1.05
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-05-29
  */
 public class HomeView extends BorderPane {
+    private HomeController homeController;
+
     private BarraBuilder barraBuilder;
 
-    private Button btnCriarEvento;
-    private Button btnFiltros;
+    private Button btnCriarEvento, btnFiltros;
 
-    private Label lbNomeUsuario;
+    private Label lbNomeUsuario, lbEmailUsuario;
     private ImageView avatarView;
-    private Label lbEmailUsuario;
+
     private Label lbSaudacao;
     private Label lbEncontrarEventos;
 
     private ScrollPane scrollEventos;
     private GridPane gridEventos;
 
-    private HomeController homeController;
-
-    public record Evento(String titulo, String local, String dataHora, String categoria, Image imagem) {}
+    public record EventoH(String titulo, String local, String dataHora, String categoria, Image imagem) {}
 
     /**
      * Construtor da classe {@code HomeView}.
@@ -60,9 +58,7 @@ public class HomeView extends BorderPane {
         setCenter(conteudoCentral);
     }
 
-    public void setHomeController(HomeController homeController) {
-        this.homeController = homeController;
-    }
+    public void setHomeController(HomeController homeController) {this.homeController = homeController;}
 
     /**
      * Este método constrói o cabeçalho da área principal da interface,
@@ -108,7 +104,7 @@ public class HomeView extends BorderPane {
     }
 
     /**
-     * Este método cria a área de filtros e controles para busca de eventos,
+     * Este método cria a área de filtros e controles para busca de eventoHS,
      * incluindo botão de filtros, texto explicativo e botão de criar evento.
      * @return um componente HBox do JavaFX
      */
@@ -121,7 +117,7 @@ public class HomeView extends BorderPane {
         btnFiltros = new Button("🔍 Filtros");
         btnFiltros.getStyleClass().add("filters-button");
 
-        lbEncontrarEventos = new Label("Encontre eventos por filtro");
+        lbEncontrarEventos = new Label("Encontre eventoHS por filtro");
         lbEncontrarEventos.getStyleClass().add("filter-description-label");
 
         btnCriarEvento = new Button("+ Criar evento");
@@ -140,9 +136,9 @@ public class HomeView extends BorderPane {
     }
 
     /**
-     * Este método cria o grid de eventos que será exibido na área principal.
-     * Os eventos são organizados em uma grade de 4 colunas.
-     * @return um componente ScrollPane contendo o grid de eventos
+     * Este método cria o grid de eventoHS que será exibido na área principal.
+     * Os eventoHS são organizados em uma grade de 4 colunas.
+     * @return um componente ScrollPane contendo o grid de eventoHS
      */
     private ScrollPane criarGridEventos() {
         gridEventos = new GridPane();
@@ -172,14 +168,14 @@ public class HomeView extends BorderPane {
     }
 
     /**
-     * Limpa o grid e exibe os eventos fornecidos.
+     * Limpa o grid e exibe os eventoHS fornecidos.
      * Este método é chamado pelo HomeController para popular a interface.
-     * @param eventos A lista de eventos a serem exibidos.
+     * @param eventoHS A lista de eventoHS a serem exibidos.
      */
-    public void setEventos(List<Evento> eventos) {
+    public void setEventos(List<EventoH> eventoHS) {
         gridEventos.getChildren().clear();
 
-        if (eventos == null || eventos.isEmpty()) {
+        if (eventoHS == null || eventoHS.isEmpty()) {
             Label placeholder = new Label("Nenhum evento disponível no momento.");
             placeholder.getStyleClass().add("placeholder-label");
             StackPane placeholderPane = new StackPane(placeholder);
@@ -188,16 +184,16 @@ public class HomeView extends BorderPane {
             return;
         }
 
-        for (int i = 0; i < eventos.size(); i++) {
-            Evento evento = eventos.get(i);
-            EventoHCard cardEvento = new EventoHCard();
+        for (int i = 0; i < eventoHS.size(); i++) {
+            EventoH eventoH = eventoHS.get(i);
+            EventoHCartao cardEvento = new EventoHCartao();
             cardEvento.getStylesheets().add(getClass().getResource("/styles/event-h-card.css").toExternalForm());
 
-            cardEvento.setLblTitulo(evento.titulo());
-            cardEvento.setLblLocal(evento.local());
-            cardEvento.setLblDataHora(evento.dataHora());
-            cardEvento.setLblTipo(evento.categoria());
-            cardEvento.setImagem(evento.imagem());
+            cardEvento.setLblTitulo(eventoH.titulo());
+            cardEvento.setLblLocal(eventoH.local());
+            cardEvento.setLblDataHora(eventoH.dataHora());
+            cardEvento.setLblTipo(eventoH.categoria());
+            cardEvento.setImagem(eventoH.imagem());
 
             int row = i / 3;
             int col = i % 3;
@@ -207,7 +203,7 @@ public class HomeView extends BorderPane {
 
     /**
      * O método monta a parte central da interface com um container, organizando o cabeçalho principal,
-     * a área de filtros e o grid de eventos em um layout vertical flexível e estilizado.
+     * a área de filtros e o grid de eventoHS em um layout vertical flexível e estilizado.
      * @return um VBox contendo todo o conteúdo central
      */
     private VBox criarContainerCentral() {
@@ -218,6 +214,7 @@ public class HomeView extends BorderPane {
         VBox centerContent = new VBox(0);
         centerContent.getStyleClass().add("center-content-area");
         centerContent.getChildren().addAll(cabecalhoPrincipal, areaFiltros, gridEventosPane);
+
         VBox.setVgrow(gridEventosPane, Priority.ALWAYS);
 
         return centerContent;
@@ -234,9 +231,5 @@ public class HomeView extends BorderPane {
     public Button getBtnCriarEvento() { return btnCriarEvento; }
     public Button getBtnFiltros() { return btnFiltros; }
 
-    public void setAvatarImagem(Image avatarImagem) {
-        if(this.avatarView != null && avatarImagem != null) {
-            this.avatarView.setImage(avatarImagem);
-        }
-    }
+    public void setAvatarImagem(Image avatarImagem) {if(this.avatarView != null && avatarImagem != null) {this.avatarView.setImage(avatarImagem);}}
 }

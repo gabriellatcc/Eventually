@@ -134,3 +134,18 @@
     -fx-padding: 40;
     -fx-alignment: center;
 }
+
+.new-event-button-bottom {
+    -fx-font-family: 'Poppins Bold';
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 15px 25px;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.new-event-button-bottom:hover {
+    -fx-background-color: #388E3C;
+}

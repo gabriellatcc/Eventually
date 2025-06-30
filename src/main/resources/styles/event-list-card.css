@@ -1,0 +1,67 @@
+.root-pane {
+    -fx-background-color: #1e1e1e;
+    -fx-padding: 20;
+}
+
+.layout-pane {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 0, 0);
+}
+
+.cards-container {
+    -fx-spacing: 20;
+}
+
+.evento-list-card-left {
+    -fx-background-color: linear-gradient(to right, #7A2074 0%, #9A009A 44%, #C93ACD 87%, #E05CE4 100%);
+    -fx-background-radius: 15 0 0 15;
+}
+
+.evento-list-card-right {
+    -fx-background-color: #f1f1f1;
+    -fx-background-radius: 0 15 15 0;
+}
+
+.card-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.card-local {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+.card-date {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.card-dot {
+    -fx-fill: #9A009A;
+}
+
+.card-capacity-value {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.card-capacity-desc {
+    -fx-font-size: 12px;
+    -fx-text-fill: #333333;
+}
+
+.card-button {
+    -fx-background-color: #9A009A;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+}
+
+.card-button:hover {
+    -fx-background-color: #7A2074;
+}

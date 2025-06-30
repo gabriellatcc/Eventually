@@ -2,6 +2,8 @@ package com.eventually.service;
 
 import com.eventually.dto.CadastrarUsuarioDto;
 import com.eventually.dto.PreferenciasUsuarioDto;
+import com.eventually.model.EventoModel;
+import com.eventually.model.FormatoSelecionado;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.model.UsuarioModel;
 import javafx.scene.image.Image;
@@ -9,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -18,11 +21,12 @@ import java.util.regex.Pattern;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.03
+ * @version 1.04
  * @since 2025-05-15
  */
 public final class UsuarioCadastroService {
     private static UsuarioCadastroService instancia;
+    private EventoCriacaoService eventoCriacaoService;
     private Set<UsuarioModel> listaUsuarios;
 
     private static final Pattern EMAIL_DOMAIN_PATTERN = Pattern.compile("^[a-zA-Z0-9._%+-]{2,}@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
@@ -40,6 +44,8 @@ public final class UsuarioCadastroService {
      * Construtor que inicializa a lista com um objeto teste do tipo {@link UsuarioModel}.
      */
     private UsuarioCadastroService() {
+        this.eventoCriacaoService = eventoCriacaoService.getInstancia();
+
         listaUsuarios = new HashSet<>();
 
         //usuario teste abaixo:
@@ -47,9 +53,59 @@ public final class UsuarioCadastroService {
         preferenciasDoUsuario.add(TemaPreferencia.CORPORATIVO);
         preferenciasDoUsuario.add(TemaPreferencia.CULTURAL);
         preferenciasDoUsuario.add(TemaPreferencia.SOCIAL);
-        LocalDate dataTeste = LocalDate.of(2003, 2, 1);
-        Image imagemTeste= new Image(getClass().getResourceAsStream("/images/aviso-icone.png"));
-        UsuarioModel usuarioTesteModel = new UsuarioModel("gab tav","gab@gmail.com","a1234$","crz",dataTeste,imagemTeste,null,null,preferenciasDoUsuario,true);
+
+        UsuarioModel usuarioTesteModel = new UsuarioModel(
+                "gab tav",
+                "gab@gmail.com",
+                "a1234$",
+                "crz",
+                LocalDate.of(2003, 2, 1),
+                null,
+                new ArrayList<>(),
+                new ArrayList<>(),
+                preferenciasDoUsuario,
+                true
+        );
+
+        LocalDate dataDeHoje = LocalDate.now();
+        LocalDate amanha = dataDeHoje.plusDays(1);
+        LocalDate depoisAmanha = dataDeHoje.plusDays(2);
+        LocalTime horaEspecificaTeste1 = LocalTime.of(10, 30);
+        LocalTime horaEspecificaTeste2 = LocalTime.of(12, 30);
+        Set<TemaPreferencia> preferenciasEvento = new HashSet<>();
+        preferenciasEvento.add(TemaPreferencia.CORPORATIVO);
+
+        EventoModel evento1 = new EventoModel(
+                usuarioTesteModel, "Conferência Tech Inovação", "Discussão sobre o futuro da tecnologia.",
+                FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções, SP", null, 200,
+                dataDeHoje, horaEspecificaTeste1,
+                amanha, horaEspecificaTeste2,
+                preferenciasEvento, null, true, false
+        );
+
+        EventoModel evento2 = new EventoModel(
+                usuarioTesteModel, "Workshop de Design UX/UI", "Aprenda na prática os fundamentos de UX.",
+                FormatoSelecionado.ONLINE, "https://zoom.us/j/123456", "Online", null, 50,
+                amanha, LocalTime.of(17, 30),
+                depoisAmanha, LocalTime.of(18, 30),
+                preferenciasEvento, null, true, false
+        );
+
+        EventoModel evento3 = new EventoModel(
+                usuarioTesteModel, "Festival de Música Indie", "Bandas independentes em um evento único.",
+                FormatoSelecionado.HIBRIDO, null, "Parque Ibirapuera, SP", null, 1000,
+                amanha, horaEspecificaTeste1,
+                depoisAmanha, horaEspecificaTeste2,
+                preferenciasEvento, null, true, false
+        );
+
+        usuarioTesteModel.getEventosOrganizados().add(evento1);
+        usuarioTesteModel.getEventosOrganizados().add(evento2);
+        usuarioTesteModel.getEventosOrganizados().add(evento3);
+        eventoCriacaoService.adicionarEvento(evento1);
+        eventoCriacaoService.adicionarEvento(evento2);
+        eventoCriacaoService.adicionarEvento(evento3);
+
         listaUsuarios.add(usuarioTesteModel);
         //usuario teste acima
 

@@ -1,9 +1,10 @@
 package com.eventually.controller;
 
-import com.eventually.service.AlertaService;
-import com.eventually.service.NavegacaoService;
-import com.eventually.service.UsuarioSessaoService;
-import com.eventually.view.UserScheduleView;
+import com.eventually.model.EventoModel;
+import com.eventually.model.FormatoSelecionado;
+import com.eventually.model.UsuarioModel;
+import com.eventually.service.*;
+import com.eventually.view.*;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
@@ -13,22 +14,26 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /** PASSÍVEL A ALTERAÇÃO
  * Classe controladora da tela de programação do usuário, é responsável pela comunicação
  * da tela de programação com o backend.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.03
+ * @version 1.04
  * @since 2025-04-25
  */
 public class UserScheduleController {
     private final UserScheduleView userScheduleView;
     private final Stage primaryStage;
 
-    private UsuarioSessaoService usuarioSessaoService;
     private NavegacaoService navegacaoService;
-
+    private UsuarioSessaoService usuarioSessaoService;
+    private UsuarioCadastroService usuarioCadastroService;
     private String emailRecebido;
 
     private AlertaService alertaService =new AlertaService();
@@ -42,7 +47,8 @@ public class UserScheduleController {
      */
     public UserScheduleController(String email, UserScheduleView userScheduleView, Stage primaryStage) {
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
-        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService.");
+        this.usuarioCadastroService = UsuarioCadastroService.getInstancia();
+        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService e UsuarioCadastroService.");
 
         this.emailRecebido = email;
 
@@ -52,30 +58,29 @@ public class UserScheduleController {
         this.primaryStage = primaryStage;
         this.navegacaoService = new NavegacaoService(primaryStage);
 
-        configManipuladoresDeEventoUS();
-        carregarDadosIniciais();
+        configManipuladoresEventoProg();
+        configurarSeletorDeDatas();
     }
 
     /**
      * Este método configura os manipuladores de eventos para os botões da tela de programação e, em caso de falha, exibe uma
      * mensagem no console.
      */
-    private void configManipuladoresDeEventoUS() {
-        sistemaDeLogger.info("Método configManipuladoresEventoRegistro() chamado.");
+    private void configManipuladoresEventoProg() {
+        sistemaDeLogger.info("Método configManipuladoresEventoProg() chamado.");
         try {
-            userScheduleView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> processarNavegacaoProgramacao());
-
             userScheduleView.getBarraBuilder().getBtnInicio().setOnAction(e -> navegacaoService.navegarParaHome(usuarioSessaoService.procurarUsuario(emailRecebido)));
             userScheduleView.getBarraBuilder().getBtnMeusEventos().setOnAction(e -> navegacaoService.navegarParaMeusEventos(emailRecebido));
+            userScheduleView.getBarraBuilder().getBtnProgramacao().setOnAction(e -> processarNavegacaoProgramacao());
             userScheduleView.getBarraBuilder().getBtnConfiguracoes().setOnAction(e -> navegacaoService.navegarParaConfiguracoes(emailRecebido));
 
             userScheduleView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
 
-          //  userScheduleView.getBtnNovoEvento().setOnAction(e -> navegacaoService.abrirModalCriarEvento(emailRecebido, this::processarCarregamentoEventos));
-
             userScheduleView.getLbEmailUsuario().setText(emailRecebido);
             userScheduleView.getLbNomeUsuario().setText(definirNome(emailRecebido));
             userScheduleView.setAvatarImagem(definirImagem(emailRecebido));
+
+            processarCarregamentoEventos();
 
             if (userScheduleView.getGrupoDatas() != null) {
                 userScheduleView.getGrupoDatas().selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
@@ -84,9 +89,8 @@ public class UserScheduleController {
                     }
                 });
             }
-
         } catch (Exception e) {
-            sistemaDeLogger.error("Erro ao configurar manipuladores de programação: "+e.getMessage());
+            sistemaDeLogger.error("Erro ao configurar manipuladores da tela de programação: "+e.getMessage());
             e.printStackTrace();
         }
     }
@@ -126,14 +130,6 @@ public class UserScheduleController {
     }
 
     /**
-     * Carrega os dados iniciais do usuário e a lista de eventos na view.
-     */
-    private void carregarDadosIniciais() {
-        configurarSeletorDeDatas();
-        processarSelecaoData(userScheduleView.getGrupoDatas().getSelectedToggle());
-    }
-
-    /**
      * Este método exibe mensagem informando que o usuário já está na tela de programação e, em caso de falha na exibição
      * do aviso, é exibida uma mensagem de erro no console.
      */
@@ -170,7 +166,6 @@ public class UserScheduleController {
             btnData.setUserData(dataIteracao);
             btnData.setToggleGroup(userScheduleView.getGrupoDatas());
             btnData.getStyleClass().add("date-button");
-
             userScheduleView.getSeletorDataContainer().getChildren().add(btnData);
 
             if (i == 0) {
@@ -187,6 +182,126 @@ public class UserScheduleController {
         if (toggle == null) return;
 
         LocalDate dataSelecionada = (LocalDate) toggle.getUserData();
-        sistemaDeLogger.info("Data selecionada: " + dataSelecionada);
+        sistemaDeLogger.info("Data selecionada pelo usuário: " + dataSelecionada);
+
+        userScheduleView.atualizarCabecalho(dataSelecionada);
+
+        carregarEventosParaData(dataSelecionada);
     }
+
+    /**
+     * Aceita uma data e filtrar os eventos.
+     * @param dataAlvo A data para a qual os eventos devem ser filtrados e exibidos.
+     */
+    private void carregarEventosParaData(LocalDate dataAlvo) {
+        List<EventoModel> todosOsEventos = new ArrayList<>();
+        List<EventoModel> listaDeEventosCriados = usuarioSessaoService.procurarEventosCriados(emailRecebido);
+        List<EventoModel> listaDeEventosInscritos = usuarioSessaoService.procurarEventosInscritos(emailRecebido);
+
+        if (listaDeEventosCriados != null) todosOsEventos.addAll(listaDeEventosCriados);
+        if (listaDeEventosInscritos != null) todosOsEventos.addAll(listaDeEventosInscritos);
+
+        List<EventoModel> eventosFiltrados = todosOsEventos.stream()
+                .filter(evento -> {
+                    if (evento.getDataInicial() == null || evento.getDataFinal() == null) {
+                        return false;
+                    }
+
+                    boolean comecaNoDia = evento.getDataInicial().equals(dataAlvo);
+                    boolean terminaNoDia = evento.getDataFinal().equals(dataAlvo);
+                    boolean estaNoMeio = dataAlvo.isAfter(evento.getDataInicial()) && dataAlvo.isBefore(evento.getDataFinal());
+                    return comecaNoDia || terminaNoDia || estaNoMeio;
+                })
+                .collect(Collectors.toList());
+
+        List<UserScheduleView.EventoUS> eventosParaView = eventosFiltrados.stream()
+                .map(this::converterParaView)
+                .collect(Collectors.toList());
+
+        userScheduleView.setEventos(eventosParaView);
+        sistemaDeLogger.info("Encontrados {} eventos para a data {}.", eventosFiltrados.size(), dataAlvo);
+    }
+
+    /**
+     * Converte um EventoModel em um registro HomeView.EventoUS para popular a UI.
+     * (Este método não precisou de alterações)
+     * @param model O modelo de dados do evento.
+     * @return Um registro pronto para a view.
+     */
+    private UserScheduleView.EventoUS converterParaView(EventoModel model) {
+        String titulo = model.getNomeEvento();
+
+        String local = (model.getFormato() == FormatoSelecionado.ONLINE) ? "Evento Online" : model.getLocalizacao();
+
+        String categoria = model.getTemasEvento().stream()
+                .findFirst()
+                .map(t -> t.toString().substring(0, 1).toUpperCase() + t.toString().substring(1).toLowerCase())
+                .orElse("Geral");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", new Locale("pt", "BR"));
+        String dataFormatada = model.getDataInicial().format(formatter);
+        String dataHora = String.format("%s - %s", dataFormatada, model.getHoraInicial().format(DateTimeFormatter.ofPattern("HH:mm")));
+
+        return new UserScheduleView.EventoUS(titulo, local, dataHora, categoria);
+    }
+
+    private void processarCarregamentoEventos() {
+        sistemaDeLogger.info("Carregando eventos reais do serviço...");
+
+        List<UserScheduleView.EventoUS> eventosParaView = new ArrayList<>();
+
+        List<EventoModel> listaDeEventosCriados = usuarioSessaoService.procurarEventosCriados(emailRecebido);
+        List<EventoModel> listaDeEventosInscritos = usuarioSessaoService.procurarEventosInscritos(emailRecebido);
+
+        int quantidadeCriados = (listaDeEventosCriados != null) ? listaDeEventosCriados.size() : 0;
+        int quantidadeInscritos = (listaDeEventosInscritos != null) ? listaDeEventosInscritos.size() : 0;
+        int valoreventos = quantidadeCriados + quantidadeInscritos;
+
+        List<EventoModel> todosOsEventos = new ArrayList<>();
+        todosOsEventos.addAll(listaDeEventosCriados);
+        todosOsEventos.addAll(listaDeEventosInscritos);
+
+        for (int i = 0; i < valoreventos; i++) {
+            eventosParaView.add(converterParaView(todosOsEventos.get(i)));
+            EventoMECartao cartao = new EventoMECartao();
+
+            cartao.setLblTitulo(todosOsEventos.get(i).getNomeEvento());
+            cartao.setLblLocal(todosOsEventos.get(i).getLocalizacao());
+            cartao.setLblCapacidadeValor(String.valueOf(todosOsEventos.get(i).getnParticipantes()));
+            configurarDataDoCartao(cartao, todosOsEventos.get(i));
+
+            userScheduleView.getListaEventos().getChildren().add(cartao);
+        }
+    }
+
+    /**
+     * Método auxiliar para formatar e configurar as datas no cartão do evento.
+     * @param cartao O cartão a ser configurado.
+     * @param evento O evento com os dados de data/hora.
+     */
+    private void configurarDataDoCartao(EventoMECartao cartao, EventoModel evento) {
+        Locale brasil = new Locale("pt", "BR");
+        DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("EEE dd, MMM yyyy", brasil);
+        DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
+
+        LocalDate dataInicial = evento.getDataInicial();
+        LocalDate dataFinal = evento.getDataFinal();
+
+        if (dataInicial.equals(dataFinal)) {
+            String dataFormatada = dataInicial.format(formatoData);
+
+            String horaInicialFormatada = evento.getHoraInicial().format(formatoHora);
+            String horaFinalFormatada = evento.getHoraFinal().format(formatoHora);
+            String horarioCompleto = horaInicialFormatada + " - " + horaFinalFormatada;
+
+            cartao.setDataUnica(dataFormatada, horarioCompleto);
+
+        } else {
+            String dataHoraInicio = dataInicial.format(formatoData) + " " + evento.getHoraInicial().format(formatoHora);
+            String dataHoraFim = dataFinal.format(formatoData) + " " + evento.getHoraFinal().format(formatoHora);
+
+            cartao.setDataMultipla(dataHoraInicio, dataHoraFim);
+        }
+    }
+
 }

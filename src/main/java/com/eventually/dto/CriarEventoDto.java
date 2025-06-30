@@ -1,6 +1,7 @@
 package com.eventually.dto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Objects;
 
 /**
@@ -20,7 +21,7 @@ import java.util.Objects;
  * @since 2025-06-24
  */
 public record CriarEventoDto(String emailOrganizador, String tituloEvento, String descricaoEvento, PreferenciaFormatoDto preferenciaFormato,
-                             int nParticipantes, String horaInicial, LocalDate diaInicial, String horaFinal, LocalDate diaFinal,
+                             int nParticipantes, LocalTime horaInicial, LocalDate diaInicial, LocalTime horaFinal, LocalDate diaFinal,
                              PreferenciasUsuarioDto preferenciasEvento) {
     public CriarEventoDto {
         Objects.nonNull(emailOrganizador());

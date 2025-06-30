@@ -1,10 +1,11 @@
+
 package com.eventually.view;
 
 import com.eventually.controller.UserScheduleController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,12 +15,13 @@ import javafx.scene.shape.Circle;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 /**
  * Esta classe representa a visualização da tela de programação de eventos do usuário
  * @author Yuri Garcia Maia
- * @version 1.07
+ * @version 1.08
  * @author Gabriela Tavares Costa Corrêa (Documentação e revisão da classe)
  * @since 2025-04-06
  */
@@ -28,18 +30,22 @@ public class UserScheduleView extends BorderPane {
 
     private BarraBuilder barraBuilder;
 
-    private Button btnNovoEvento;
-
     private Label lbNomeUsuario;
     private ImageView avatarView;
     private Label lbEmailUsuario;
+    private Label lbCabecalhoData;
 
     private ToggleGroup grupoDatas;
     private VBox listaEventos;
 
     private LocalDate dataSelecionada;
 
+    private ScrollPane scrollEventos;
+    private StackPane pane;
+
     private HBox seletorDataContainer;
+
+    public record EventoUS(String titulo, String local, String dataHora, String categoria) {}
 
     /**
      *Construtor da classe {@code UserScheduleView}.
@@ -76,18 +82,17 @@ public class UserScheduleView extends BorderPane {
      * navegação e informações do usuário logado.
      * @return um componente HBox do JavaFX
      */
-    private HBox criarControlesSubCabecalho() {
-        HBox subCabecalho = new HBox(15);
-        subCabecalho.setPadding(new Insets(10, 40, 10, 40));
-        subCabecalho.setAlignment(Pos.CENTER_LEFT);
-        subCabecalho.getStyleClass().add("sub-header-controls");
+    private HBox criarCabecalho() {
+        HBox cabecalhoPrincipal = new HBox();
+        cabecalhoPrincipal.setPadding(new Insets(20, 40, 10, 40));
+        cabecalhoPrincipal.setAlignment(Pos.CENTER_LEFT);
 
-        btnNovoEvento = new Button("+ Criar novo evento");
-        btnNovoEvento.getStyleClass().add("new-event-button-bottom");
+        lbCabecalhoData = new Label();
+        lbCabecalhoData.getStyleClass().add("greeting-label");
+        atualizarCabecalho(LocalDate.now());
 
         lbNomeUsuario = new Label();
         lbNomeUsuario.getStyleClass().add("user-display-label");
-
         lbEmailUsuario = new Label();
         lbEmailUsuario.getStyleClass().add("user-email-label");
 
@@ -110,12 +115,17 @@ public class UserScheduleView extends BorderPane {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        subCabecalho.getChildren().addAll(btnNovoEvento, spacer, userDisplayBox);
+        cabecalhoPrincipal.getChildren().addAll(lbCabecalhoData, spacer, userDisplayBox);
+        return cabecalhoPrincipal;
+    }
 
-        subCabecalho.setBorder(new Border(new BorderStroke(Color.GREEN,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-
-        return subCabecalho;
+    public void atualizarCabecalho(LocalDate data) {
+        Locale locale = new Locale("pt", "BR");
+        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEE dd,", locale);
+        DateTimeFormatter monthYearFormatter = DateTimeFormatter.ofPattern("MMM yy", locale);
+        String dayStr = data.format(dayFormatter).toUpperCase();
+        String monthYearStr = data.format(monthYearFormatter).toUpperCase();
+        lbCabecalhoData.setText("Eventos para " + dayStr + " " + monthYearStr + ".");
     }
 
     /**
@@ -127,47 +137,60 @@ public class UserScheduleView extends BorderPane {
     private HBox criarSeletorDeDatas() {
         seletorDataContainer = new HBox(10);
         seletorDataContainer.setAlignment(Pos.CENTER);
-        seletorDataContainer.setPadding(new Insets(10, 40, 10, 40));
+        seletorDataContainer.setPadding(new Insets(10, 40, 20, 40));
         seletorDataContainer.getStyleClass().add("date-picker-bar");
-        seletorDataContainer.setBorder(new Border(new BorderStroke(Color.INDIANRED,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
         return seletorDataContainer;
     }
 
-    /** Este método cria a classe do container que representa a lista de eventos
-     * da interface gráfica. Essa lista será preenchida com eventos correspondentes
-     * à data atualmente selecionada.
-     * @return a lista de eventos a serem exibidos no dia selecionado
-     */
-    private VBox criarListaEventos() {
+    private ScrollPane criarAreaEventos() {
         listaEventos = new VBox(15);
-        listaEventos.setAlignment(Pos.CENTER);
+        listaEventos.setAlignment(Pos.TOP_CENTER);
         listaEventos.getStyleClass().add("event-list-container");
         listaEventos.setPadding(new Insets(20, 40, 20, 40));
-        listaEventos.setBorder(new Border(new BorderStroke(Color.GREEN,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        carregarEventosPorData(dataSelecionada);
-        return listaEventos;
+        scrollEventos = new ScrollPane(listaEventos);
+        scrollEventos.setFitToWidth(true);
+        scrollEventos.getStyleClass().add("events-scroll-pane");
+        scrollEventos.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollEventos.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        VBox.setVgrow(scrollEventos, Priority.ALWAYS);
+
+        return scrollEventos;
     }
 
-    /** Esta classe cria um container que exibe a lista de eventos para o dia do mês e ano específicos, ao selecionar
-     * outros dias da semana, é limpa a mensagem e exibida outra para o dia especifico.
-     *
-      * @param date é a data do dia de hoje no padrão java e dentro da classe é refatorado para ser
-     *  exibida em formato EEE dd MMM yy
+    /**
+     * Limpa o grid e exibe os eventoUS fornecidos.
+     * Este método é chamado pelo HomeController para popular a interface.
+     * @param eventoUS A lista de eventoUS a serem exibidos.
      */
-    private void carregarEventosPorData(LocalDate date) {
+    public void setEventos(List<UserScheduleView.EventoUS> eventoUS) {
         listaEventos.getChildren().clear();
 
-        DateTimeFormatter dayFormatter = DateTimeFormatter.ofPattern("EEE dd,", new Locale("pt", "BR")).withLocale(new Locale("pt", "BR"));
-        DateTimeFormatter monthYearFormatter = DateTimeFormatter.ofPattern("MMM yy", new Locale("pt", "BR")).withLocale(new Locale("pt", "BR"));
+        if (eventoUS == null || eventoUS.isEmpty()) {
+            Label placeholder = new Label("Nenhum evento disponível para a data selecionada.");
+            placeholder.getStyleClass().add("placeholder-label");
+            listaEventos.getChildren().add(placeholder);
+            return;
+        }
 
-        String dayStr = date.format(dayFormatter).toUpperCase();
-        String monthYearStr = date.format(monthYearFormatter).toUpperCase();
+        for (UserScheduleView.EventoUS eventoU : eventoUS) {
+            EventoMECartao cardEvento = new EventoMECartao();
 
-        Label placeholder = new Label("Eventos para " + dayStr + " " + monthYearStr + ".");
-        listaEventos.getChildren().add(placeholder);
+            cardEvento.setLblTitulo(eventoU.titulo());
+            cardEvento.setLblLocal(eventoU.local());
+
+            String[] dataHoraParts = eventoU.dataHora().split(" - ");
+            if (dataHoraParts.length == 2) {
+                cardEvento.setLblDataLinha1(dataHoraParts[0]);
+                cardEvento.setLblDataLinha2(dataHoraParts[1]);
+            } else {
+                cardEvento.setLblDataLinha1(eventoU.dataHora());
+                cardEvento.setLblDataLinha2("");
+            }
+
+            listaEventos.getChildren().add(cardEvento);
+        }
     }
 
     /**
@@ -176,16 +199,17 @@ public class UserScheduleView extends BorderPane {
      * @return
      */
     private VBox criarContainerCentral() {
-        HBox controlesSubCabecalho = criarControlesSubCabecalho();
+        HBox cabecalhoPrincipal = criarCabecalho();
         HBox seletorDeDatas = criarSeletorDeDatas();
-        VBox listaEventosVBox = criarListaEventos();
 
-        StackPane stackPane = new StackPane(listaEventosVBox);
-        VBox.setVgrow(stackPane, Priority.ALWAYS);
+        ScrollPane areaEventos = criarAreaEventos();
 
         VBox centerContent = new VBox(0);
         centerContent.getStyleClass().add("center-content-area");
-        centerContent.getChildren().addAll(controlesSubCabecalho, seletorDeDatas, stackPane);
+        centerContent.getChildren().addAll(cabecalhoPrincipal, seletorDeDatas, areaEventos);
+
+        centerContent.setBorder(new Border(new BorderStroke(Color.BLUE,
+                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
         return centerContent;
     }
@@ -194,14 +218,11 @@ public class UserScheduleView extends BorderPane {
      * Métodos de encapsulamento getters e setters
      */
     public BarraBuilder getBarraBuilder() { return barraBuilder; }
-    public Button getBtnNovoEvento() { return btnNovoEvento; }
+
+    public Label getLbCabecalhoData() {return lbCabecalhoData;}
     public Label getLbNomeUsuario() { return lbNomeUsuario; }
     public Label getLbEmailUsuario() { return lbEmailUsuario; }
-    public void setAvatarImagem(Image avatarImagem) {
-        if (this.avatarView != null && avatarImagem != null) {
-            this.avatarView.setImage(avatarImagem);
-        }
-    }
+    public void setAvatarImagem(Image avatarImagem) {if (this.avatarView != null && avatarImagem != null) {this.avatarView.setImage(avatarImagem);}}
     public ToggleGroup getGrupoDatas() { return grupoDatas; }
     public HBox getSeletorDataContainer() { return seletorDataContainer; }
     public VBox getListaEventos() { return listaEventos; }

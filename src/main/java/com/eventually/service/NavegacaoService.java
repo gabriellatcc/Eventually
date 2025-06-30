@@ -232,7 +232,7 @@ public class NavegacaoService {
 
             modalStage.showAndWait();
         } catch (Exception ex) {
-            sistemaDeLogger.error("Erro ao abrir modal para Criar Evento: " + ex.getMessage());
+            sistemaDeLogger.error("Erro ao abrir modal para Criar EventoH: " + ex.getMessage());
             ex.printStackTrace();
         }
     }

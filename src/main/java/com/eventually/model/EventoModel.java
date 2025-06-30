@@ -2,6 +2,7 @@ package com.eventually.model;
 import javafx.scene.image.Image;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.*;
 
 /**
@@ -24,7 +25,7 @@ public class EventoModel {
     private String localizacao;
     private Image fotoEvento;
     private int nParticipantes;
-    private String horaInicial, horaFinal;
+    private LocalTime horaInicial, horaFinal;
     private LocalDate dataInicial, dataFinal;
     private Set<TemaPreferencia> temasEvento = new HashSet<>();
 
@@ -33,15 +34,15 @@ public class EventoModel {
     private boolean estadoDoEvento=true;
     private boolean isFinalizado=false;
     public EventoModel(UsuarioModel organizador, String nomeEvento, String descricao, FormatoSelecionado formato, String linkAcesso,
-                       String localizacao, Image fotoEvento, int nParticipantes, LocalDate dataInicial, String horaInicial,
-                       LocalDate dataFinal, String horaFinal, Set<TemaPreferencia> temasEvento, List<UsuarioModel> participantes, boolean estadoDoEvento, boolean isFinalizado) {
+                       String localizacao, Image fotoEvento, int nParticipantes, LocalDate dataInicial, LocalTime horaInicial,
+                       LocalDate dataFinal, LocalTime horaFinal, Set<TemaPreferencia> temasEvento, List<UsuarioModel> participantes, boolean estadoDoEvento, boolean isFinalizado) {
         this.organizador = organizador;
         this.nomeEvento = nomeEvento;
         this.descricao = descricao;
         this.formato = formato;
         this.linkAcesso = linkAcesso;
         this.localizacao = localizacao;
-        this.fotoEvento = fotoEvento;
+        this.fotoEvento = new Image(getClass().getResourceAsStream("/images/evento-padrao.jpg"));
         this.nParticipantes = nParticipantes;
         this.dataInicial = dataInicial;
         this.horaInicial = horaInicial;
@@ -86,14 +87,14 @@ public class EventoModel {
     public LocalDate getDataInicial() {return dataInicial;}
     public void setDataInicial(LocalDate dataInicial) {this.dataInicial = dataInicial;}
 
-    public String getHoraInicial() {return horaInicial;}
-    public void setHoraInicial(String horaInicial) {this.horaInicial = horaInicial;}
+    public LocalTime getHoraInicial() {return horaInicial;}
+    public void setHoraInicial(LocalTime horaInicial) {this.horaInicial = horaInicial;}
 
     public LocalDate getDataFinal() {return dataFinal;}
     public void setDataFinal(LocalDate dataFinal) {this.dataFinal = dataFinal;}
 
-    public String getHoraFinal() {return horaFinal;}
-    public void setHoraFinal(String horaFinal) {this.horaFinal = horaFinal;}
+    public LocalTime getHoraFinal() {return horaFinal;}
+    public void setHoraFinal(LocalTime horaFinal) {this.horaFinal = horaFinal;}
 
     public Set<TemaPreferencia> getTemasEvento() {return temasEvento;}
     public void setTemasEvento(Set<TemaPreferencia> temasEvento) {this.temasEvento = temasEvento;}
@@ -115,26 +116,4 @@ public class EventoModel {
         return idEvento == that.idEvento;
     }
 
-    @Override
-    public String toString() {
-        return "EventoModel{" +
-                "idEvento=" + idEvento +
-                ", organizador=" + organizador +
-                ", nomeEvento='" + nomeEvento + '\'' +
-                ", descricao='" + descricao + '\'' +
-                ", formato=" + formato +
-                ", linkAcesso=" + linkAcesso +
-                ", localizacao='" + localizacao + '\'' +
-                ", fotoEvento=" + fotoEvento +
-                ", nParticipantes=" + nParticipantes +
-                ", dataInicial=" + dataInicial +
-                ", horaInicial=" + horaInicial +
-                ", dataFinal=" + dataFinal +
-                ", horaFinal=" + horaFinal +
-                ", temasEvento=" + temasEvento +
-                ", estadoDoEvento=" + estadoDoEvento +
-                ", isFinalizado=" + isFinalizado +
-                ", participantes=" + participantes +
-                '}';
-    }
 }

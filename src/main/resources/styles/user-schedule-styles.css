@@ -13,6 +13,12 @@
     -fx-background-color: white;
 }
 
+.greeting-label {
+    -fx-font-family: "Poppins Bold", "Arial Bold";
+    -fx-font-size: 32px;
+    -fx-text-fill: #7A2074;
+}
+
 .main-view {
     -fx-background-color: white;
     -fx-font-family: "Poppins", "Arial", sans-serif;
@@ -55,11 +61,6 @@
     -fx-alignment: center;
 }
 
-.sub-header-controls {
-    -fx-background-color: white;
-}
-
-
 .top-button {
     -fx-font-family: 'Poppins';
     -fx-background-color: #8E2392;
@@ -101,6 +102,9 @@
     -fx-spacing: 10px;
     -fx-max-width: 600px;
     -fx-min-width: 600px;
+    -fx-min-height: 70px;
+    -fx-pref-height: 70px;
+    -fx-max-height: 70px;
 }
 
 .date-button {
@@ -144,14 +148,12 @@
     -fx-font-size: 14px;
     -fx-opacity: 0.9;
 }
-
 .event-date {
     -fx-font-family: 'Poppins Bold';
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
 }
-
 .event-time {
     -fx-font-family: 'Poppins Bold';
     -fx-text-fill: white;
@@ -159,17 +161,33 @@
     -fx-font-weight: bold;
 }
 
-.new-event-button-bottom {
-    -fx-font-family: 'Poppins Bold';
-    -fx-background-color: #4CAF50;
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-padding: 15px 25px;
-    -fx-background-radius: 25px;
-    -fx-cursor: hand;
-    -fx-font-weight: bold;
+.events-scroll-pane {
+    -fx-background-color: white;
 }
-
-.new-event-button-bottom:hover {
-    -fx-background-color: #388E3C;
+.events-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-pref-width: 10;
+}
+.events-scroll-pane .scroll-bar .increment-button, .events-scroll-pane .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-pref-height: 0;
+}
+.events-scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: #f0f0f0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+.events-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #cccccc;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8px;
+}
+.events-scroll-pane .scroll-bar:vertical:hover .thumb {
+    -fx-background-color: #b3b3b3;
+}
+.events-scroll-pane .scroll-bar:vertical:pressed .thumb {
+    -fx-background-color: #999999;
 }

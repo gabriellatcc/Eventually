@@ -72,8 +72,8 @@ public class EventoExclusaoService {
                 alertaService.alertarInfo("Sucesso: Estado do evento alterado!");
                 return true;
             } else {
-                alertaService.alertarWarn("Alteração de Estado Inválida", "Evento com ID " + idEvento + " não encontrado.");
-                sistemaDeLogger.info("Evento com ID " + idEvento + " não encontrado para alterar estado.");
+                alertaService.alertarWarn("Alteração de Estado Inválida", "EventoH com ID " + idEvento + " não encontrado.");
+                sistemaDeLogger.info("EventoH com ID " + idEvento + " não encontrado para alterar estado.");
                 return false;
             }
         } catch (Exception e) {

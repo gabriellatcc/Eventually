@@ -41,60 +41,6 @@ public final class EventoCriacaoService {
      */
     private EventoCriacaoService() {
         listaEventos = new HashSet<>();
-        this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
-        //eventos teste abaixo:
-
-        Set<TemaPreferencia> preferenciasEvento = new HashSet<>();
-        preferenciasEvento.add(TemaPreferencia.CORPORATIVO);
-        preferenciasEvento.add(TemaPreferencia.CULTURAL);
-        preferenciasEvento.add(TemaPreferencia.SOCIAL);
-
-        EventoModel evento1 = new EventoModel(
-                null, "Conferência Tech Inovação", "Discussão sobre o futuro da tecnologia.",
-                FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções, SP", null, 200,
-                LocalDate.of(2025, 8, 15), "09:00",
-                LocalDate.of(2025, 8, 16), "18:00",
-                preferenciasEvento, null, true, false
-        );
-        listaEventos.add(evento1);
-
-        EventoModel evento2 = new EventoModel(
-                null, "Workshop de Design UX/UI", "Aprenda na prática os fundamentos de UX.",
-                FormatoSelecionado.ONLINE, "https://zoom.us/j/123456", "Online", null, 50,
-                LocalDate.of(2025, 9, 5), "19:00",
-                LocalDate.of(2025, 9, 5), "22:00",
-                preferenciasEvento, null, true, false
-        );
-        listaEventos.add(evento2);
-
-        EventoModel evento3 = new EventoModel(
-                null, "Festival de Música Indie", "Bandas independentes em um evento único.",
-                FormatoSelecionado.HIBRIDO, null, "Parque Ibirapuera, SP", null, 1000,
-                LocalDate.of(2025, 9, 28), "14:00",
-                LocalDate.of(2025, 9, 28), "23:00",
-                preferenciasEvento, null, true, false
-        );
-        listaEventos.add(evento3);
-
-        EventoModel evento4 = new EventoModel(
-                null, "Feira de Tecnologia e Inovação", "Apresentação de startups e novas tecnologias do mercado.",
-                FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções Expo Center Norte, SP", null, 5000,
-                LocalDate.of(2025, 10, 15), "09:00",
-                LocalDate.of(2025, 10, 17), "18:00",
-                preferenciasEvento, null, true, true
-        );
-        listaEventos.add(evento4);
-
-        EventoModel evento5 = new EventoModel(
-                null, "Workshop de Fotografia com Celular", "Aprenda a tirar fotos incríveis usando apenas o seu smartphone.",
-                FormatoSelecionado.ONLINE, "https://zoom.us/j/1234567890", "Plataforma Zoom", null, 150,
-                LocalDate.of(2025, 11, 22), "19:00",
-                LocalDate.of(2025, 11, 22), "21:30",
-                null, null, true, false
-        );
-        listaEventos.add(evento5);
-
-        //eventos teste acima
 
         sistemaDeLogger.info("Inicializado e lista de eventos criada. HashSet size: " + listaEventos.size());
     }
@@ -147,7 +93,6 @@ public final class EventoCriacaoService {
     public boolean criarEventoSeValido(CriarEventoDto dto, String link, String localizacaoEvento, Image fotoEvento) {
         sistemaDeLogger.info("Método criarEventoSeValido() chamado.");
         try {
-
             criarEvento(dto,link,localizacaoEvento,fotoEvento);
             return true;
         }catch (Exception e) {
@@ -219,9 +164,9 @@ public final class EventoCriacaoService {
 
             boolean adicionado = listaEventos.add(evento);
             if (adicionado) {
-                sistemaDeLogger.info("Evento adicionado com ID: " + id + " | HashSet size: " + listaEventos.size());
+                sistemaDeLogger.info("EventoH adicionado com ID: " + id + " | HashSet size: " + listaEventos.size());
             } else {
-                sistemaDeLogger.info("Evento não adicionado (possivelmente já existe ou houve um problema).");
+                sistemaDeLogger.info("EventoH não adicionado (possivelmente já existe ou houve um problema).");
             }
             return adicionado;
         } catch (Exception e) {

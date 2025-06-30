@@ -21,7 +21,7 @@ import javafx.scene.shape.Rectangle;
  *
  *
  */
-public class EventoHCard extends VBox {
+public class EventoHCartao extends VBox {
     private static final double CARD_WIDTH = 320;
     private static final double CARD_HEIGHT = 280;
     private static final double IMAGE_HEIGHT = 200;
@@ -35,7 +35,7 @@ public class EventoHCard extends VBox {
     /**
      * Construtor padrão que inicializa a UI do card.
      */
-    public EventoHCard() {
+    public EventoHCartao() {
         setupUI();
     }
 
@@ -105,14 +105,9 @@ public class EventoHCard extends VBox {
 
         this.getChildren().addAll(imageContainer, infoPane);
     }
-    public Label getLblDataHora() {return lblDataHora;}
     public void setLblDataHora(String dataHora) {this.lblDataHora.setText(dataHora);}
-    public Label getLblTitulo() {return lblTitulo;}
     public void setLblTitulo(String titulo) {this.lblTitulo.setText(titulo);}
-    public Label getLblLocal() {return lblLocal;}
     public void setLblLocal(String local) {this.lblLocal.setText(local);}
-    public Label getLblTipo() {return lblTipo;}
     public void setLblTipo(String tipo) {this.lblTipo.setText(tipo);}
-    public ImageView getImagemEventoView() {return imagemEventoView;}
     public void setImagem(Image imagem) {this.imagemEventoView.setImage(imagem);}
 }
