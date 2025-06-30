@@ -139,6 +139,6 @@ Esses serviços são classes que seguem o padrão singleton (classe única) para
 
 - **Gabriella Tavares Costa Corrêa** - [@gabriellatcc](https://github.com/gabriellatcc) (Estruturação, desenvolvimento backend, integração com frontend, documentação de código e revisão de boas práticas)
 - **Yuri Garcia Maia** - [@yurigmaia](https://github.com/yurigmaia) (Desenvolvimento frontend de código, padronização e criação de design, desenvolvimento de protótipos de telas, revisão da construção de telas)
-- **Maria Auxilidora da Cunha Pereira** - [@maripereira55](https://github.com/maripereira55) (Padronização e criação de design, desenvolvimento de protótipos de telas, revisão da construção de telas)
+- **Maria Auxilidora da Cunha Pereira** - [@MariaPereiraGit](https://github.com/MariaPereiraGit) (Padronização e criação de design, desenvolvimento de protótipos de telas, revisão da construção de telas)
 - **Lívia Elisei Neves Machado** - [@liviaelisei](https://github.com/liviaelisei) (Consolidação de ideias e documentação)
 - **Lucas Lopes de Oliveira** - [@LucasLopes2003](https://github.com/LucasLopes2003) (Consolidação de ideias)
