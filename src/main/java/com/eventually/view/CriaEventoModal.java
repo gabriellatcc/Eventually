@@ -26,7 +26,7 @@ import java.util.List;
  * @author Yuri Garcia Maia
  * @version 1.0
  * @since 2025-06-18
- * @author Gabriella Tavares Costa Corrêa (revisão de documentação e parte lógica)
+ * @author Gabriella Tavares Costa Corrêa (Revisão de documentação e parte lógica)
  * @since 2025-06-19
  */
 public class CriaEventoModal extends Parent {

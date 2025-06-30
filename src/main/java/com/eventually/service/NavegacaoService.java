@@ -318,4 +318,40 @@ public class NavegacaoService {
             ex.printStackTrace();
         }
     }
+
+    /**
+     * Neste método é manipulado o clique no cartão de evento da tela de início e, em
+     * caso de erro, é exibida uma mensagem no console.
+     */
+    public void abrirModalVerEvento() {
+        sistemaDeLogger.info("Método abrirModalVerEvento() chamado.");
+        try {
+            InscricaoModal modalInscricao = new InscricaoModal();
+            InscricaoController modalController = new InscricaoController(modalInscricao);
+            modalInscricao.setInscricaoController(modalController);
+
+            Stage modalStage = new Stage();
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(primaryStage);
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
+
+            Scene modalScene = new Scene(modalInscricao);
+
+            modalStage.setOnShown(event -> {
+                javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+                modalStage.setX((screenBounds.getWidth() - modalStage.getWidth()) / 2);
+                modalStage.setY((screenBounds.getHeight() - modalStage.getHeight()) / 2);
+            });
+
+            modalScene.setFill(Color.TRANSPARENT);
+            modalScene.getStylesheets().add(getClass().getResource("/styles/exibicao-styles.css").toExternalForm());
+            modalStage.setScene(modalScene);
+
+            modalStage.showAndWait();
+        } catch (Exception ex) {
+            sistemaDeLogger.error("Erro ao abrir modal para Criar EventoH: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
 }

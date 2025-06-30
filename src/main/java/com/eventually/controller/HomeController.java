@@ -177,7 +177,7 @@ public class HomeController {
 
         String local;
         if (model.getFormato() == FormatoSelecionado.ONLINE) {
-            local = "EventoH Online";
+            local = "Evento Online";
         } else {
             local = model.getLocalizacao();
         }
@@ -194,12 +194,19 @@ public class HomeController {
                     .get();
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd 'de' MMM", new Locale("pt", "BR"));
-        String dataFormatada = model.getDataInicial().format(formatter).toUpperCase();
-        String dataHora = String.format("%s - %s", dataFormatada, model.getHoraInicial());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE dd, MMM yyyy", new Locale("pt", "BR"));
+        String dataFormatada1 = model.getDataInicial().format(formatter).toUpperCase();
+        String dataHora1 = String.format("%s - %s", dataFormatada1, model.getHoraInicial());
+
+        String dataFormatada2 = model.getDataFinal().format(formatter).toUpperCase();
+        String dataHora2 = String.format("%s - %s", dataFormatada2, model.getHoraFinal());
 
         Image imagem = model.getFotoEvento();
 
-        return new HomeView.EventoH(titulo, local, dataHora, categoria, imagem);
+        return new HomeView.EventoH(titulo, local, dataHora1, dataHora2, categoria, imagem);
+    }
+
+    public void abrir() {
+        navegacaoService.abrirModalVerEvento();
     }
 }

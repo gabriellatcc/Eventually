@@ -1,8 +1,10 @@
 package com.eventually.view;
 
 import com.eventually.controller.HomeController;
+import com.eventually.service.NavegacaoService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -38,7 +40,11 @@ public class HomeView extends BorderPane {
     private ScrollPane scrollEventos;
     private GridPane gridEventos;
 
-    public record EventoH(String titulo, String local, String dataHora, String categoria, Image imagem) {}
+    private NavegacaoService navegacaoService;
+
+    private EventoHCartao eventoHCartao;
+
+    public record EventoH(String titulo, String local, String dataHoraInicio, String dataHoraFim, String categoria, Image imagem) {}
 
     /**
      * Construtor da classe {@code HomeView}.
@@ -142,19 +148,19 @@ public class HomeView extends BorderPane {
      */
     private ScrollPane criarGridEventos() {
         gridEventos = new GridPane();
-        gridEventos.setPadding(new Insets(0, 40, 20, 40));
-        gridEventos.setHgap(25);
+        gridEventos.setPadding(new Insets(0, 10, 20, 10));
+        gridEventos.setHgap(30);
         gridEventos.setVgap(25);
         gridEventos.getStyleClass().add("events-grid");
 
         gridEventos.getColumnConstraints().clear();
 
         ColumnConstraints col1 = new ColumnConstraints();
-        col1.setPercentWidth(33.33);
+        col1.setMaxWidth(400);
         ColumnConstraints col2 = new ColumnConstraints();
-        col2.setPercentWidth(33.33);
+        col2.setMaxWidth(400);
         ColumnConstraints col3 = new ColumnConstraints();
-        col3.setPercentWidth(33.33);
+        col3.setMaxWidth(400);
 
         gridEventos.getColumnConstraints().addAll(col1, col2, col3);
 
@@ -186,15 +192,37 @@ public class HomeView extends BorderPane {
 
         for (int i = 0; i < eventoHS.size(); i++) {
             EventoH eventoH = eventoHS.get(i);
+
             EventoHCartao cardEvento = new EventoHCartao();
             cardEvento.getStylesheets().add(getClass().getResource("/styles/event-h-card.css").toExternalForm());
 
             cardEvento.setLblTitulo(eventoH.titulo());
             cardEvento.setLblLocal(eventoH.local());
-            cardEvento.setLblDataHora(eventoH.dataHora());
+
+            cardEvento.setLblDataHoraInicio(eventoH.dataHoraInicio());
+            cardEvento.setLblDataHoraFim(eventoH.dataHoraFim());
+
             cardEvento.setLblTipo(eventoH.categoria());
             cardEvento.setImagem(eventoH.imagem());
 
+            cardEvento.setCursor(Cursor.HAND);
+
+          /*  cardEvento.setOnMouseClicked(event -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Detalhes do Evento");
+
+                alert.setHeaderText("Evento: " + eventoH.titulo());
+                alert.setContentText(
+                        "Local: " + eventoH.local() + "\n" +
+                                "Categoria: " + eventoH.categoria() + "\n" +
+                                "Início: " + eventoH.dataHoraInicio()
+                );
+                alert.showAndWait();
+            });
+*/
+            cardEvento.setOnMouseClicked(event -> {
+                homeController.abrir();
+            });
             int row = i / 3;
             int col = i % 3;
             gridEventos.add(cardEvento, col, row);

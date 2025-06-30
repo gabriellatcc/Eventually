@@ -22,12 +22,12 @@ import javafx.scene.shape.Rectangle;
  *
  */
 public class EventoHCartao extends VBox {
-    private static final double CARD_WIDTH = 320;
+    private static final double CARD_WIDTH = 400;
     private static final double CARD_HEIGHT = 280;
     private static final double IMAGE_HEIGHT = 200;
 
     private ImageView imagemEventoView;
-    private Label lblDataHora;
+    private Label lblDataHoraInicio, lblDataHoraFim;
     private Label lblTitulo;
     private Label lblLocal;
     private Label lblTipo;
@@ -43,7 +43,7 @@ public class EventoHCartao extends VBox {
         this.setBorder(new Border(new BorderStroke(Color.RED,
                 BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
         this.setPrefSize(CARD_WIDTH, CARD_HEIGHT);
-
+        this.getStyleClass().add("event-h-card");
         this.setAlignment(Pos.TOP_CENTER);
 
         StackPane imageContainer = new StackPane();
@@ -69,10 +69,14 @@ public class EventoHCartao extends VBox {
         infoPane.setPadding(new Insets(10, 15, 15, 15));
         infoPane.getStyleClass().add("hcard-info-pane");
 
-        lblDataHora = new Label("SEX 14, MAR 2025 - 18:20");
-        lblDataHora.setBorder(new Border(new BorderStroke(Color.GRAY,
-                BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        lblDataHora.getStyleClass().add("hcard-date");
+        HBox hbDataHora = new HBox(0);
+        hbDataHora.setAlignment(Pos.CENTER_LEFT);
+        lblDataHoraInicio = new Label();
+        lblDataHoraInicio.getStyleClass().add("hcard-date");
+        Label lblSeparador = new Label(" | ");
+        lblDataHoraFim = new Label();
+        lblDataHoraFim.getStyleClass().add("hcard-date");
+        hbDataHora.getChildren().addAll(lblDataHoraInicio, lblSeparador, lblDataHoraFim);
 
         lblTitulo = new Label("Título do evento");
         lblTitulo.setBorder(new Border(new BorderStroke(Color.BLACK,
@@ -90,22 +94,19 @@ public class EventoHCartao extends VBox {
                 BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         lblTipo.getStyleClass().add("hcard-type");
 
-        VBox titleLocationBox = new VBox(0, lblTitulo, lblLocal);
+        VBox titleLocationBox = new VBox(0, lblTitulo, lblLocal, lblTipo);
         titleLocationBox.setBorder(new Border(new BorderStroke(Color.ORANGE,
                 BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        HBox bottomInfoBox = new HBox(10, titleLocationBox, spacer, lblTipo);
-        bottomInfoBox.setBorder(new Border(new BorderStroke(Color.LIGHTGOLDENRODYELLOW,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        bottomInfoBox.setAlignment(Pos.BOTTOM_LEFT);
+        HBox bottomInfoBox = new HBox(10, titleLocationBox);
 
-        infoPane.getChildren().addAll(lblDataHora, bottomInfoBox);
+        infoPane.getChildren().addAll(hbDataHora, bottomInfoBox);
 
         this.getChildren().addAll(imageContainer, infoPane);
     }
-    public void setLblDataHora(String dataHora) {this.lblDataHora.setText(dataHora);}
+
+    public void setLblDataHoraInicio(String dataHora) {this.lblDataHoraInicio.setText(dataHora);}
+    public void setLblDataHoraFim(String dataHora) {this.lblDataHoraFim.setText(dataHora);}
     public void setLblTitulo(String titulo) {this.lblTitulo.setText(titulo);}
     public void setLblLocal(String local) {this.lblLocal.setText(local);}
     public void setLblTipo(String tipo) {this.lblTipo.setText(tipo);}

@@ -49,7 +49,12 @@
     -fx-font-weight: bold;
 }
 
-.center-content-area, .events-scroll-pane, .events-grid {
+.events-grid {
+    -fx-background-color: white;
+    -fx-alignment: center;
+}
+
+.center-content-area, .events-scroll-pane {
     -fx-background-color: white;
 }
 .events-scroll-pane .scroll-bar:vertical {
