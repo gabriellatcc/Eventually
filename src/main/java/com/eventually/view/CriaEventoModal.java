@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Classe responsável pelo modal de "Criar evento".
  * @author Yuri Garcia Maia
- * @version 1.01
+ * @version 1.02
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação e parte lógica)
  * @since 2025-06-19
@@ -95,7 +95,6 @@ public class CriaEventoModal extends Parent {
         VBox layout = new VBox(20);
         layout.setAlignment(Pos.TOP_CENTER);
         layout.setPadding(new Insets(10, 20, 10, 20));
-        layout.getStyleClass().add("root-pane");
         layout.getStyleClass().add("layout-pane");
 
         Rectangle rect = new Rectangle(MODAL_WIDTH, MODAL_HEIGHT);

@@ -3,6 +3,7 @@ import com.eventually.dto.AutenticarUsuarioDto;
 import com.eventually.model.UsuarioModel;
 import com.eventually.service.AlertaService;
 import com.eventually.service.NavegacaoService;
+import com.eventually.service.ResultadoAutenticacao;
 import com.eventually.service.UsuarioSessaoService;
 import com.eventually.view.*;
 import javafx.scene.Scene;
@@ -12,11 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-/** PASSÍVEL DE ALTERAÇÃÕES
+/**
  * Classe controladora da tela de login, é responsável pela comunicação da tela de login com o backend.
  * Contém todos os métodos como privados para que seu acesso seja somente por esta classe.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.01
+ * @version 1.02
  * @since 2025-05-07
  * @author Gabriella Tavares Costa Corrêa (Documentação e revisão da da estrutura e parte lógica da classe)
  * @since 2025-05-14
@@ -77,7 +78,7 @@ public class LoginController {
         sistemaDeLog.info("Método processarEsqueceuSenhaLink() chamado.");
         try {
             sistemaDeLog.info("Botão de esqueceu sua senha clicado!");
-            abrirModalEsqueceuSenha();
+            navegacaoService.abrirEsqueceuSenhaModal();
         } catch (Exception e) {
             sistemaDeLog.error("Erro ao configurar manipulador de senha esquecida: "+e.getMessage());
             e.printStackTrace();
@@ -111,38 +112,34 @@ public class LoginController {
             String email = loginView.getEmailField().getText();
             String senha = loginView.getPasswordField().getText();
 
-            AutenticarUsuarioDto usuarioASerAutenticado = new AutenticarUsuarioDto(email, senha);
-
-            Optional<UsuarioModel> usuarioAutenticado = usuarioSessaoService.validarUsuario(usuarioASerAutenticado.email(), usuarioASerAutenticado.senha());
-
-            if (usuarioAutenticado.isPresent()) {
-                sistemaDeLog.info("Usuário autenticado com sucesso!");
-                navegacaoService.navegarParaHome(usuarioAutenticado.get());
-
-            } else {
-                sistemaDeLog.info("Email não cadastrado ou senha incorretos.");
+            if (email.isBlank() || senha.isBlank()) {
+                sistemaDeLog.warn("Tentativa de login com campos vazios.");
                 AlertModal alertModal = new AlertModal();
-                alertModal.show(primaryStage, "Erro de Login", "Senha incorreta ou email não cadastrado.");
+                alertModal.show(primaryStage, "Atenção", "Por favor, preencha todos os campos.");
+                return;
+            }
+
+            ResultadoAutenticacao resultado = usuarioSessaoService.validarUsuario(email, senha);
+
+            AlertModal alertModal = new AlertModal();
+            switch (resultado.getStatus()) {
+                case SUCESSO:
+                    sistemaDeLog.info("Usuário autenticado com sucesso!");
+                    navegacaoService.navegarParaHome(resultado.getUsuario().get());
+                    break;
+
+                case FALHA_CREDENCIAL_INVALIDA:
+                    sistemaDeLog.info("Email não cadastrado ou senha incorretos.");
+                    alertModal.show(primaryStage, "Erro de Login", "Senha incorreta ou email não cadastrado.");
+                    break;
+
+                case FALHA_CONTA_INATIVA:
+                    sistemaDeLog.warn("Tentativa de login com conta inativa.");
+                    alertModal.show(primaryStage, "Login Bloqueado", "Esta conta está inativa e não pode realizar o login.");
+                    break;
             }
         } catch (Exception e) {
             sistemaDeLog.error("Erro ao configurar manipulador de login: "+e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Método que instancia e chama o modal de "Esqueceu sua senha" e em caso de falha na configuração
-     * do modal, uma mensagem de erro é exibida no console.
-     */
-    private void abrirModalEsqueceuSenha() {
-        sistemaDeLog.info("Método abrirModalEsqueceuSenha() chamado.");
-        try{
-            EsqueceuSenhaModal esqueceuSenhaModal = new EsqueceuSenhaModal();
-            esqueceuSenhaModal.showForgotPasswordModal(primaryStage);
-            EsqueceuSenhaController fpController = new EsqueceuSenhaController(esqueceuSenhaModal);
-            esqueceuSenhaModal.setForgotPasswordController(fpController);
-        } catch (Exception e) {
-            sistemaDeLog.error("Erro ao abrir o modal: "+e.getMessage());
             e.printStackTrace();
         }
     }

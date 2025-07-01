@@ -1,5 +1,6 @@
 package com.eventually.service;
 import com.eventually.model.EventoModel;
+import com.eventually.model.StatusLogin;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.model.UsuarioModel;
 import javafx.scene.image.Image;
@@ -17,7 +18,7 @@ import java.util.Set;
  * fornecendo acesso a informações como nome, ID, email, senha e outros atributos do {@link UsuarioModel} (por enquanto, em memória).
  * A classe acessa a coleção de usuários diretamente através do {@link UsuarioCadastroService}.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.04
+ * @version 1.05
  * @since 2025-04-22
  */
 public final class UsuarioSessaoService {
@@ -64,27 +65,27 @@ public final class UsuarioSessaoService {
      * @return Um {@code Optional} contendo o {@code UsuarioModel} se um usuário com o email e senha fornecidos for
      * encontrado. Se nenhum usuário corresponder aos critérios, retorna um {@code Optional} vazio.
      */
-    public Optional<UsuarioModel> validarUsuario(String email, String senha) {
+    public ResultadoAutenticacao  validarUsuario(String email, String senha) {
         sistemaDeLogger.info("Método validarUsuario() chamado.");
         try {
-            if (email == null || email.trim().isEmpty() || senha == null || senha.trim().isEmpty()) {
-                alertaService.alertarWarn("Login Inválido", "Email e senha não podem ser vazios.");
-                return Optional.empty();
-            }
             Optional<UsuarioModel> usuarioAValidar = usuarioCadastroService.getAllUsuarios().stream()
                     .filter(usuario -> usuario.getEmail().equals(email) && usuario.getSenha().equals(senha))
                     .findFirst();
-            if(procurarEstado(email)) {
-                return usuarioAValidar;
-            } else{
-                alertaService.alertarErro("A conta está inativa e não pode realizar o login.\nCrie outra conta.");
-                return Optional.empty();
+
+            if (usuarioAValidar.isEmpty()) {
+                return new ResultadoAutenticacao(StatusLogin.FALHA_CREDENCIAL_INVALIDA, Optional.empty());
             }
+
+            if (procurarEstado(email)) {
+                return new ResultadoAutenticacao(StatusLogin.SUCESSO, usuarioAValidar);
+            } else {
+                return new ResultadoAutenticacao(StatusLogin.FALHA_CONTA_INATIVA, Optional.empty());
+            }
+
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao validar usuário: " + e.getMessage());
             e.printStackTrace();
-            alertaService.alertarErro("Erro ao validar credenciais do usuário.");
-            return Optional.empty();
+            return new ResultadoAutenticacao(StatusLogin.FALHA_CREDENCIAL_INVALIDA, Optional.empty());
         }
     }
 

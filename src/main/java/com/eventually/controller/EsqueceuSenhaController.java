@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Classe controladora do modal de "Esqueceu sua senha", é responsável pela comunicação do modal com o backend.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e da estrutura da classe)
- * @version 1.01
+ * @version 1.02
  * @since 2025-05-23
  */
-public class EsqueceuSenhaController {
+public class  EsqueceuSenhaController {
     private final EsqueceuSenhaModal esqueceuSenhaModal;
 
     private AlertaService alertaService =new AlertaService();
@@ -40,7 +40,7 @@ public class EsqueceuSenhaController {
         sistemaDeLogger.info("Método configManipuladoresEventoEsqueceuSenha() chamado.");
         try {
             esqueceuSenhaModal.getBtnEnviar().setOnAction(event -> {enviarEmail();});
-            esqueceuSenhaModal.getBtnFechar().setOnAction(fecharModal());
+            esqueceuSenhaModal.getBtnFechar().setOnAction(event-> fecharModal());
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores do modal de Esqueceu Senha: "+e.getMessage());
             e.printStackTrace();
@@ -74,15 +74,13 @@ public class EsqueceuSenhaController {
      * exibida uma mensagem no console.
      * @return nulo para que o modal finalize sua exibição e operação.
      */
-    private EventHandler<ActionEvent> fecharModal() {
+    private void fecharModal() {
         sistemaDeLogger.info("Método fecharModal() chamado.");
         try {
             sistemaDeLogger.info("Botão de Fechar clicado!");
             esqueceuSenhaModal.close();
-            return null;
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao fechar o modal: " + e.getMessage());
-            return null;
         }
     }
 }

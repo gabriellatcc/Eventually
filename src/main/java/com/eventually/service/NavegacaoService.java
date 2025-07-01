@@ -19,7 +19,7 @@ import java.io.File;
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.04
+ * @version 1.05
  * @since 2025-06-19
  */
 public class NavegacaoService {
@@ -353,6 +353,39 @@ public class NavegacaoService {
         } catch (Exception ex) {
             sistemaDeLogger.error("Erro ao abrir modal para Criar EventoH: " + ex.getMessage());
             ex.printStackTrace();
+        }
+    }
+
+    public void abrirEsqueceuSenhaModal() {
+        sistemaDeLogger.info("Método abrirModalEsqueceuSenha() chamado.");
+        try{
+            EsqueceuSenhaModal modal=new EsqueceuSenhaModal();
+            EsqueceuSenhaController modalController= new EsqueceuSenhaController(modal);
+            modal.setForgotPasswordController(modalController);
+            Stage modalStage = new Stage();
+
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(primaryStage);
+
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
+
+            Scene modalScene = new Scene(modal, modalStage.getWidth()/2,  modalStage.getHeight()/2);
+
+            modalStage.setOnShown(event -> {
+                javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+                modalStage.setX((screenBounds.getWidth() - modalStage.getWidth()) / 2);
+                modalStage.setY((screenBounds.getHeight() - modalStage.getHeight()) / 2);
+            });
+
+            modalScene.setFill(Color.TRANSPARENT);
+            modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
+            modalStage.setScene(modalScene);
+
+            modalStage.showAndWait();
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao abrir o modal: "+e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -3,6 +3,7 @@ import com.eventually.controller.EsqueceuSenhaController;
 import com.eventually.controller.LoginController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -11,8 +12,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -24,10 +23,10 @@ import org.slf4j.LoggerFactory;
  * Classe para o modal de "Esqueceu sua senha".
  * Contém métodos públicos para que sejam acessados por outras classes.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e da estrutura da classe)
- * @version 1.01
+ * @version 1.02
  * @since 23-05-2025
  */
-public class EsqueceuSenhaModal {
+public class EsqueceuSenhaModal extends Parent {
     private Stage modalStage;
     private Scene modalScene;
 
@@ -42,7 +41,7 @@ public class EsqueceuSenhaModal {
     /**
      *  Construtor padrão da classe.
      */
-    public EsqueceuSenhaModal() {}
+    public EsqueceuSenhaModal() {setupUI();}
 
     /**
      * Define o controlador para este modal.
@@ -52,32 +51,28 @@ public class EsqueceuSenhaModal {
         this.fpController = fpController;
     }
 
+    private void setupUI() {
+        VBox layout = criarLayoutPrincipal();
+        this.getChildren().add(layout);
+    }
+
     /**
      * Exibe a janela modal configurada para recuperação de senha.
-     * @param parentStage a janela principal da aplicação que será usada como base para o modal.
+     * @return vbox com elementos do modal
      */
-    public void showForgotPasswordModal(Stage parentStage) {
-        modalStage = new Stage();
-        modalStage.initModality(Modality.APPLICATION_MODAL);
-        modalStage.initOwner(parentStage);
-        modalStage.initStyle(StageStyle.TRANSPARENT);
-        modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
+    public VBox criarLayoutPrincipal() {
+        final double MODAL_WIDTH = 400;
+        final double MODAL_HEIGHT = 400;
 
-        final double MODAL_WIDTH = 500;
-        final double MODAL_HEIGHT = 370;
-
-        VBox layout = new VBox(20);
+        VBox layout = new VBox(15);
         layout.setAlignment(Pos.TOP_CENTER);
-        layout.setPadding(new Insets(30));
-
         layout.setPrefSize(MODAL_WIDTH, MODAL_HEIGHT);
-
-        layout.setStyle("-fx-background-color: white; -fx-background-radius: 40; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 15, 0.5, 0, 4);");
+        layout.setPadding(new Insets(10, 20, 10, 20));
+        layout.getStyleClass().add("layout-pane");
 
         Rectangle rect = new Rectangle(MODAL_WIDTH, MODAL_HEIGHT);
-        rect.setArcWidth(40);
-        rect.setArcHeight(40);
-
+        rect.setArcWidth(20);
+        rect.setArcHeight(20);
         layout.setClip(rect);
 
         Image cadeadoImg = new Image(getClass().getResource("/images/cadeado.png").toExternalForm());
@@ -87,42 +82,31 @@ public class EsqueceuSenhaModal {
         cadeadoView.setFitHeight(100);
 
         Label title = new Label("Esqueceu sua senha?");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        title.setTextFill(Color.web("#B6318D"));
-        title.setPadding(new Insets(5,0,0,0));
+        title.getStyleClass().add("title-label-modal");
 
-        Label instruction = new Label("Por favor, insira o Email vinculado à sua conta\nque enviaremos as instruções para a\nrestauração da sua senha");
-        instruction.setFont(Font.font("Arial", 14));
-        instruction.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
-        instruction.setPadding(new Insets(5,0,0,0));
+        Label instruction = new Label("Por favor, insira o Email vinculado à sua conta que enviaremos as instruções para a restauração da sua senha.");
+        instruction.getStyleClass().add("label-modal");
+        instruction.setStyle("-fx-font-weight: normal; -fx-text-alignment: center; -fx-font-size: 16px;");
+        instruction.setWrapText(true);
 
         fldEmail= new TextField();
         fldEmail.setPromptText("E-mail");
         fldEmail.setMaxWidth(350);
-        fldEmail.getStyleClass().add("login-field");
+        fldEmail.getStyleClass().add("modal-field");
 
         HBox buttons = new HBox(20);
         buttons.setAlignment(Pos.CENTER);
 
         btnEnviar = new Button("Enviar");
-        btnEnviar.setPrefHeight(40);
-        btnEnviar.setPrefWidth(120);
-        btnEnviar.setStyle("-fx-background-color: #D64BCD; -fx-text-fill: white; -fx-background-radius: 20;");
+        btnEnviar.getStyleClass().add("modal-interact-button");
 
         btnFechar = new Button("Fechar");
-        btnFechar.setPrefHeight(40);
-        btnFechar.setPrefWidth(120);
-        btnFechar.setStyle("-fx-background-color: #D64BCD; -fx-text-fill: white; -fx-background-radius: 20;");
+        btnFechar.getStyleClass().add("modal-interact-button");
 
         buttons.getChildren().addAll(btnEnviar, btnFechar);
 
         layout.getChildren().addAll(cadeadoView, title, instruction, fldEmail, buttons);
-
-        modalScene = new Scene(layout, MODAL_WIDTH, MODAL_HEIGHT, Color.TRANSPARENT);
-        modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
-        modalStage.setScene(modalScene);
-
-        modalStage.showAndWait();
+        return layout;
     }
 
     /**
@@ -133,15 +117,9 @@ public class EsqueceuSenhaModal {
     public TextField getFldEmail() {return fldEmail;}
 
     public void close() {
-        try {
-            if (modalStage != null) {
-                sistemaDeLogger.info("Fechando modalStage: " + modalStage);
-                modalStage.close();
-            } else {
-                sistemaDeLogger.info("ModalStage é null. Não é possível fechar.");
-            }} catch (Exception e) {
-            sistemaDeLogger.error("Ocorreu um erro ao fechar o modal: "+e.getMessage());
-            e.printStackTrace();
+        Stage stage = (Stage) this.getScene().getWindow();
+        if (stage != null) {
+            stage.close();
         }
     }
 }

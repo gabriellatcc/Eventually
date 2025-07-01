@@ -16,17 +16,19 @@ import javafx.stage.StageStyle;
 /**
  * Classe do modal de aviso de "Senha incorreta ou email não cadastrado" da tela de login.
  * @author Yuri Garcia Maia
- * @version 1.0
+ * @version 1.01
  * @since 2025-06-22
+ * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
+ * @since 2025-07-01
+ *
  */
 public class AlertModal {
 
     /**
      * Exibe o modal de aviso com a mensagem especificada.
-     *
-     * @param parentStage A janela principal da aplicação.
-     * @param title O título da janela do modal.
-     * @param message A mensagem a ser exibida.
+     * @param parentStage a janela principal da aplicação.
+     * @param title o título da janela do modal.
+     * @param message a mensagem a ser exibida.
      */
     public void show(Stage parentStage, String title, String message) {
         Stage modalStage = new Stage();
@@ -41,24 +43,24 @@ public class AlertModal {
         VBox rootLayout = new VBox(20);
         rootLayout.setAlignment(Pos.CENTER);
         rootLayout.setPadding(new Insets(30));
-        rootLayout.getStyleClass().add("root-pane");
+        rootLayout.getStyleClass().add("layout-pane");
 
         Rectangle rect = new Rectangle(MODAL_WIDTH, MODAL_HEIGHT);
         rect.setArcWidth(40);
         rect.setArcHeight(40);
+
         rootLayout.setClip(rect);
 
         Label titleLabel = new Label(title);
-        titleLabel.getStyleClass().add("title-label");
-        titleLabel.setStyle("-fx-font-size: 26px; -fx-text-fill: #8E2392;");
+        titleLabel.getStyleClass().add("title-label-modal");
 
         Label messageLabel = new Label(message);
-        messageLabel.getStyleClass().add("field-label");
+        messageLabel.getStyleClass().add("label-modal");
         messageLabel.setStyle("-fx-font-weight: normal; -fx-text-alignment: center; -fx-font-size: 16px;");
         messageLabel.setWrapText(true);
 
         Button btnOk = new Button("OK");
-        btnOk.getStyleClass().add("edit-event-button");
+        btnOk.getStyleClass().add("modal-interact-button");
         btnOk.setPrefWidth(140);
         btnOk.setOnAction(e -> modalStage.close());
         VBox.setMargin(btnOk, new Insets(10, 0, 0, 0));
@@ -67,7 +69,7 @@ public class AlertModal {
 
         Scene modalScene = new Scene(rootLayout, MODAL_WIDTH, MODAL_HEIGHT, Color.TRANSPARENT);
 
-        modalScene.getStylesheets().add(getClass().getResource("/styles/my-events-styles.css").toExternalForm());
+        modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
 
         modalStage.setScene(modalScene);
         modalStage.showAndWait();

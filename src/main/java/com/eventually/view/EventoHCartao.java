@@ -13,12 +13,11 @@ import javafx.scene.shape.Rectangle;
  * Representa um card de evento.
  * Este componente encapsula a exibição de uma imagem e informações de um evento,
  * como título, data, local e tipo.
- * @version 1.02
+ * @version 1.03
  * @author Yuri Garcia Maia
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-06-28
- *
  */
 public class EventoHCartao extends VBox {
     private static final double CARD_WIDTH = 400;
