@@ -54,6 +54,15 @@
     -fx-alignment: center;
 }
 
+.tag-label {
+    -fx-background-color: #FFE1FD;
+    -fx-text-fill: #C93ACD;
+    -fx-font-family: "Poppins";
+    -fx-font-size: 12px;
+    -fx-padding: 5px 10px;
+    -fx-background-radius: 15px;
+}
+
 .center-content-area, .events-scroll-pane {
     -fx-background-color: white;
 }

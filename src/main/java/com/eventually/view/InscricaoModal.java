@@ -16,7 +16,7 @@ import javafx.stage.Stage;
  * Classe responsável pelo modal de "Inscrição no Evento".
  * Exibe os detalhes de um evento específico e permite que o usuário interaja com ele.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e parte lógica)
- * @version 1.01
+ * @version 1.02
  * @since 2025-06-27
  */
 public class InscricaoModal extends Parent {
@@ -217,5 +217,4 @@ public class InscricaoModal extends Parent {
 
     //get preferencias -> loop de preferencias
     public FlowPane getFlowPaneTags() {return flowPaneTags;}
-
 }

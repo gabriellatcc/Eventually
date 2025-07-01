@@ -19,7 +19,7 @@ import java.util.Set;
  * Esta classe é responsável por exibir a página principal
  * com filtros de eventoHS e listagem de evento disponíveis.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.07
+ * @version 1.08
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-05-29
@@ -35,10 +35,11 @@ public class HomeView extends BorderPane {
     private ImageView avatarView;
 
     private Label lbSaudacao;
-    private Label lbEncontrarEventos;
 
     private ScrollPane scrollEventos;
     private GridPane gridEventos;
+
+    private FlowPane flowPaneTags;
 
     public record EventoH(
             String titulo,
@@ -131,18 +132,18 @@ public class HomeView extends BorderPane {
         btnFiltros = new Button("🔍 Filtros");
         btnFiltros.getStyleClass().add("filters-button");
 
-        lbEncontrarEventos = new Label("Encontre eventos por filtro");
-        lbEncontrarEventos.getStyleClass().add("filter-description-label");
-
-        btnCriarEvento = new Button("+ Criar evento");
-        btnCriarEvento.getStyleClass().add("create-event-button");
+        flowPaneTags = new FlowPane(5, 10);
+        flowPaneTags.setAlignment(Pos.CENTER_LEFT);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
+        btnCriarEvento = new Button("+ Criar evento");
+        btnCriarEvento.getStyleClass().add("create-event-button");
+
         areaFiltros.getChildren().addAll(
                 btnFiltros,
-                lbEncontrarEventos,
+                flowPaneTags,
                 spacer,
                 btnCriarEvento
         );
@@ -249,6 +250,8 @@ public class HomeView extends BorderPane {
      * Métodos de encapsulamento getters
      */
     public BarraBuilder getBarraBuilder() {return barraBuilder;}
+
+    public FlowPane getFlowPaneTags() {return flowPaneTags;}
 
     public Label getLbNomeUsuario() {return lbNomeUsuario;}
     public Label getLbEmailUsuario() {return lbEmailUsuario; }

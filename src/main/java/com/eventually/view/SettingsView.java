@@ -23,7 +23,7 @@ import java.util.List;
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
  * @author Yuri Garcia Maia (Criação)
  * @since 22-05-2025
- * @version 1.04
+ * @version 1.05
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, lógica e da estrutura da classe)
  * @since 22-05-2025
  */
@@ -189,6 +189,9 @@ public class SettingsView extends BorderPane {
         descSocial.setTextFill(Color.DARKSLATEGRAY);
         rightColumn.getChildren().add(new VBox(2, cbSocial, descSocial));
 
+        for (CheckBox cb : List.of(cbCorporativo, cbBeneficente, cbEducacional, cbCultural, cbEsportivo, cbReligioso, cbSocial)) {
+            cb.setDisable(true);
+        }
 
         HBox columns = new HBox(60, leftColumn, rightColumn);
         vbSessao.getChildren().addAll(hbTitulo, description, columns);

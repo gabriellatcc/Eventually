@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Classe responsável pelo modal de "Criar evento".
  * @author Yuri Garcia Maia
- * @version 1.02
+ * @version 1.03
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação e parte lógica)
  * @since 2025-06-19
@@ -392,7 +392,6 @@ public class CriaEventoModal extends Parent {
             }
         });
     }
-
 
     public void close() {
         Stage stage = (Stage) this.getScene().getWindow();

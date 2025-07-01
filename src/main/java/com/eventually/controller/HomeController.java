@@ -5,6 +5,7 @@ import com.eventually.model.FormatoSelecionado;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.service.*;
 import com.eventually.view.*;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.05
+ * @version 1.06
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -81,7 +82,19 @@ public class HomeController {
             homeView.getBarraBuilder().getBtnSair().setOnAction(e -> navegacaoService.abrirModalEncerrarSessao());
 
             homeView.getBtnCriarEvento().setOnAction(e -> navegacaoService.abrirModalCriarEvento(emailRecebido, this::processarCarregamentoEventos));
-            homeView.getBtnFiltros().setOnAction(e -> processarFiltros());
+            homeView.getBtnFiltros().setOnAction(e -> navegacaoService.abrirModalEditarFiltros(emailRecebido));
+
+            Set<TemaPreferencia> temasUsuario = usuarioSessaoService.procurarPreferencias(emailRecebido);
+
+            Set<String> tags = temasUsuario.stream()
+                    .map(TemaPreferencia::name)
+                    .collect(Collectors.toSet());
+
+            for (String nomeTag : tags) {
+                Label tagLabel = new Label(nomeTag);
+                tagLabel.getStyleClass().add("tag-label");
+                homeView.getFlowPaneTags().getChildren().add(tagLabel);
+            }
 
             homeView.getLbEmailUsuario().setText(emailRecebido);
             homeView.getLbNomeUsuario().setText(definirNome(emailRecebido));
@@ -125,21 +138,6 @@ public class HomeController {
             sistemaDeLogger.error("Erro ao obter nome do usuário: "+e.getMessage());
             e.printStackTrace();
             return null;
-        }
-    }
-
-    /**
-     * Neste método é manipulado o clique no botão "Filtros", abrindo o painel de filtros e, em caso de erro, é
-     * exibida uma mensagem no console.
-     */
-    private void processarFiltros() {
-        sistemaDeLogger.info("Método processarFiltros() chamado.");
-        try {
-            sistemaDeLogger.info("Botão de Filtros clicado!");
-            // IMPLEMENTAR ELEMENTO UI PARA FILTRO
-        } catch (Exception ex) {
-            sistemaDeLogger.error("Erro ao abrir filtros: " + ex.getMessage());
-            ex.printStackTrace();
         }
     }
 

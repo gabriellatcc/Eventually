@@ -1,11 +1,13 @@
 package com.eventually.service;
 
+import com.eventually.model.TemaPreferencia;
 import com.eventually.model.UsuarioModel;
 import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Esta classe é um Singleton, garantindo que apenas uma instância de {@code UsuarioAtualizacaoService} exista em
@@ -13,7 +15,7 @@ import java.util.Optional;
  * Esta classe utiliza a instância única de {@link UsuarioCadastroService} para acessar e manipular os dados
  * dos usuários em memória.
  * @author Gabriella Tavares Costa Corrêa (Criação,documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.02
+ * @version 1.03
  * @since 2025-05-18
  */
 public final class UsuarioAtualizacaoService {
@@ -197,5 +199,33 @@ public final class UsuarioAtualizacaoService {
     private void notificarSucesso(String campo, int idUsuario) {
         sistemaDeLogger.info("{} do usuário com ID {} alterado(a) com sucesso.", campo, idUsuario);
         alertaService.alertarInfo(campo + " alterado(a) com sucesso!");
+    }
+
+    /**
+     * Atualiza as preferências de tema de um usuário específico.
+     * @param idUsuario o ID do usuário a ser atualizado.
+     * @param novosTemas o novo conjunto de temas de preferência.
+     * @return true se a atualização for bem-sucedida, false caso contrário.
+     */
+    public boolean atualizarTemas(int idUsuario, Set<TemaPreferencia> novosTemas) {
+        Optional<UsuarioModel> usuarioOpt = buscarUsuarioParaAtualizacao(idUsuario);
+
+        if (usuarioOpt.isEmpty()) {
+            sistemaDeLogger.warn("Tentativa de atualizar temas para usuário inexistente com ID: {}", idUsuario);
+            return false;
+        }
+
+        try {
+            UsuarioModel usuario = usuarioOpt.get();
+            usuario.setTemasPreferidos(novosTemas);
+
+            sistemaDeLogger.info("Temas do usuário com ID {} atualizados com sucesso.", idUsuario);
+            notificarSucesso("Temas", idUsuario);
+            return true;
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao atualizar temas para o usuário com ID {}: {}", idUsuario, e.getMessage());
+            alertaService.alertarErro("Ocorreu um erro inesperado ao salvar suas preferências.");
+            return false;
+        }
     }
 }

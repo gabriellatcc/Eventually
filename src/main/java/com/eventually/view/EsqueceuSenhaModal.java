@@ -27,9 +27,6 @@ import org.slf4j.LoggerFactory;
  * @since 23-05-2025
  */
 public class EsqueceuSenhaModal extends Parent {
-    private Stage modalStage;
-    private Scene modalScene;
-
     private Button btnEnviar;
     private Button btnFechar;
     private TextField fldEmail;

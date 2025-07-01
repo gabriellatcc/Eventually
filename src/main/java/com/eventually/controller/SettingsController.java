@@ -14,7 +14,7 @@ import java.util.Set;
  * Classe controladora da tela de Configurações do usuário, é responsável pela comunicação da tela de de configurações
  * com o backend.
  * Contém todos os métodos como privados para que seu acesso seja somente por esta classe.
- * @version 1.03
+ * @version 1.04
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-22
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
@@ -88,8 +88,8 @@ public class SettingsController {
 
             settingsView.getHlAlterarFoto().setOnAction(e->navegacaoService.abrirMudancaImagemModal(settingsView, emailRecebido, "foto"));
 
-            //get all check boxes
-        //    settingsView.getHlAlterarPreferencias().setOnAction(e-> confirmarAlteracoes(/"receber valores"/));
+            settingsView.getHlAlterarPreferencias().setOnAction(e->navegacaoService.abrirModalEditarFiltros(emailRecebido));
+
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores de configurações: "+e.getMessage());
             e.printStackTrace();
