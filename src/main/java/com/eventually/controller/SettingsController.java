@@ -3,18 +3,20 @@ package com.eventually.controller;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.service.*;
 import com.eventually.view.*;
+import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Set;
 
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe controladora da tela de Configurações do usuário, é responsável pela comunicação da tela de de configurações
  * com o backend.
  * Contém todos os métodos como privados para que seu acesso seja somente por esta classe.
- * @version 1.04
+ * @version 1.05
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-22
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
@@ -88,12 +90,21 @@ public class SettingsController {
 
             settingsView.getHlAlterarFoto().setOnAction(e->navegacaoService.abrirMudancaImagemModal(settingsView, emailRecebido, "foto"));
 
-            settingsView.getHlAlterarPreferencias().setOnAction(e->navegacaoService.abrirModalEditarFiltros(emailRecebido));
-
+            settingsView.getHlAlterarPreferencias().setOnAction(e -> {
+                abrirModalParaEdicao();
+            });
+            
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores de configurações: "+e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void abrirModalParaEdicao() {
+        navegacaoService.abrirModalEditarFiltros(emailRecebido);
+
+        sistemaDeLogger.info("Modal de edição de temas fechado. Atualizando a tela de configurações.");
+        atualizarVisualizacaoPreferencias();
     }
 
     /**
@@ -207,6 +218,26 @@ public class SettingsController {
             sistemaDeLogger.error("Erro ao obter data de nascimento do usuário: "+e.getMessage());
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * Carrega as preferências de tema mais recentes do serviço
+     * e atualiza o estado das checkboxes na tela de configurações.
+     */
+    public void atualizarVisualizacaoPreferencias() {
+        sistemaDeLogger.info("Atualizando visualização das preferências de conteúdo.");
+
+        Set<TemaPreferencia> temasAtuais = usuarioSessaoService.procurarPreferencias(emailRecebido);
+
+        Map<TemaPreferencia, CheckBox> mapaCheckBoxes = settingsView.getMapaDeCheckBoxesDeTemas();
+
+        mapaCheckBoxes.values().forEach(cb -> cb.setSelected(false));
+
+        for (TemaPreferencia tema : temasAtuais) {
+            if (mapaCheckBoxes.containsKey(tema)) {
+                mapaCheckBoxes.get(tema).setSelected(true);
+            }
         }
     }
 

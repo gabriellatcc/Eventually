@@ -1,6 +1,7 @@
 package com.eventually.view;
 
 import com.eventually.controller.SettingsController;
+import com.eventually.model.TemaPreferencia;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -16,14 +17,16 @@ import org.slf4j.LoggerFactory;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Classe para a tela de Configurações.
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
  * @author Yuri Garcia Maia (Criação)
  * @since 22-05-2025
- * @version 1.05
+ * @version 1.06
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, lógica e da estrutura da classe)
  * @since 22-05-2025
  */
@@ -41,6 +44,7 @@ public class SettingsView extends BorderPane {
 
     private ImageView avatarView;
 
+    private final Map<TemaPreferencia, CheckBox> mapaDeCheckBoxesDeTemas = new EnumMap<>(TemaPreferencia.class);
     /**
      * Construtor da SettingsView.
      */
@@ -148,42 +152,49 @@ public class SettingsView extends BorderPane {
                 BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
         cbCorporativo = new CheckBox("Corporativos");
+        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.CORPORATIVO, cbCorporativo);
         Label descCorporativo = new Label("(palestras, workshops, feiras de negócios)");
         descCorporativo.setFont(Font.font("Arial", 11));
         descCorporativo.setTextFill(Color.DARKSLATEGRAY);
         leftColumn.getChildren().add(new VBox(2, cbCorporativo, descCorporativo));
 
         cbEducacional = new CheckBox("Educacionais");
+        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.EDUCACIONAL, cbEducacional);
         Label descEducacional = new Label("(palestras, seminários, cursos)");
         descEducacional.setFont(Font.font("Arial", 11));
         descEducacional.setTextFill(Color.DARKSLATEGRAY);
         leftColumn.getChildren().add(new VBox(2, cbEducacional, descEducacional));
 
         cbCultural = new CheckBox("Culturais");
+        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.CULTURAL, cbCultural);
         Label descCultural = new Label("(shows, exposições, festivais)");
         descCultural.setFont(Font.font("Arial", 11));
         descCultural.setTextFill(Color.DARKSLATEGRAY);
         leftColumn.getChildren().add(new VBox(2, cbCultural, descCultural));
 
         cbEsportivo = new CheckBox("Esportivos");
+        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.ESPORTIVO, cbEsportivo);
         Label descEsportivo = new Label("(competições, maratonas, torneios)");
         descEsportivo.setFont(Font.font("Arial", 11));
         descEsportivo.setTextFill(Color.DARKSLATEGRAY);
         leftColumn.getChildren().add(new VBox(2, cbEsportivo, descEsportivo));
 
         cbBeneficente = new CheckBox("Beneficentes");
+        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.BENEFICENTE, cbBeneficente);
         Label descBeneficente = new Label("(arrecadação de fundos, campanhas sociais)");
         descBeneficente.setFont(Font.font("Arial", 11));
         descBeneficente.setTextFill(Color.DARKSLATEGRAY);
         rightColumn.getChildren().add(new VBox(2, cbBeneficente, descBeneficente));
 
         cbReligioso = new CheckBox("Religiosos");
+        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.RELIGIOSO, cbReligioso);
         Label descReligioso = new Label("(cultos, retiros, encontros espirituais)");
         descReligioso.setFont(Font.font("Arial", 11));
         descReligioso.setTextFill(Color.DARKSLATEGRAY);
         rightColumn.getChildren().add(new VBox(2, cbReligioso, descReligioso));
 
         cbSocial = new CheckBox("Sociais");
+        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.SOCIAL, cbSocial);
         Label descSocial = new Label("(aniversários, casamentos, confraternizações)");
         descSocial.setFont(Font.font("Arial", 11));
         descSocial.setTextFill(Color.DARKSLATEGRAY);
@@ -370,5 +381,9 @@ public class SettingsView extends BorderPane {
         if(this.avatarView != null && avatarImagem != null) {
             this.avatarView.setImage(avatarImagem);
         }
+    }
+
+    public Map<TemaPreferencia, CheckBox> getMapaDeCheckBoxesDeTemas() {
+        return mapaDeCheckBoxesDeTemas;
     }
 }
