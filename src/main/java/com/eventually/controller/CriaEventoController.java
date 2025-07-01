@@ -19,7 +19,7 @@ import java.time.LocalTime;
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe responsável pela comunicação do modal de "Criar evento" com o backend.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.06
+ * @version 1.07
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
  * @since 2025-06-19
@@ -190,6 +190,8 @@ public class CriaEventoController {
                     sistemaDeLogger.info("Imagem válida (proporção 16:10) selecionada: " + arquivoSelecionado.getName() + " (" + (int)larguraImagem + "x" + (int)alturaImagem + ")");
                     imageFinal = imagemSelecionada;
                     criaEventoModal.setPreviewImage(imageFinal);
+                    this.arquivoFinal = arquivoSelecionado;
+
                     criaEventoModal.setArquivoSelecionado(arquivoSelecionado);
                 } else {
                     sistemaDeLogger.warn("Imagem com proporção inválida selecionada: " +

@@ -11,7 +11,7 @@ import java.util.*;
  * datas de início e término, quantidade de participantes, classificação etária, presença de
  * certificado e participantes do evento.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.03
+ * @version 1.04
  * @since 2025-04-04
  */
 public class EventoModel {
@@ -42,7 +42,6 @@ public class EventoModel {
         this.formato = formato;
         this.linkAcesso = linkAcesso;
         this.localizacao = localizacao;
-        this.fotoEvento = new Image(getClass().getResourceAsStream("/images/evento-padrao.jpg"));
         this.nParticipantes = nParticipantes;
         this.dataInicial = dataInicial;
         this.horaInicial = horaInicial;
@@ -52,6 +51,12 @@ public class EventoModel {
         this.participantes =  new ArrayList<UsuarioModel>();;
         this.estadoDoEvento = true;//comeca ativo
         this.isFinalizado = false;//comeca não finalizado
+
+        if (fotoEvento != null) {
+            this.fotoEvento = fotoEvento;
+        } else {
+            this.fotoEvento = new Image(getClass().getResourceAsStream("/images/evento-padrao.jpg"));
+        }
     }
 
     /**
