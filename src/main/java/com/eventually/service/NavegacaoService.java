@@ -1,6 +1,7 @@
 package com.eventually.service;
 
 import com.eventually.controller.*;
+import com.eventually.model.EventoModel;
 import com.eventually.model.UsuarioModel;
 import com.eventually.view.*;
 import javafx.scene.Scene;
@@ -13,18 +14,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.List;
 
 /** PASSÍVEL DE ALTERÇÕES
  * Serviço responsável por gerenciar a navegação entre as diferentes telas da aplicação, centraliza a lógica de
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.06
+ * @version 1.07
  * @since 2025-06-19
  */
 public class NavegacaoService {
     private final Stage primaryStage;
+
+    private UsuarioSessaoService usuarioSessaoService;
+
     private final TelaService telaService;
+
     private static final Logger sistemaDeLogger = LoggerFactory.getLogger(NavegacaoService.class);
 
     /**
@@ -32,6 +38,9 @@ public class NavegacaoService {
      * @param primaryStage o palco principal da aplicação, onde as cenas serão definidas.
      */
     public NavegacaoService(Stage primaryStage) {
+        this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
+        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService.");
+
         this.primaryStage = primaryStage;
         this.telaService = new TelaService();
     }
@@ -324,12 +333,21 @@ public class NavegacaoService {
      * Neste método é manipulado o clique no cartão de evento da tela de início e, em
      * caso de erro, é exibida uma mensagem no console.
      */
-    public void abrirModalVerEvento(HomeView.EventoH eventoH) {
+    public void abrirModalVerEvento(String emailRecebido, HomeView.EventoH eventoH) {
         sistemaDeLogger.info("Método abrirModalVerEvento() chamado.");
         try {
-            InscricaoModal modalInscricao = new InscricaoModal();
-            InscricaoController modalController = new InscricaoController(modalInscricao,eventoH);
-            modalInscricao.setInscricaoController(modalController);
+            List<EventoModel> listaDeEventosCriados = usuarioSessaoService.procurarEventosCriados(emailRecebido);
+            List<EventoModel> listaDeEventosInscritos = usuarioSessaoService.procurarEventosInscritos(emailRecebido);
+
+            EventoModal modal = new EventoModal();
+
+            EventoController modalController = new EventoController(
+                    modal,
+                    eventoH,
+                    listaDeEventosCriados,
+                    listaDeEventosInscritos
+            );
+            modal.setInscricaoController(modalController);
 
             Stage modalStage = new Stage();
             modalStage.initModality(Modality.APPLICATION_MODAL);
@@ -337,7 +355,7 @@ public class NavegacaoService {
             modalStage.initStyle(StageStyle.TRANSPARENT);
             modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
 
-            Scene modalScene = new Scene(modalInscricao);
+            Scene modalScene = new Scene(modal);
 
             modalStage.setOnShown(event -> {
                 javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
@@ -346,12 +364,12 @@ public class NavegacaoService {
             });
 
             modalScene.setFill(Color.TRANSPARENT);
-            modalScene.getStylesheets().add(getClass().getResource("/styles/exibicao-styles.css").toExternalForm());
+            modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
             modalStage.setScene(modalScene);
 
             modalStage.showAndWait();
         } catch (Exception ex) {
-            sistemaDeLogger.error("Erro ao abrir modal para Criar EventoH: " + ex.getMessage());
+            sistemaDeLogger.error("Erro ao abrir modal para exibir evento: " + ex.getMessage());
             ex.printStackTrace();
         }
     }

@@ -17,6 +17,43 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 0, 0);
 }
 
+.card-dot {
+    -fx-fill: #9A009A;
+}
+
+.tag-label {
+    -fx-background-color: #FFE1FD;
+    -fx-text-fill: #C93ACD;
+    -fx-font-family: "Poppins";
+    -fx-font-size: 12px;
+    -fx-padding: 5px 10px;
+    -fx-background-radius: 15px;
+}
+
+.formato-label {
+    -fx-background-color: #573acd;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "Poppins";
+    -fx-font-size: 12px;
+    -fx-padding: 5px 10px;
+    -fx-background-radius: 15px;
+}
+
+.hcard-title {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-padding: 2px 0 0 0;
+}
+
+.hcard-date {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #7A2074;
+}
+
 .image-preview-container {
     -fx-border-color: #888888;
     -fx-border-width: 1px;
@@ -121,6 +158,25 @@
     -fx-background-color: #A329A8;
 }
 .modal-interact-button:disabled {
+    -fx-background-color: #cccccc;
+    -fx-opacity: 0.7;
+}
+
+.modal-interact-button-secondary{
+    -fx-font-family: 'Poppins Bold';
+    -fx-pref-height: 40px;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+    -fx-background-color: #c93acd;
+    -fx-pref-width: 160px;
+}
+.modal-interact-button-secondary {
+    -fx-background-color: #e05ce4;
+}
+.modal-interact-button-secondary {
     -fx-background-color: #cccccc;
     -fx-opacity: 0.7;
 }

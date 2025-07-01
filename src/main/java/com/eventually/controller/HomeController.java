@@ -5,7 +5,6 @@ import com.eventually.model.FormatoSelecionado;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.service.*;
 import com.eventually.view.*;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -246,6 +245,6 @@ public class HomeController {
     }
 
     public void abrir(HomeView.EventoH eventoH) {
-        navegacaoService.abrirModalVerEvento(eventoH);
+        navegacaoService.abrirModalVerEvento(emailRecebido, eventoH);
     }
 }
