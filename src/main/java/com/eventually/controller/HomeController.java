@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.07
+ * @version 1.08
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -210,11 +211,9 @@ public class HomeController {
         String titulo = model.getNomeEvento();
         String local = model.getFormato() == FormatoSelecionado.ONLINE ? "Evento Online" : model.getLocalizacao();
         Image imagem = model.getFotoEvento();
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE dd, MMM uuuu", new Locale("pt", "BR"));
         String dataHora1 = String.format("%s - %s", model.getDataInicial().format(formatter).toUpperCase(), model.getHoraInicial());
         String dataHora2 = String.format("%s - %s", model.getDataFinal().format(formatter).toUpperCase(), model.getHoraFinal());
-
         String descricao = model.getDescricao();
 
         int inscritos = model.getParticipantes().size();
@@ -226,10 +225,16 @@ public class HomeController {
         Set<String> preferencias = model.getTemasEvento().stream()
                 .map(Enum::toString)
                 .collect(Collectors.toSet());
-
         String categoria = preferencias.stream().findFirst().orElse("Geral");
 
+        String linkAcesso = model.getLinkAcesso();
+        LocalDate dataI = model.getDataInicial();
+        LocalDate dataF = model.getDataFinal();
+        String horaI = String.valueOf(model.getHoraInicial());
+        String horaF = String.valueOf(model.getHoraFinal());
+
         return new HomeView.EventoH(
+                model.getId(),
                 titulo,
                 local,
                 dataHora1,
@@ -240,7 +245,12 @@ public class HomeController {
                 inscritos,
                 capacidade,
                 formatoStr,
-                preferencias
+                preferencias,
+                linkAcesso,
+                dataI,
+                dataF,
+                horaI,
+                horaF
         );
     }
 

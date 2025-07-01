@@ -1,23 +1,18 @@
 package com.eventually.controller;
-import com.eventually.dto.AutenticarUsuarioDto;
-import com.eventually.model.UsuarioModel;
-import com.eventually.service.AlertaService;
 import com.eventually.service.NavegacaoService;
 import com.eventually.service.ResultadoAutenticacao;
 import com.eventually.service.UsuarioSessaoService;
 import com.eventually.view.*;
-import javafx.scene.Scene;
+import com.eventually.view.modal.AlertModal;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Optional;
 
 /**
  * Classe controladora da tela de login, é responsável pela comunicação da tela de login com o backend.
  * Contém todos os métodos como privados para que seu acesso seja somente por esta classe.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.02
+ * @version 1.03
  * @since 2025-05-07
  * @author Gabriella Tavares Costa Corrêa (Documentação e revisão da da estrutura e parte lógica da classe)
  * @since 2025-05-14

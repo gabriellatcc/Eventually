@@ -1,4 +1,4 @@
-package com.eventually.view;
+package com.eventually.view.modal;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,7 +16,7 @@ import javafx.stage.StageStyle;
 /**
  * Classe do modal de aviso de "Senha incorreta ou email não cadastrado" da tela de login.
  * @author Yuri Garcia Maia
- * @version 1.01
+ * @version 1.02
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-07-01

@@ -3,7 +3,7 @@ package com.eventually.controller;
 import com.eventually.service.AlertaService;
 import com.eventually.service.UsuarioAtualizacaoService;
 import com.eventually.service.UsuarioSessaoService;
-import com.eventually.view.MudancaImagemModal;
+import com.eventually.view.modal.MudancaImagemModal;
 import com.eventually.view.SettingsView;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
@@ -17,7 +17,7 @@ import java.io.File;
  * Controller para a lógica do modal de seleção de imagem.
  * Gerencia as ações de abrir o seletor de arquivos, pré-visualizar e salvar.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.0
+ * @version 1.01
  * @since 2025-06-24
  */
 public class MudancaImagemController {

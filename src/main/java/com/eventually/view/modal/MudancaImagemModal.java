@@ -1,4 +1,4 @@
-package com.eventually.view;
+package com.eventually.view.modal;
 
 import com.eventually.controller.MudancaImagemController;
 import javafx.geometry.Insets;
@@ -18,7 +18,7 @@ import java.io.File;
 /**
  * Classe para o modal de seleção de imagem.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.0
+ * @version 1.01
  * @since 2025-06-24
  */
 public class MudancaImagemModal extends Parent {

@@ -4,7 +4,7 @@ package com.eventually.model;
  * Cada constante representa um tipo de formato que pode ser associado
  * a um evento.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.0
+ * @version 1.01
  * @since 2025-05-15
  */
 public enum FormatoSelecionado {

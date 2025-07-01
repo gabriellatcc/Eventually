@@ -2,6 +2,7 @@ package com.eventually.service;
 
 import com.eventually.model.TemaPreferencia;
 import com.eventually.model.UsuarioModel;
+import com.eventually.view.HomeView;
 import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import java.util.Set;
  * Esta classe utiliza a instância única de {@link UsuarioCadastroService} para acessar e manipular os dados
  * dos usuários em memória.
  * @author Gabriella Tavares Costa Corrêa (Criação,documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.03
+ * @version 1.04
  * @since 2025-05-18
  */
 public final class UsuarioAtualizacaoService {
@@ -227,5 +228,8 @@ public final class UsuarioAtualizacaoService {
             alertaService.alertarErro("Ocorreu um erro inesperado ao salvar suas preferências.");
             return false;
         }
+    }
+
+    public void atualizarEventoParticipado(String email, HomeView.EventoH eventoH) {
     }
 }

@@ -1,20 +1,16 @@
-package com.eventually.view;
+package com.eventually.view.modal;
 import com.eventually.controller.EsqueceuSenhaController;
 import com.eventually.controller.LoginController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * Classe para o modal de "Esqueceu sua senha".
  * Contém métodos públicos para que sejam acessados por outras classes.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e da estrutura da classe)
- * @version 1.02
+ * @version 1.03
  * @since 23-05-2025
  */
 public class EsqueceuSenhaModal extends Parent {

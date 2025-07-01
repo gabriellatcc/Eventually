@@ -1,4 +1,4 @@
-package com.eventually.view;
+package com.eventually.view.modal;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,11 +16,11 @@ import javafx.stage.StageStyle;
 
 /**
  * Esta classe representa o modal de confirmar encerrar sessão.
- * @author Yuri Garcia Maia
+ * @author Gabriella Tavares Costa Corrêa
  * @version 1.0
- * @since 2025-06-22
+ * @since 2025-07-01
  */
-public class LogoutConfirmModal {
+public class ModalConfirmarExclusao {
     private boolean result = false;
 
     /**
@@ -49,11 +49,11 @@ public class LogoutConfirmModal {
         rect.setArcHeight(40);
         rootLayout.setClip(rect);
 
-        Label title = new Label("Encerrar sessão?");
+        Label title = new Label("Excluir evento");
         title.getStyleClass().add("title-label-modal");
         title.setStyle("-fx-font-size: 26px;");
 
-        Label message = new Label("Tem certeza que deseja\nencerrar a sessão?");
+        Label message = new Label("Tem certeza que deseja\ndeletar o evento?\uD83D\uDE14");
         message.getStyleClass().add("label-modal");
         message.setStyle("-fx-font-weight: normal; -fx-text-alignment: center; -fx-font-size: 16px;");
 

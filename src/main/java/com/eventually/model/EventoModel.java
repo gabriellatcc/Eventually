@@ -11,7 +11,7 @@ import java.util.*;
  * datas de início e término, quantidade de participantes, classificação etária, presença de
  * certificado e participantes do evento.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.04
+ * @version 1.05
  * @since 2025-04-04
  */
 public class EventoModel {
@@ -48,7 +48,7 @@ public class EventoModel {
         this.dataFinal = dataFinal;
         this.horaFinal = horaFinal;
         this.temasEvento = temasEvento;
-        this.participantes =  new ArrayList<UsuarioModel>();;
+        this.participantes =  new ArrayList<UsuarioModel>();
         this.estadoDoEvento = true;//comeca ativo
         this.isFinalizado = false;//comeca não finalizado
 

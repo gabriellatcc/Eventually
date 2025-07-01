@@ -1,4 +1,4 @@
-package com.eventually.view;
+package com.eventually.view.modal;
 
 import com.eventually.controller.CriaEventoController;
 import javafx.application.Platform;
@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Classe responsável pelo modal de "Criar evento".
  * @author Yuri Garcia Maia
- * @version 1.03
+ * @version 1.04
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação e parte lógica)
  * @since 2025-06-19

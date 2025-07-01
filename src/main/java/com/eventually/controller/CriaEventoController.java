@@ -5,7 +5,7 @@ import com.eventually.dto.PreferenciaFormatoDto;
 import com.eventually.dto.PreferenciasUsuarioDto;
 import com.eventually.service.AlertaService;
 import com.eventually.service.EventoCriacaoService;
-import com.eventually.view.CriaEventoModal;
+import com.eventually.view.modal.CriaEventoModal;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -19,7 +19,7 @@ import java.time.LocalTime;
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe responsável pela comunicação do modal de "Criar evento" com o backend.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.07
+ * @version 1.08
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
  * @since 2025-06-19

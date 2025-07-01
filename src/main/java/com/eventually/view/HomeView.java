@@ -1,7 +1,6 @@
 package com.eventually.view;
 
 import com.eventually.controller.HomeController;
-import com.eventually.service.NavegacaoService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -11,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -19,7 +19,7 @@ import java.util.Set;
  * Esta classe é responsável por exibir a página principal
  * com filtros de eventoHS e listagem de evento disponíveis.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.09
+ * @version 1.10
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-05-29
@@ -42,6 +42,7 @@ public class HomeView extends BorderPane {
     private FlowPane flowPaneTags;
 
     public record EventoH(
+            int id,
             String titulo,
             String local,
             String dataHoraInicio,
@@ -52,7 +53,12 @@ public class HomeView extends BorderPane {
             int inscritos,
             int capacidade,
             String formato,
-            Set<String> preferencias
+            Set<String> preferencias,
+            String linkAcesso,
+            LocalDate dataI,
+            LocalDate dataF,
+            String horaI,
+            String horaF
     ) {}
 
     /**

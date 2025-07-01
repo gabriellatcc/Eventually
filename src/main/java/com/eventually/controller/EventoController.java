@@ -1,13 +1,17 @@
 package com.eventually.controller;
 
 import com.eventually.model.EventoModel;
+import com.eventually.service.AlertaService;
+import com.eventually.service.NavegacaoService;
+import com.eventually.service.UsuarioAtualizacaoService;
 import com.eventually.view.HomeView;
-import com.eventually.view.EventoModal;
+import com.eventually.view.modal.EventoModal;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.util.List;
 import java.util.Set;
@@ -16,25 +20,39 @@ import java.util.Set;
  * Controller para o modal de Inscrição/Visualização de Evento.
  * Gerencia as interações do usuário com o modal.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e parte lógica)
- * @version 1.01
+ * @version 1.02
  * @since 2025-06-27
  */
 public class EventoController {
     private final EventoModal view;
     private HomeView.EventoH eventoH;
+
     private List<EventoModel> eventosCriadosPeloUsuario;
     private List<EventoModel> eventosInscritosPeloUsuario;
+
+    private UsuarioAtualizacaoService usuarioA;
+    private NavegacaoService navegacaoService;
+
+    private AlertaService alertaService =new AlertaService();
+
+    private String email;
 
     /**
      * Construtor que associa a View (o modal) com este Controller.
      * @param view a instância de EventoModal que este controller gerenciará.
      * @param eventoH o evento a ser exibido
      */
-    public EventoController(EventoModal view, HomeView.EventoH eventoH,List<EventoModel> eventosCriados, List<EventoModel> eventosInscritos) {
+    public EventoController(String email, EventoModal view, HomeView.EventoH eventoH,List<EventoModel> eventosCriados,
+                            List<EventoModel> eventosInscritos, Stage primaryStage) {
         this.view = view;
         this.eventoH = eventoH;
         this.eventosCriadosPeloUsuario = eventosCriados;
         this.eventosInscritosPeloUsuario = eventosInscritos;
+        this.usuarioA = UsuarioAtualizacaoService.getInstancia();
+
+        this.email=email;
+        this.navegacaoService = new NavegacaoService(primaryStage);
+
         initialize();
     }
 
@@ -87,50 +105,62 @@ public class EventoController {
         VBox containerDeBotoes = view.getVbBotoesAcao();
         containerDeBotoes.getChildren().clear();
 
-        if (eventosCriadosPeloUsuario.contains(eventoH)) {
+        boolean ehCriador = eventosCriadosPeloUsuario.stream()
+                .anyMatch(eventoModel -> eventoModel.getId() == eventoH.id());
+
+        boolean estaInscrito = eventosInscritosPeloUsuario.stream()
+                .anyMatch(eventoModel -> eventoModel.getId() == eventoH.id());
+
+        if (ehCriador) {
             Button btnEditar = view.getBtnEditar();
             Button btnExcluir = view.getBtnExcluir();
 
-  //          btnEditar.setOnAction(e -> handleEditar());
-    //        btnExcluir.setOnAction(e -> handleExcluir());
+            btnEditar.setOnAction(e -> processarEditar());
+            btnExcluir.setOnAction(e -> processarExcluir());
 
             HBox hboxOrganizerButtons = new HBox(10, btnEditar, btnExcluir);
             hboxOrganizerButtons.setAlignment(Pos.CENTER);
 
             containerDeBotoes.getChildren().add(hboxOrganizerButtons);
 
-        } else if (eventosInscritosPeloUsuario.contains(eventoH)) {
+        } else if (estaInscrito) {
             Button btnCancelar = view.getBtnCancelarInscricao();
             Button btnVer = view.getBtnVerParticipantes();
 
-      //      btnCancelar.setOnAction(e -> handleCancelarInscricao());
-        //    btnVer.setOnAction(e -> handleVerParticipantes());
+            btnCancelar.setOnAction(e -> processarCancelarInscricao());
+            btnVer.setOnAction(e -> processarVerParticipantes());
 
             containerDeBotoes.getChildren().addAll(btnCancelar, btnVer);
 
         } else {
             Button btnInscrever = view.getBtnInscrever();
-          //  btnInscrever.setOnAction(e -> handleInscrever());
-
-            containerDeBotoes.getChildren().add(btnInscrever);
+            btnInscrever.setOnAction(e -> processarInscricao());
+            HBox hboxInscrever = new HBox(btnInscrever);
+            hboxInscrever.setAlignment(Pos.CENTER);
+            containerDeBotoes.getChildren().add(hboxInscrever);
         }
     }
-/*
-    private void handleEditar() {
-       navegacaoService.abrirModalEdicao();
+    private void processarEditar() {
+       navegacaoService.abrirModalEdicao(eventoH);
+        view.close();
     }
-    private void handleExcluir() {
-        navegacaoService.abrirModalConfimarExclusao();
+    private void processarExcluir() {
+        navegacaoService.abrirModalConfimarExclusao(eventoH);
+        view.close();
     }
-    private void handleCancelarInscricao() {
-        navegacaoService.abrirModalCancInscricao();
+    private void processarCancelarInscricao() {
+        navegacaoService.abrirModalCancInscricao(eventoH);
+        view.close();
     }
-    private void handleVerParticipantes() {
-        navegacaoService.abrirModalParticipantes();
+    private void processarVerParticipantes() {
+        navegacaoService.abrirModalParticipantes(eventoH);
+        view.close();
     }
-    private void handleInscrever() {
-        //se inscrever e alert info
 
+    private void processarInscricao() {
+        usuarioA.atualizarEventoParticipado(email, eventoH);
+
+        alertaService.alertarInfo("Você está inscrito com sucesso!");
+        view.close();
     }
-    */
 }

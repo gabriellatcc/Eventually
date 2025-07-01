@@ -2,16 +2,14 @@ package com.eventually.controller;
 
 import com.eventually.service.AlertaService;
 import com.eventually.service.EmailService;
-import com.eventually.view.EsqueceuSenhaModal;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import com.eventually.view.modal.EsqueceuSenhaModal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Classe controladora do modal de "Esqueceu sua senha", é responsável pela comunicação do modal com o backend.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e da estrutura da classe)
- * @version 1.02
+ * @version 1.03
  * @since 2025-05-23
  */
 public class  EsqueceuSenhaController {

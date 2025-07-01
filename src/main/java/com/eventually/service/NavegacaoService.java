@@ -4,6 +4,7 @@ import com.eventually.controller.*;
 import com.eventually.model.EventoModel;
 import com.eventually.model.UsuarioModel;
 import com.eventually.view.*;
+import com.eventually.view.modal.*;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -21,13 +22,16 @@ import java.util.List;
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.07
+ * @version 1.08
  * @since 2025-06-19
  */
 public class NavegacaoService {
     private final Stage primaryStage;
 
     private UsuarioSessaoService usuarioSessaoService;
+    private EventoExclusaoService eventoExclusaoService;
+
+    private AlertaService alertaService =new AlertaService();
 
     private final TelaService telaService;
 
@@ -39,7 +43,8 @@ public class NavegacaoService {
      */
     public NavegacaoService(Stage primaryStage) {
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
-        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService.");
+        this.eventoExclusaoService = EventoExclusaoService.getInstancia();
+        sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService e EventoExclusaoService.");
 
         this.primaryStage = primaryStage;
         this.telaService = new TelaService();
@@ -341,19 +346,22 @@ public class NavegacaoService {
 
             EventoModal modal = new EventoModal();
 
-            EventoController modalController = new EventoController(
-                    modal,
-                    eventoH,
-                    listaDeEventosCriados,
-                    listaDeEventosInscritos
-            );
-            modal.setInscricaoController(modalController);
-
             Stage modalStage = new Stage();
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.initOwner(primaryStage);
             modalStage.initStyle(StageStyle.TRANSPARENT);
             modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
+
+            EventoController modalController = new EventoController(
+                    emailRecebido,
+                    modal,
+                    eventoH,
+                    listaDeEventosCriados,
+                    listaDeEventosInscritos,
+                    modalStage
+            );
+            modal.setInscricaoController(modalController);
+
 
             Scene modalScene = new Scene(modal);
 
@@ -438,5 +446,70 @@ public class NavegacaoService {
             sistemaDeLogger.error("Erro ao abrir o modal: "+e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public void abrirModalEdicao(HomeView.EventoH eventoH) {
+        sistemaDeLogger.info("Método abrirModalEdicao() chamado.");
+        try {
+            EditaEventoModal modal=new EditaEventoModal();
+            EditaEventoController modalController= new EditaEventoController(modal,eventoH);
+            modal.setEditaEventoController(modalController);
+            Stage modalStage = new Stage();
+
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(primaryStage);
+
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
+
+            Scene modalScene = new Scene(modal, modalStage.getWidth()/2,  modalStage.getHeight()/2);
+
+            modalStage.setOnShown(event -> {
+                javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+                modalStage.setX((screenBounds.getWidth() - modalStage.getWidth()) / 2);
+                modalStage.setY((screenBounds.getHeight() - modalStage.getHeight()) / 2);
+            });
+
+            modalScene.setFill(Color.TRANSPARENT);
+            modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
+            modalStage.setScene(modalScene);
+
+            modalStage.showAndWait();
+        } catch (Exception ex) {
+            sistemaDeLogger.error("Erro ao abrir modal para editar Evento: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    public void abrirModalConfimarExclusao(HomeView.EventoH eventoH) {
+        ModalConfirmarExclusao confirmModal = new ModalConfirmarExclusao();
+        int id = eventoH.id();
+
+        boolean usuarioConfirmou = confirmModal.showAndWait(primaryStage);
+        if (usuarioConfirmou) {
+
+            eventoExclusaoService.alterarEstadoDoEvento(id,false);
+            alertaService.alertarInfo("Evento excluído com sucesso!");
+        } else {
+            System.out.println("O usuário excluiu o evento.");
+        }
+    }
+
+    public void abrirModalCancInscricao(HomeView.EventoH eventoH) {
+        CancelaInscricaoModal confirmModal = new CancelaInscricaoModal();
+        int id = eventoH.id();
+
+        boolean usuarioConfirmou = confirmModal.showAndWait(primaryStage);
+        if (usuarioConfirmou) {
+
+            eventoExclusaoService.alterarEstadoDoEvento(id,false);
+            alertaService.alertarInfo("Evento excluído com sucesso!");
+        } else {
+            System.out.println("O usuário cancelou a inscricao do evento.");
+        }
+    }
+
+    public void abrirModalParticipantes(HomeView.EventoH eventoH) {
+
     }
 }
