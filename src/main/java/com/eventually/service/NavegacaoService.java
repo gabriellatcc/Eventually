@@ -19,7 +19,7 @@ import java.io.File;
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.03
+ * @version 1.04
  * @since 2025-06-19
  */
 public class NavegacaoService {
@@ -324,11 +324,11 @@ public class NavegacaoService {
      * Neste método é manipulado o clique no cartão de evento da tela de início e, em
      * caso de erro, é exibida uma mensagem no console.
      */
-    public void abrirModalVerEvento() {
+    public void abrirModalVerEvento(HomeView.EventoH eventoH) {
         sistemaDeLogger.info("Método abrirModalVerEvento() chamado.");
         try {
             InscricaoModal modalInscricao = new InscricaoModal();
-            InscricaoController modalController = new InscricaoController(modalInscricao);
+            InscricaoController modalController = new InscricaoController(modalInscricao,eventoH);
             modalInscricao.setInscricaoController(modalController);
 
             Stage modalStage = new Stage();

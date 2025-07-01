@@ -15,12 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-/** PASSÍVEL DE ALTERAÇÕES
+/**
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.04
+ * @version 1.05
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -174,39 +175,43 @@ public class HomeController {
      */
     private HomeView.EventoH converterParaView(EventoModel model) {
         String titulo = model.getNomeEvento();
-
-        String local;
-        if (model.getFormato() == FormatoSelecionado.ONLINE) {
-            local = "Evento Online";
-        } else {
-            local = model.getLocalizacao();
-        }
-
-        String categoria;
-        Set<TemaPreferencia> temas = model.getTemasEvento();
-
-        if (temas == null || temas.isEmpty()) {
-            categoria = "Geral";
-        } else {
-            categoria = temas.stream()
-                    .findFirst()
-                    .map(t -> t.toString().substring(0, 1).toUpperCase() + t.toString().substring(1).toLowerCase())
-                    .get();
-        }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE dd, MMM yyyy", new Locale("pt", "BR"));
-        String dataFormatada1 = model.getDataInicial().format(formatter).toUpperCase();
-        String dataHora1 = String.format("%s - %s", dataFormatada1, model.getHoraInicial());
-
-        String dataFormatada2 = model.getDataFinal().format(formatter).toUpperCase();
-        String dataHora2 = String.format("%s - %s", dataFormatada2, model.getHoraFinal());
-
+        String local = model.getFormato() == FormatoSelecionado.ONLINE ? "Evento Online" : model.getLocalizacao();
         Image imagem = model.getFotoEvento();
 
-        return new HomeView.EventoH(titulo, local, dataHora1, dataHora2, categoria, imagem);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE dd, MMM uuuu", new Locale("pt", "BR"));
+        String dataHora1 = String.format("%s - %s", model.getDataInicial().format(formatter).toUpperCase(), model.getHoraInicial());
+        String dataHora2 = String.format("%s - %s", model.getDataFinal().format(formatter).toUpperCase(), model.getHoraFinal());
+
+        String descricao = model.getDescricao();
+
+        int inscritos = model.getParticipantes().size();
+        int capacidade = model.getnParticipantes();
+
+        String formatoStr = model.getFormato().toString();
+        formatoStr = formatoStr.substring(0, 1).toUpperCase() + formatoStr.substring(1).toLowerCase();
+
+        Set<String> preferencias = model.getTemasEvento().stream()
+                .map(Enum::toString)
+                .collect(Collectors.toSet());
+
+        String categoria = preferencias.stream().findFirst().orElse("Geral");
+
+        return new HomeView.EventoH(
+                titulo,
+                local,
+                dataHora1,
+                dataHora2,
+                categoria,
+                imagem,
+                descricao,
+                inscritos,
+                capacidade,
+                formatoStr,
+                preferencias
+        );
     }
 
-    public void abrir() {
-        navegacaoService.abrirModalVerEvento();
+    public void abrir(HomeView.EventoH eventoH) {
+        navegacaoService.abrirModalVerEvento(eventoH);
     }
 }

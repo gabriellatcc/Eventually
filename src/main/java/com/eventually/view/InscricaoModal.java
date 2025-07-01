@@ -7,8 +7,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Separator;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
@@ -18,7 +16,7 @@ import javafx.stage.Stage;
  * Classe responsável pelo modal de "Inscrição no Evento".
  * Exibe os detalhes de um evento específico e permite que o usuário interaja com ele.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e parte lógica)
- * @version 1.0
+ * @version 1.01
  * @since 2025-06-27
  */
 public class InscricaoModal extends Parent {
@@ -26,12 +24,15 @@ public class InscricaoModal extends Parent {
 
     private ImageView imgTopoEvento;
     private Label lblTituloEvento;
-    private Label lblDataHoraEvento;
+    private Label lblDataHoraInicio;
+    private Label lblDataHoraFim;
+
     private Label lblDescricao;
     private Label lblParticipantesInscritos;
     private Label lblVagasDisponiveis;
     private ProgressBar pbVagas;
     private Label lblLocalizacao;
+    private Label lblFormato;
     private FlowPane flowPaneTags;
 
     private Button btnInscrever;
@@ -55,8 +56,6 @@ public class InscricaoModal extends Parent {
     private void setup() {
         VBox layout = criarLayoutPrincipal();
         this.getChildren().add(layout);
-
-        preencherDadosExemplo();
     }
 
     /**
@@ -70,7 +69,6 @@ public class InscricaoModal extends Parent {
         VBox layout = new VBox(15);
         layout.setAlignment(Pos.TOP_CENTER);
         layout.setPadding(new Insets(0));
-        layout.getStyleClass().add("root-pane");
         layout.getStyleClass().add("layout-pane");
 
         Rectangle rect = new Rectangle(MODAL_WIDTH, MODAL_HEIGHT);
@@ -78,9 +76,7 @@ public class InscricaoModal extends Parent {
         rect.setArcHeight(20);
         layout.setClip(rect);
 
-
-        Image image = new Image(getClass().getResourceAsStream("/images/evento-padrao.jpg"));
-        imgTopoEvento = new ImageView(image);
+        imgTopoEvento = new ImageView();
         imgTopoEvento.setFitWidth(MODAL_WIDTH);
         imgTopoEvento.setFitHeight(180);
         imgTopoEvento.setPreserveRatio(false);
@@ -89,17 +85,24 @@ public class InscricaoModal extends Parent {
         contentContainer.setPadding(new Insets(10, 25, 20, 25));
         contentContainer.setAlignment(Pos.TOP_LEFT);
 
-        lblTituloEvento = new Label("Título do evento");
+        lblTituloEvento = new Label();
         lblTituloEvento.getStyleClass().add("title-label-modal");
 
-        lblDataHoraEvento = new Label("Sexta-Feira, 20 de junho, 2025 - 15:00h às 17:00h");
-        lblDataHoraEvento.getStyleClass().add("subtitle-label-modal");
-        lblDataHoraEvento.setStyle("-fx-font-size: 14px;");
+
+        HBox hbDataHora = new HBox(0);
+        hbDataHora.setAlignment(Pos.CENTER_LEFT);
+        lblDataHoraInicio = new Label();
+        lblDataHoraInicio.getStyleClass().add("hcard-date");
+        Label lblSeparador = new Label(" | ");
+        lblDataHoraFim = new Label();
+        lblDataHoraFim.getStyleClass().add("hcard-date");
+        hbDataHora.getChildren().addAll(lblDataHoraInicio, lblSeparador, lblDataHoraFim);
+
 
         Label lblHeaderDescricao = new Label("Descrição");
         lblHeaderDescricao.getStyleClass().add("title-label-modal");
         lblHeaderDescricao.setStyle("-fx-font-size: 20px;");
-        lblDescricao = new Label("Um evento inovador com palestras e dinâmicas para melhor aprendizagem dos participantes");
+        lblDescricao = new Label();
         lblDescricao.setWrapText(true);
         lblDescricao.getStyleClass().add("label-modal");
 
@@ -111,17 +114,21 @@ public class InscricaoModal extends Parent {
         hbVagas.setAlignment(Pos.CENTER_LEFT);
 
         Label iconParticipante = new Label("\uD83D\uDC64");
-        iconParticipante.setStyle("-fx-font-size: 24px; -fx-text-fill: #9747FF;");
+        iconParticipante.setStyle("-fx-font-size: 24px; -fx-text-fill: #c93acd;");
 
-        lblParticipantesInscritos = new Label("30 participantes inscritos");
+        lblParticipantesInscritos = new Label();
         lblParticipantesInscritos.getStyleClass().add("label-modal");
 
         Pane spacer = new Pane();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        lblVagasDisponiveis = new Label("20 de 50 vagas Disponíveis");
+        lblVagasDisponiveis = new Label();
         lblVagasDisponiveis.getStyleClass().add("label-modal");
         lblVagasDisponiveis.setAlignment(Pos.CENTER_RIGHT);
+
+        lblFormato = new Label();
+        lblFormato.getStyleClass().add("label-modal");
+        lblFormato.setAlignment(Pos.CENTER_RIGHT);
 
         hbVagas.getChildren().addAll(iconParticipante, lblParticipantesInscritos, spacer, lblVagasDisponiveis);
 
@@ -156,47 +163,17 @@ public class InscricaoModal extends Parent {
         hbSair.setAlignment(Pos.CENTER);
         hbSair.setPadding(new Insets(10, 0, 0, 0));
 
-
         contentContainer.getChildren().addAll(
-                lblTituloEvento, lblDataHoraEvento,
-                new Separator(),
+                lblTituloEvento, hbDataHora,
                 lblHeaderDescricao, lblDescricao,
-                new Separator(),
-                lblHeaderVagas, hbVagas, pbVagas,
+                lblHeaderVagas, lblFormato, hbVagas, pbVagas,
                 vbBotoesAcao,
-                new Separator(),
                 lblHeaderLocalizacao, lblLocalizacao,
-                new Separator(),
                 flowPaneTags
         );
 
         layout.getChildren().addAll(imgTopoEvento, contentContainer, hbSair);
         return layout;
-    }
-
-    /**
-     * Popula o modal com os dados de exemplo vistos na imagem.
-     * Em uma aplicação real, um método como `popularDados(Evento evento)` seria chamado pelo Controller.
-     */
-    private void preencherDadosExemplo() {
-        lblTituloEvento.setText("Título do evento");
-        lblDataHoraEvento.setText("Sexta-Feira, 20 de junho, 2025 - 15:00h às 17:00h");
-        lblDescricao.setText("Um evento inovador com palestras e dinâmicas para melhor aprendizagem dos participantes");
-
-        int inscritos = 30;
-        int totalVagas = 50;
-        lblParticipantesInscritos.setText(inscritos + " participantes inscritos");
-        lblVagasDisponiveis.setText((totalVagas - inscritos) + " de " + totalVagas + " vagas Disponíveis");
-        pbVagas.setProgress((double) inscritos / totalVagas);
-
-        lblLocalizacao.setText("Faculty Cruise Technology, Av. Rotary, 383 - Vila Paulista, Cruzeiro - SP, 12701-170");
-
-        String[] tags = {"#educacionais", "#culturais", "#educacionais", "#culturais", "#educacionais", "#culturais"};
-        for (String nomeTag : tags) {
-            Label tagLabel = new Label(nomeTag);
-            tagLabel.getStyleClass().add("tag-label");
-            flowPaneTags.getChildren().add(tagLabel);
-        }
     }
 
     /**
@@ -212,4 +189,33 @@ public class InscricaoModal extends Parent {
     public Button getBtnInscrever() {return btnInscrever;}
     public Button getBtnVerParticipantes() {return btnVerParticipantes;}
     public Button getBtnSair() {return btnSair;}
+
+    //get titulo
+    public Label getLblTituloEvento() {return lblTituloEvento;}
+
+    //get data
+    public Label getLblDataHoraFim() {return lblDataHoraFim;}
+    public Label getLblDataHoraInicio() {return lblDataHoraInicio;}
+
+    //get descricao
+    public Label getLblDescricao() {return lblDescricao;}
+
+    //get inscritos
+    public Label getLblParticipantesInscritos() {return lblParticipantesInscritos;}
+
+    //get n participantes
+    public Label getLblVagasDisponiveis() {return lblVagasDisponiveis;}
+
+    // get imagem
+    public ImageView getImgTopoEvento() {return imgTopoEvento;}
+
+    //get localizacao
+    public Label getLblLocalizacao() {return lblLocalizacao;}
+
+    // get foramto
+    public Label getLblFormato() {return lblFormato;}
+
+    //get preferencias -> loop de preferencias
+    public FlowPane getFlowPaneTags() {return flowPaneTags;}
+
 }

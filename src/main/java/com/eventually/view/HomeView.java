@@ -12,14 +12,14 @@ import javafx.scene.layout.*;
 import javafx.scene.shape.Circle;
 
 import java.util.List;
+import java.util.Set;
 
 /**
- * PASSÍVEL DE ALTERAÇÕES
  * Classe da tela inicial do sistema.
  * Esta classe é responsável por exibir a página principal
  * com filtros de eventoHS e listagem de evento disponíveis.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.06
+ * @version 1.07
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-05-29
@@ -40,11 +40,19 @@ public class HomeView extends BorderPane {
     private ScrollPane scrollEventos;
     private GridPane gridEventos;
 
-    private NavegacaoService navegacaoService;
-
-    private EventoHCartao eventoHCartao;
-
-    public record EventoH(String titulo, String local, String dataHoraInicio, String dataHoraFim, String categoria, Image imagem) {}
+    public record EventoH(
+            String titulo,
+            String local,
+            String dataHoraInicio,
+            String dataHoraFim,
+            String categoria,
+            Image imagem,
+            String descricao,
+            int inscritos,
+            int capacidade,
+            String formato,
+            Set<String> preferencias
+    ) {}
 
     /**
      * Construtor da classe {@code HomeView}.
@@ -207,22 +215,11 @@ public class HomeView extends BorderPane {
 
             cardEvento.setCursor(Cursor.HAND);
 
-          /*  cardEvento.setOnMouseClicked(event -> {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Detalhes do Evento");
-
-                alert.setHeaderText("Evento: " + eventoH.titulo());
-                alert.setContentText(
-                        "Local: " + eventoH.local() + "\n" +
-                                "Categoria: " + eventoH.categoria() + "\n" +
-                                "Início: " + eventoH.dataHoraInicio()
-                );
-                alert.showAndWait();
-            });
-*/
+            HomeView.EventoH eventocartaodavez= eventoHS.get(i);
             cardEvento.setOnMouseClicked(event -> {
-                homeController.abrir();
+                homeController.abrir(eventocartaodavez);
             });
+
             int row = i / 3;
             int col = i % 3;
             gridEventos.add(cardEvento, col, row);

@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Classe responsável pelo modal de "Criar evento".
  * @author Yuri Garcia Maia
- * @version 1.0
+ * @version 1.01
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação e parte lógica)
  * @since 2025-06-19
@@ -421,10 +421,6 @@ public class CriaEventoModal extends Parent {
     /**
      * Métodos de encapsulamento getters e setters.
      */
-    public void setPreviewImage(Image image) {
-        this.imgPreview.setImage(image);
-    }
-
     public File getArquivoSelecionado() {return arquivoSelecionado;}
     public void setArquivoSelecionado(File arquivoSelecionado) {
         this.arquivoSelecionado = arquivoSelecionado;
@@ -446,6 +442,11 @@ public class CriaEventoModal extends Parent {
     public TextArea getTaLocalizacao() {return taLocalizacao;}
     public Image getImageEvento() {return imageEvento;}
     public TextField getFldNParticipantes() {return fldNParticipantes;}
+
+    public void setPreviewImage(Image image) {
+        this.imageEvento = image;
+        this.imgPreview.setImage(image);
+    }
 
     public TextField getFldHoraInicio() {return fldHoraInicio;}
     public DatePicker getDatePickerStart() {return datePickerStart;}

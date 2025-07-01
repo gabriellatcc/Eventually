@@ -23,7 +23,7 @@ import java.util.List;
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
  * @author Yuri Garcia Maia (Criação)
  * @since 22-05-2025
- * @version 1.03
+ * @version 1.04
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, lógica e da estrutura da classe)
  * @since 22-05-2025
  */
@@ -40,10 +40,6 @@ public class SettingsView extends BorderPane {
     private CheckBox cbCorporativo, cbBeneficente, cbEducacional, cbCultural, cbEsportivo, cbReligioso, cbSocial;
 
     private ImageView avatarView;
-
-    private final DateTimeFormatter appDateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-    private static final Logger sistemaDeLogger = LoggerFactory.getLogger(SettingsView.class);
 
     /**
      * Construtor da SettingsView.
@@ -367,7 +363,6 @@ public class SettingsView extends BorderPane {
     public List<CheckBox> getThemeCheckBoxes() {return themeCheckBoxes;}
     public void setThemeCheckBoxes(List<CheckBox> themeCheckBoxes) {this.themeCheckBoxes = themeCheckBoxes;}
 
-    public ImageView getAvatarView() {return avatarView;}
     public void setAvatarImagem(Image avatarImagem) {
         if(this.avatarView != null && avatarImagem != null) {
             this.avatarView.setImage(avatarImagem);

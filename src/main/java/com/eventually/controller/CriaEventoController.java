@@ -19,7 +19,7 @@ import java.time.LocalTime;
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe responsável pela comunicação do modal de "Criar evento" com o backend.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.04
+ * @version 1.05
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
  * @since 2025-06-19
@@ -195,9 +195,9 @@ public class CriaEventoController {
                             (int) imagemSelecionada.getWidth() + "x" + (int) imagemSelecionada.getHeight() +
                             " (proporção: " + String.format("%.2f", proporcaoImagem) + ", esperada: " + proporcaoDesejada + ")");
 
+                    this.imageFinal = null;
                     criaEventoModal.setPreviewImage(null);
                     criaEventoModal.setArquivoSelecionado(null);
-                    this.imageFinal = null;
                     this.arquivoFinal = null;
 
                     String mensagem = String.format("A imagem selecionada tem proporção %.2f, mas a proporção esperada é %.1f:%1.f.",

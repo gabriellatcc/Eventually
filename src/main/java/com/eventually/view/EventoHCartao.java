@@ -13,12 +13,11 @@ import javafx.scene.shape.Rectangle;
  * Representa um card de evento.
  * Este componente encapsula a exibição de uma imagem e informações de um evento,
  * como título, data, local e tipo.
- * @version 1.01
+ * @version 1.02
  * @author Yuri Garcia Maia
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-06-28
- *
  *
  */
 public class EventoHCartao extends VBox {
@@ -40,32 +39,33 @@ public class EventoHCartao extends VBox {
     }
 
     private void setupUI() {
-        this.setBorder(new Border(new BorderStroke(Color.RED,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
         this.setPrefSize(CARD_WIDTH, CARD_HEIGHT);
         this.getStyleClass().add("event-h-card");
         this.setAlignment(Pos.TOP_CENTER);
 
-        StackPane imageContainer = new StackPane();
-        imageContainer.setBorder(new Border(new BorderStroke(Color.DEEPPINK,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        imageContainer.setPrefSize(CARD_WIDTH, IMAGE_HEIGHT);
-        imageContainer.setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
-
+        //
         imagemEventoView = new ImageView();
         imagemEventoView.setFitWidth(CARD_WIDTH);
         imagemEventoView.setFitHeight(IMAGE_HEIGHT);
         imagemEventoView.setPreserveRatio(false);
 
+        StackPane imageContainer = new StackPane();
+        imageContainer.getChildren().add(imagemEventoView);
+        imageContainer.setPrefSize(CARD_WIDTH, IMAGE_HEIGHT);
+        imageContainer.setStyle(
+                "-fx-background-color: C7C7C7;" +
+                        "-fx-background-radius: 20;" +
+                        "-fx-border-width: 4px;" +
+                        "-fx-border-radius: 20;"
+        );
+
         Rectangle imageClip = new Rectangle(CARD_WIDTH, IMAGE_HEIGHT);
         imageClip.setArcWidth(20);
         imageClip.setArcHeight(20);
         imageContainer.setClip(imageClip);
-        imageContainer.getChildren().add(imagemEventoView);
+//
 
         VBox infoPane = new VBox(5);
-        infoPane.setBorder(new Border(new BorderStroke(Color.GREEN,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         infoPane.setPadding(new Insets(10, 15, 15, 15));
         infoPane.getStyleClass().add("hcard-info-pane");
 
@@ -79,24 +79,15 @@ public class EventoHCartao extends VBox {
         hbDataHora.getChildren().addAll(lblDataHoraInicio, lblSeparador, lblDataHoraFim);
 
         lblTitulo = new Label("Título do evento");
-        lblTitulo.setBorder(new Border(new BorderStroke(Color.BLACK,
-                BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         lblTitulo.getStyleClass().add("hcard-title");
 
         lblLocal = new Label("Local do evento");
-        lblLocal.setBorder(new Border(new BorderStroke(Color.BROWN,
-                BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-
         lblLocal.getStyleClass().add("hcard-location");
 
         lblTipo = new Label("Tipo do evento");
-        lblTipo.setBorder(new Border(new BorderStroke(Color.TEAL,
-                BorderStrokeStyle.DASHED, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         lblTipo.getStyleClass().add("hcard-type");
 
         VBox titleLocationBox = new VBox(0, lblTitulo, lblLocal, lblTipo);
-        titleLocationBox.setBorder(new Border(new BorderStroke(Color.ORANGE,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
         HBox bottomInfoBox = new HBox(10, titleLocationBox);
 
@@ -110,5 +101,10 @@ public class EventoHCartao extends VBox {
     public void setLblTitulo(String titulo) {this.lblTitulo.setText(titulo);}
     public void setLblLocal(String local) {this.lblLocal.setText(local);}
     public void setLblTipo(String tipo) {this.lblTipo.setText(tipo);}
-    public void setImagem(Image imagem) {this.imagemEventoView.setImage(imagem);}
+
+    public void setImagem(Image imagem) {
+        if(this.imagemEventoView != null &&  imagem != null ) {
+            this.imagemEventoView.setImage(imagem);
+        }
+    }
 }
