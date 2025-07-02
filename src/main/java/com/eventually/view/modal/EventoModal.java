@@ -160,6 +160,8 @@ public class EventoModal extends Parent {
         btnExcluir.setMaxWidth(Double.MAX_VALUE);
 
         vbBotoesAcao = new VBox(10);
+        Button btnComentarios = new Button("Ver Comentários");
+        vbBotoesAcao.getChildren().add(btnComentarios);
 
         HBox hboxLocalizacaoFormato = new HBox();
         hboxLocalizacaoFormato.setAlignment(Pos.CENTER_LEFT);

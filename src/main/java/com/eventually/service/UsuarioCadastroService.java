@@ -2,10 +2,7 @@ package com.eventually.service;
 
 import com.eventually.dto.CadastrarUsuarioDto;
 import com.eventually.dto.PreferenciasUsuarioDto;
-import com.eventually.model.EventoModel;
-import com.eventually.model.FormatoSelecionado;
-import com.eventually.model.TemaPreferencia;
-import com.eventually.model.UsuarioModel;
+import com.eventually.model.*;
 import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,12 +72,14 @@ public final class UsuarioCadastroService {
         Set<TemaPreferencia> preferenciasEvento = new HashSet<>();
         preferenciasEvento.add(TemaPreferencia.CORPORATIVO);
 
+        List<ComentarioModel> comentarios = new ArrayList<>();
+
         EventoModel evento1 = new EventoModel(
                 usuarioTesteModel, "Conferência Tech Inovação", "Discussão sobre o futuro da tecnologia.",
                 FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções, SP", null, 200,
                 dataDeHoje, horaEspecificaTeste1,
                 amanha, horaEspecificaTeste2,
-                preferenciasEvento, null, true, false
+                preferenciasEvento, null, true, false, comentarios
         );
 
         EventoModel evento2 = new EventoModel(
@@ -88,7 +87,7 @@ public final class UsuarioCadastroService {
                 FormatoSelecionado.ONLINE, "https://zoom.us/j/123456", "Online", null, 50,
                 amanha, LocalTime.of(17, 30),
                 depoisAmanha, LocalTime.of(18, 30),
-                preferenciasEvento, null, true, false
+                preferenciasEvento, null, true, false, comentarios
         );
 
         EventoModel evento3 = new EventoModel(
@@ -96,7 +95,7 @@ public final class UsuarioCadastroService {
                 FormatoSelecionado.HIBRIDO, null, "Parque Ibirapuera, SP", null, 1000,
                 amanha, horaEspecificaTeste1,
                 depoisAmanha, horaEspecificaTeste2,
-                preferenciasEvento, null, true, false
+                preferenciasEvento, null, true, false, comentarios
         );
 
         usuarioTesteModel.getEventosOrganizados().add(evento1);

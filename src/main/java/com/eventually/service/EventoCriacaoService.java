@@ -2,10 +2,7 @@ package com.eventually.service;
 
 import com.eventually.dto.CriarEventoDto;
 import com.eventually.dto.PreferenciasUsuarioDto;
-import com.eventually.model.FormatoSelecionado;
-import com.eventually.model.TemaPreferencia;
-import com.eventually.model.EventoModel;
-import com.eventually.model.UsuarioModel;
+import com.eventually.model.*;
 import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,6 +121,8 @@ public final class EventoCriacaoService {
             }
             FormatoSelecionado formatoEnum = FormatoSelecionadoService.mapearFormato(dto.preferenciaFormato());
 
+            List<ComentarioModel> comentarios = new ArrayList<>();
+
             EventoModel novoEvento = new EventoModel(
                     usuario,
                     dto.tituloEvento(),
@@ -140,7 +139,8 @@ public final class EventoCriacaoService {
                     temasPreferidos,
                     new ArrayList<>(),
                     true,
-                    false
+                    false,
+                    comentarios
             );
 
             adicionarEvento(novoEvento);
