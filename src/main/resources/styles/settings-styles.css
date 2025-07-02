@@ -169,3 +169,201 @@
     -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
+
+.conteudo-central {
+    -fx-padding: 25px;
+    -fx-spacing: 5px;
+    -fx-alignment: top-left; /* MODIFICADO: De top-center para top-left */
+}
+
+.purple-checkbox > .box {
+    -fx-pref-width: 20px;
+    -fx-pref-height: 20px;
+    -fx-background-color: transparent;
+    -fx-border-color: #7A2074;
+    -fx-border-width: 3px;
+    -fx-border-radius: 3px;
+}
+
+.purple-checkbox > .text {
+    -fx-font-family: 'Poppins';
+    -fx-fill: black;
+}
+
+.interact-button{
+    -fx-font-family: 'Poppins Bold';
+    -fx-pref-height: 30px;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-background-color: #8E2392;
+    -fx-pref-width: 160px;
+}
+.interact-button:hover {
+    -fx-background-color: #A329A8;
+}
+.interact-button:disabled {
+    -fx-background-color: #cccccc;
+    -fx-opacity: 0.7;
+}
+
+.purple-checkbox:selected > .box {
+    -fx-background-color: #7A2074;
+    -fx-border-color: #7A2074;
+}
+
+.purple-checkbox > .box > .mark {
+    -fx-scale-x: 1.5;
+    -fx-scale-y: 1.5;
+}
+
+.purple-checkbox.register-field:focused {
+    -fx-border-color: #7A2074;
+    -fx-border-width: 2px;
+}
+
+.settings-titulo1 {
+    -fx-font-family: 'Poppins Bold';
+    -fx-font-size: 28px;
+    -fx-text-fill: #333333;
+}
+
+.settings-section {
+    -fx-padding: 10px;
+    -fx-spacing: 15px;
+}
+
+.section-header {
+    -fx-alignment: baseline-left;
+}
+
+.section-title {
+    -fx-font-family: 'Poppins Bold';
+    -fx-font-size: 20px;
+    -fx-text-fill: #333333;
+}
+
+.description-label {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+}
+
+.description-label-list {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 11px;
+    -fx-text-fill: #2F4F4F;
+    -fx-padding: 0 0 0 5px;
+}
+
+.hyperlink {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 14px;
+    -fx-text-fill: #8E2392;
+}
+
+.hyperlink:hover {
+    -fx-underline: true;
+}
+
+.hl-alterar-foto {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 14px;
+    -fx-text-fill: #8E2392;
+}
+
+.hl-alterar-foto:hover {
+    -fx-underline: true;
+}
+
+.checkbox-columns-container {
+    -fx-spacing: 60px;
+}
+
+.checkbox-column {
+    -fx-spacing: 10px;
+}
+
+.checkbox-column .vbox {
+    -fx-spacing: 2px;
+}
+
+.user-preferences-container {
+    -fx-spacing: 30px;
+    -fx-alignment: top-center; /* ADICIONADO: Alinha os filhos (grid e foto) ao topo */
+}
+
+.user-details-grid {
+    -fx-hgap: 10px;
+    -fx-vgap: 15px;
+    -fx-padding: 10px 0 10px 0;
+}
+
+.user-detail-row {
+    -fx-alignment: baseline-left;
+    -fx-spacing: 8px;
+}
+.user-detail-row-email {
+    -fx-alignment: baseline-left;
+    -fx-spacing: 8px;
+    -fx-text-fill: #633333;
+}
+.greeting-label {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 16px;
+    -fx-text-fill: #333333;
+}
+
+.photo-section {
+    -fx-alignment: center;
+    -fx-padding: 0px 10px 5px 10px;
+    -fx-spacing: 10px;
+}
+
+.photo-title {
+    -fx-font-family: 'Poppins';
+    -fx-font-weight: normal;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+.photo-placeholder {
+    -fx-pref-width: 100px;
+    -fx-pref-height: 100px;
+    -fx-min-width: 100px;
+    -fx-min-height: 100px;  /* ADICIONADO */
+    -fx-max-width: 100px;   /* ADICIONADO */
+    -fx-max-height: 100px;
+    -fx-background-color: #C7C7C7;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
+}
+
+.photo-info {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 10px;
+    -fx-text-fill: #6c757d;
+    -fx-text-alignment: center;
+}
+
+.delete-button-container {
+    -fx-alignment: center-right;
+    -fx-padding: -30px 18px 0px 0;
+}
+
+.delete-account-button {
+    -fx-font-family: 'Poppins';
+    -fx-pref-width: 150px;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 30px;
+    -fx-background-color: #f44336;
+    -fx-text-fill: white;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.delete-account-button:hover {
+    -fx-background-color: #d32f2f;
+}

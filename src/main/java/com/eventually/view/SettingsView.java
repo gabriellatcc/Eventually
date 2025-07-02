@@ -2,20 +2,13 @@ package com.eventually.view;
 
 import com.eventually.controller.SettingsController;
 import com.eventually.model.TemaPreferencia;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -26,7 +19,7 @@ import java.util.Map;
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
  * @author Yuri Garcia Maia (Criação)
  * @since 22-05-2025
- * @version 1.06
+ * @version 1.07
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, lógica e da estrutura da classe)
  * @since 22-05-2025
  */
@@ -37,319 +30,226 @@ public class SettingsView extends BorderPane {
     private List<CheckBox> themeCheckBoxes = new ArrayList<>();
 
     private Label lbNomeUsuario, lbEmailUsuario, lbSenhaUsuario, lbCidadeUsuario, lbDataNascUsuario;
-    private Hyperlink HlAlterarPreferencias, hlAlterarNome, hlAlterarEmail, hlAlterarSenha, hlAlterarCidade, hlAlterarDataNasc,hlAlterarFoto;
-    private Button btnDeleteAccount;
+    private Hyperlink hlAlterarNome, hlAlterarSenha, hlAlterarCidade, hlAlterarDataNasc,hlAlterarFoto;
+    private Button btnDeleteAccount, btnAlterarPreferencias;
 
     private CheckBox cbCorporativo, cbBeneficente, cbEducacional, cbCultural, cbEsportivo, cbReligioso, cbSocial;
 
     private ImageView avatarView;
 
     private final Map<TemaPreferencia, CheckBox> mapaDeCheckBoxesDeTemas = new EnumMap<>(TemaPreferencia.class);
-    /**
-     * Construtor da SettingsView.
-     */
+
     public SettingsView() {
         setupUI();
     }
 
-    /**
-     * Define o controller para esta view.
-     * @param sController o controller a ser usado.
-     */
     public void setSettingsController(SettingsController sController) {
         this.sController = sController;
     }
 
-    /**
-     * Configura a interface gráfica principal da tela de configurações.
-     */
     private void setupUI() {
         this.barraBuilder = new BarraBuilder();
         VBox barraLateral = this.barraBuilder.construirBarraLateral();
-
         HBox barraSuperior = this.barraBuilder.construirBarraSuperior();
-
         VBox conteudoCentral = criarConteudoCentral();
-
-        VBox envoltorioConteudoPrincipal = new VBox(conteudoCentral);
-        VBox.setVgrow(envoltorioConteudoPrincipal, Priority.ALWAYS);
 
         setLeft(barraLateral);
         setTop(barraSuperior);
         setCenter(conteudoCentral);
     }
 
-    /**
-     * Este método cria o container central da tela de configurações.
-     * @return a VBox com o conteúdo de configurações.
-     */
     private VBox criarConteudoCentral() {
-        VBox conteudoCentral = new VBox(10);
-        conteudoCentral.setPadding(new Insets(15));
-        conteudoCentral.getStyleClass().add("center-content-area");
-        conteudoCentral.setAlignment(Pos.TOP_CENTER);
+        VBox conteudoCentral = new VBox();
+        conteudoCentral.getStyleClass().add("conteudo-central");
 
         Label lbTitulo1 = new Label("Configurações");
-        lbTitulo1.setFont(Font.font("Arial", FontWeight.BOLD, 28));
         lbTitulo1.getStyleClass().add("settings-titulo1");
-        lbTitulo1.setBorder(new Border(new BorderStroke(Color.PINK,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
         VBox vbSessaoPreferenciasConteudo = criarConteudoSessaoPreferencias();
         VBox vbSessaoPreferenciasUsuario = criarSessaoPreferenciasUsuario();
 
-        btnDeleteAccount = new Button("Excluir conta");
-        btnDeleteAccount.getStyleClass().add("delete-account-button");
-        btnDeleteAccount.setStyle(
-                "-fx-font-size: 14px;" +
-                        "-fx-background-color: #f44336;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-background-radius: 5px;"
-        );
-        btnDeleteAccount.setPrefWidth(150);
-
-        HBox hbBtnExclusao = new HBox(btnDeleteAccount);
-        hbBtnExclusao.setAlignment(Pos.CENTER_RIGHT);
-        hbBtnExclusao.setPadding(new Insets(20,0,0,0));
-        hbBtnExclusao.setBorder(new Border(new BorderStroke(Color.BLUEVIOLET,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-
-        conteudoCentral.getChildren().addAll(lbTitulo1, vbSessaoPreferenciasConteudo, vbSessaoPreferenciasUsuario, hbBtnExclusao);
-        conteudoCentral.setBorder(new Border(new BorderStroke(Color.ORANGE,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        conteudoCentral.getChildren().addAll(lbTitulo1, vbSessaoPreferenciasConteudo, vbSessaoPreferenciasUsuario);
         return conteudoCentral;
     }
 
-    /**
-     * Este método cria a seção de preferências de conteúdo.
-     * @return a VBox da seção de preferências de conteúdo.
-     */
     private VBox criarConteudoSessaoPreferencias() {
-        VBox vbSessao = new VBox(15);
-        vbSessao.setPadding(new Insets(10));
+        VBox vbSessao = new VBox();
+        vbSessao.getStyleClass().add("settings-section");
 
         Label title = new Label("Preferências de conteúdo");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        HlAlterarPreferencias = new Hyperlink("(Alterar)");
-        HBox hbTitulo = new HBox();
-        hbTitulo.setAlignment(Pos.BASELINE_LEFT);
+        title.getStyleClass().add("section-title");
+        btnAlterarPreferencias = new Button("Alterar");
+        btnAlterarPreferencias.getStyleClass().add("interact-button");
         Region espacador = new Region();
         HBox.setHgrow(espacador, Priority.ALWAYS);
-        hbTitulo.getChildren().addAll(title, espacador, HlAlterarPreferencias);
-        hbTitulo.setBorder(new Border(new BorderStroke(Color.BLACK,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-
+        HBox hbTitulo = new HBox(title, espacador, btnAlterarPreferencias);
+        hbTitulo.getStyleClass().add("section-header");
 
         Label description = new Label("(Remover eventos visualizados na página inicial)");
-        description.setFont(Font.font("Arial", 12));
-        description.setTextFill(Color.GRAY);
+        description.getStyleClass().add("description-label");
 
-        VBox leftColumn = new VBox(10);
-        leftColumn.setBorder(new Border(new BorderStroke(Color.GREEN,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        VBox rightColumn = new VBox(10);
-        rightColumn.setBorder(new Border(new BorderStroke(Color.GREENYELLOW,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        VBox leftColumn = new VBox();
+        leftColumn.getStyleClass().add("checkbox-column");
+        VBox rightColumn = new VBox();
+        rightColumn.getStyleClass().add("checkbox-column");
 
         cbCorporativo = new CheckBox("Corporativos");
+        cbCorporativo.getStyleClass().add("purple-checkbox");
         mapaDeCheckBoxesDeTemas.put(TemaPreferencia.CORPORATIVO, cbCorporativo);
         Label descCorporativo = new Label("(palestras, workshops, feiras de negócios)");
-        descCorporativo.setFont(Font.font("Arial", 11));
-        descCorporativo.setTextFill(Color.DARKSLATEGRAY);
-        leftColumn.getChildren().add(new VBox(2, cbCorporativo, descCorporativo));
+        leftColumn.getChildren().add(new VBox(cbCorporativo, descCorporativo));
 
         cbEducacional = new CheckBox("Educacionais");
+        cbEducacional.getStyleClass().add("purple-checkbox");
         mapaDeCheckBoxesDeTemas.put(TemaPreferencia.EDUCACIONAL, cbEducacional);
         Label descEducacional = new Label("(palestras, seminários, cursos)");
-        descEducacional.setFont(Font.font("Arial", 11));
-        descEducacional.setTextFill(Color.DARKSLATEGRAY);
-        leftColumn.getChildren().add(new VBox(2, cbEducacional, descEducacional));
+        leftColumn.getChildren().add(new VBox(cbEducacional, descEducacional));
 
         cbCultural = new CheckBox("Culturais");
+        cbCultural.getStyleClass().add("purple-checkbox");
         mapaDeCheckBoxesDeTemas.put(TemaPreferencia.CULTURAL, cbCultural);
         Label descCultural = new Label("(shows, exposições, festivais)");
-        descCultural.setFont(Font.font("Arial", 11));
-        descCultural.setTextFill(Color.DARKSLATEGRAY);
-        leftColumn.getChildren().add(new VBox(2, cbCultural, descCultural));
+        leftColumn.getChildren().add(new VBox(cbCultural, descCultural));
 
         cbEsportivo = new CheckBox("Esportivos");
+        cbEsportivo.getStyleClass().add("purple-checkbox");
         mapaDeCheckBoxesDeTemas.put(TemaPreferencia.ESPORTIVO, cbEsportivo);
         Label descEsportivo = new Label("(competições, maratonas, torneios)");
-        descEsportivo.setFont(Font.font("Arial", 11));
-        descEsportivo.setTextFill(Color.DARKSLATEGRAY);
-        leftColumn.getChildren().add(new VBox(2, cbEsportivo, descEsportivo));
+        leftColumn.getChildren().add(new VBox(cbEsportivo, descEsportivo));
 
         cbBeneficente = new CheckBox("Beneficentes");
+        cbBeneficente.getStyleClass().add("purple-checkbox");
         mapaDeCheckBoxesDeTemas.put(TemaPreferencia.BENEFICENTE, cbBeneficente);
         Label descBeneficente = new Label("(arrecadação de fundos, campanhas sociais)");
-        descBeneficente.setFont(Font.font("Arial", 11));
-        descBeneficente.setTextFill(Color.DARKSLATEGRAY);
-        rightColumn.getChildren().add(new VBox(2, cbBeneficente, descBeneficente));
+        rightColumn.getChildren().add(new VBox(cbBeneficente, descBeneficente));
 
         cbReligioso = new CheckBox("Religiosos");
+        cbReligioso.getStyleClass().add("purple-checkbox");
         mapaDeCheckBoxesDeTemas.put(TemaPreferencia.RELIGIOSO, cbReligioso);
         Label descReligioso = new Label("(cultos, retiros, encontros espirituais)");
-        descReligioso.setFont(Font.font("Arial", 11));
-        descReligioso.setTextFill(Color.DARKSLATEGRAY);
-        rightColumn.getChildren().add(new VBox(2, cbReligioso, descReligioso));
+        rightColumn.getChildren().add(new VBox(cbReligioso, descReligioso));
 
         cbSocial = new CheckBox("Sociais");
+        cbSocial.getStyleClass().add("purple-checkbox");
         mapaDeCheckBoxesDeTemas.put(TemaPreferencia.SOCIAL, cbSocial);
         Label descSocial = new Label("(aniversários, casamentos, confraternizações)");
-        descSocial.setFont(Font.font("Arial", 11));
-        descSocial.setTextFill(Color.DARKSLATEGRAY);
-        rightColumn.getChildren().add(new VBox(2, cbSocial, descSocial));
+        rightColumn.getChildren().add(new VBox(cbSocial, descSocial));
 
-        for (CheckBox cb : List.of(cbCorporativo, cbBeneficente, cbEducacional, cbCultural, cbEsportivo, cbReligioso, cbSocial)) {
+        rightColumn.getChildren().add(btnAlterarPreferencias);
+
+        for (Label l : List.of(descCorporativo, descEducacional, descCultural, descEsportivo, descBeneficente, descReligioso, descSocial)) {
+            l.getStyleClass().add("description-label-list");
+        }
+
+        for (CheckBox cb : mapaDeCheckBoxesDeTemas.values()) {
             cb.setDisable(true);
         }
 
-        HBox columns = new HBox(60, leftColumn, rightColumn);
-        vbSessao.getChildren().addAll(hbTitulo, description, columns);
-        vbSessao.setBorder(new Border(new BorderStroke(Color.DARKBLUE,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        HBox columns = new HBox(leftColumn, rightColumn);
+        columns.getStyleClass().add("checkbox-columns-container");
 
+        vbSessao.getChildren().addAll(hbTitulo, description, columns);
         return vbSessao;
     }
 
-    /**
-     * Este método cria a seção de preferências de usuário.
-     * @return a VBox da seção de preferências de usuário.
-     */
     private VBox criarSessaoPreferenciasUsuario() {
-        VBox sessao = new VBox(15);
-        sessao.setPadding(new Insets(10));
+        VBox sessao = new VBox();
+        sessao.getStyleClass().add("settings-section");
 
         Label lbTitulo = new Label("Preferências de usuário");
-        lbTitulo.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        lbTitulo.getStyleClass().add("section-title");
         Label lbDescricaoTitulo = new Label("(Editar informações do usuário)");
-        lbDescricaoTitulo.setFont(Font.font("Arial", 12));
-        lbDescricaoTitulo.setTextFill(Color.GRAY);
+        lbDescricaoTitulo.getStyleClass().add("description-label");
 
         GridPane gpDetalhesUsuario = new GridPane();
-        gpDetalhesUsuario.setHgap(10);
-        gpDetalhesUsuario.setVgap(15);
-        gpDetalhesUsuario.setPadding(new Insets(10, 0, 10, 0));
-        gpDetalhesUsuario.setBorder(new Border(new BorderStroke(Color.RED,
-               BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        gpDetalhesUsuario.getStyleClass().add("user-details-grid");
+
+        Label lbEmail = new Label("Email:");
+        lbEmail.getStyleClass().add("user-detail-row-email");
+        lbEmailUsuario = new Label();
+        HBox hbEmail = new HBox(lbEmail, lbEmailUsuario);
+        hbEmail.getStyleClass().add("user-detail-row-email");
+        gpDetalhesUsuario.add(hbEmail, 0, 1);
 
         Label lbNome = new Label("Nome:");
-        lbNome.getStyleClass().add("greeting-label");
         lbNomeUsuario = new Label();
-        lbNomeUsuario.getStyleClass().add("greeting-label");
         hlAlterarNome = new Hyperlink("(Alterar)");
         Region espacadorNome = new Region();
         HBox.setHgrow(espacadorNome, Priority.ALWAYS);
-        HBox hbNome = new HBox(8, lbNome, lbNomeUsuario, espacadorNome, hlAlterarNome);
-        hbNome.setAlignment(Pos.BASELINE_LEFT);
+        HBox hbNome = new HBox(lbNome, lbNomeUsuario, espacadorNome, hlAlterarNome);
+        hbNome.getStyleClass().add("user-detail-row");
         gpDetalhesUsuario.add(hbNome, 0, 0);
 
-        Label lbEmail = new Label("Email:");
-        lbEmail.getStyleClass().add("greeting-label");
-        lbEmailUsuario = new Label();
-        lbEmailUsuario.getStyleClass().add("greeting-label");
-        hlAlterarEmail = new Hyperlink("(Alterar)");
-        Region espacadorEmail= new Region();
-        HBox.setHgrow(espacadorEmail, Priority.ALWAYS);
-        HBox hbEmail = new HBox(8, lbEmail, lbEmailUsuario, espacadorEmail, hlAlterarEmail);
-        hbEmail.setAlignment(Pos.BASELINE_LEFT);
-        gpDetalhesUsuario.add(hbEmail, 0, 1);
-
         Label lbSenha = new Label("Senha:");
-        lbSenha.getStyleClass().add("greeting-label");
         lbSenhaUsuario = new Label();
-        lbSenhaUsuario.getStyleClass().add("greeting-label");
         hlAlterarSenha = new Hyperlink("(Alterar)");
         Region espacadorSenha= new Region();
         HBox.setHgrow(espacadorSenha, Priority.ALWAYS);
-        HBox hbSenha = new HBox(8, lbSenha, lbSenhaUsuario, espacadorSenha, hlAlterarSenha);
-        hbSenha.setAlignment(Pos.BASELINE_LEFT);
+        HBox hbSenha = new HBox(lbSenha, lbSenhaUsuario, espacadorSenha, hlAlterarSenha);
+        hbSenha.getStyleClass().add("user-detail-row");
         gpDetalhesUsuario.add(hbSenha, 0, 2);
 
         Label lbCidade = new Label("Cidade:");
-        lbCidade.getStyleClass().add("greeting-label");
         lbCidadeUsuario = new Label();
-        lbCidadeUsuario.getStyleClass().add("greeting-label");
         hlAlterarCidade = new Hyperlink("(Alterar)");
         Region espacadorCidade= new Region();
         HBox.setHgrow(espacadorCidade, Priority.ALWAYS);
-        HBox hbCidade = new HBox(8, lbCidade,lbCidadeUsuario, espacadorCidade, hlAlterarCidade);
-        hbCidade.setAlignment(Pos.BASELINE_LEFT);
+        HBox hbCidade = new HBox(lbCidade,lbCidadeUsuario, espacadorCidade, hlAlterarCidade);
+        hbCidade.getStyleClass().add("user-detail-row");
         gpDetalhesUsuario.add(hbCidade, 0, 3);
 
         Label lbDataNascimento = new Label("Data de Nascimento:");
-        lbDataNascimento.getStyleClass().add("greeting-label");
         lbDataNascUsuario = new Label();
-        lbDataNascUsuario.getStyleClass().add("greeting-label");
         hlAlterarDataNasc = new Hyperlink("(Alterar)");
         Region espacadorData= new Region();
         HBox.setHgrow(espacadorData, Priority.ALWAYS);
-        HBox hbDataNasc = new HBox(8, lbDataNascimento,lbDataNascUsuario, espacadorData, hlAlterarDataNasc);
-        hbDataNasc.setAlignment(Pos.BASELINE_LEFT);
+        HBox hbDataNasc = new HBox(lbDataNascimento,lbDataNascUsuario, espacadorData, hlAlterarDataNasc);
+        hbDataNasc.getStyleClass().add("user-detail-row");
         gpDetalhesUsuario.add(hbDataNasc, 0, 4);
+
+        for (Label l : List.of( lbEmail, lbEmailUsuario, lbNome, lbNomeUsuario, lbSenha, lbSenhaUsuario, lbCidade, lbCidadeUsuario, lbDataNascimento, lbDataNascUsuario)) {
+            l.getStyleClass().add("greeting-label");
+        }
 
         VBox photoSection = criarSessaoFotoUsuario();
 
-        HBox hbPreferenciasUsuario = new HBox(30, gpDetalhesUsuario, photoSection);
+        HBox hbPreferenciasUsuario = new HBox(gpDetalhesUsuario, photoSection);
+        hbPreferenciasUsuario.getStyleClass().add("user-preferences-container");
         HBox.setHgrow(gpDetalhesUsuario, Priority.ALWAYS);
 
         sessao.getChildren().addAll(lbTitulo, lbDescricaoTitulo, hbPreferenciasUsuario);
-
-        sessao.setBorder(new Border(new BorderStroke(Color.DARKBLUE,
-                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         return sessao;
     }
 
-    /**
-     * Este método cria a seção de foto de perfil.
-     * @return A VBox da seção de foto de perfil.
-     */
     private VBox criarSessaoFotoUsuario() {
-        VBox photoBox = new VBox(10);
-        photoBox.setAlignment(Pos.CENTER);
-        photoBox.setPadding(new Insets(10));
+        VBox photoBox = new VBox();
+        photoBox.getStyleClass().add("photo-section");
 
         Label photoTitle = new Label("Foto de perfil");
-        photoTitle.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+        photoTitle.getStyleClass().add("photo-title");
 
         avatarView = new ImageView();
         avatarView.setFitHeight(100);
         avatarView.setFitWidth(100);
         avatarView.setPreserveRatio(true);
 
-        StackPane photoPlaceholder = new StackPane();
-        photoPlaceholder.getChildren().add(avatarView);
-        photoPlaceholder.setPrefSize(100,100);
-        photoPlaceholder.setMinSize(100,100);
-        photoPlaceholder.setMaxSize(100,100);
-        photoPlaceholder.setStyle(
-                "-fx-background-color: C7C7C7;" +
-                        "-fx-background-radius: 20;" +
-                        "-fx-border-width: 4px;" +
-                        "-fx-border-radius: 20;"
-        );
+        StackPane photoPlaceholder = new StackPane(avatarView);
+        photoPlaceholder.getStyleClass().add("photo-placeholder");
 
-        Rectangle rect = new Rectangle(100, 100);
-        rect.setArcWidth(20);
-        rect.setArcHeight(20);
-        photoPlaceholder.setClip(rect);
-
-        Label photoInfo = new Label("A imagem anexada deve ter\n200 x 200 pixels ");
-        photoInfo.setFont(Font.font("Arial", 10));
-        photoInfo.setTextFill(Color.GRAY);
-        photoInfo.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        Label photoInfo = new Label("A imagem anexada deve ter 200 x 200 pixels");
+        photoInfo.setWrapText(true);
+        photoInfo.getStyleClass().add("photo-info");
 
         hlAlterarFoto = new Hyperlink("(Alterar)");
 
-        photoBox.getChildren().addAll(photoTitle, photoPlaceholder, photoInfo, hlAlterarFoto);
+        btnDeleteAccount = new Button("Excluir conta");
+        btnDeleteAccount.getStyleClass().add("delete-account-button");
+
+        photoBox.getChildren().addAll(photoTitle, photoPlaceholder, photoInfo, hlAlterarFoto,btnDeleteAccount);
         return photoBox;
     }
 
-    /**
-     * Métodos de encapsulamento getters e setters
-     */
     public BarraBuilder getBarraBuilder() {return barraBuilder;}
-
     public CheckBox getCbCorporativo() {return cbCorporativo;}
     public CheckBox getCbBeneficente() {return cbBeneficente;}
     public CheckBox getCbEducacional() {return cbEducacional;}
@@ -357,32 +257,25 @@ public class SettingsView extends BorderPane {
     public CheckBox getCbEsportivo() {return cbEsportivo;}
     public CheckBox getCbReligioso() {return cbReligioso;}
     public CheckBox getCbSocial() {return cbSocial;}
-
     public Label getLbNomeUsuario() {return lbNomeUsuario;}
     public Label getLbEmailUsuario() {return lbEmailUsuario;}
     public Label getLbSenhaUsuario() {return lbSenhaUsuario;}
     public Label getLbCidadeUsuario() {return lbCidadeUsuario;}
     public Label getLbDataNascUsuario() {return lbDataNascUsuario;}
-
     public Button getBtnDeleteAccount() {return btnDeleteAccount;}
-
-    public Hyperlink getHlAlterarPreferencias() {return HlAlterarPreferencias;}
+    public Button getbtnAlterarPreferencias() {return btnAlterarPreferencias;}
     public Hyperlink getHlAlterarNome() {return hlAlterarNome;}
-    public Hyperlink getHlAlterarEmail() {return hlAlterarEmail;}
     public Hyperlink getHlAlterarSenha() {return hlAlterarSenha;}
     public Hyperlink getHlAlterarCidade() {return hlAlterarCidade;}
     public Hyperlink getHlAlterarDataNasc() {return hlAlterarDataNasc;}
     public Hyperlink getHlAlterarFoto() {return hlAlterarFoto;}
-
     public List<CheckBox> getThemeCheckBoxes() {return themeCheckBoxes;}
     public void setThemeCheckBoxes(List<CheckBox> themeCheckBoxes) {this.themeCheckBoxes = themeCheckBoxes;}
-
     public void setAvatarImagem(Image avatarImagem) {
         if(this.avatarView != null && avatarImagem != null) {
             this.avatarView.setImage(avatarImagem);
         }
     }
-
     public Map<TemaPreferencia, CheckBox> getMapaDeCheckBoxesDeTemas() {
         return mapaDeCheckBoxesDeTemas;
     }
