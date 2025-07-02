@@ -109,6 +109,11 @@ public class ComentarioModal extends VBox {
         atualizarListaDeComentarios();
     }
 
+    private void excluirComentario(ComentarioModel comentario) {
+
+        comentarioService.removerComentario(evento, comentario);
+        atualizarListaDeComentarios();
+    }
     private void atualizarListaDeComentarios() {
         listaComentariosVBox.getChildren().clear();
 
@@ -135,8 +140,21 @@ public class ComentarioModal extends VBox {
         Label lblData = new Label(comentario.getDataHora().format(formatter));
         lblData.getStyleClass().add("comment-date");
 
-        HBox autorInfo = new HBox(10, fotoAutorView, new VBox(2, lblNomeAutor, lblData));
+        VBox infoAutorVBox = new VBox(2, lblNomeAutor, lblData);
+
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox autorInfo = new HBox(10, fotoAutorView, infoAutorVBox, spacer);
         autorInfo.setAlignment(Pos.CENTER_LEFT);
+
+        UsuarioModel usuarioLogado = sessaoService.procurarUsuario(email);
+        if (usuarioLogado != null && usuarioLogado.equals(comentario.getAutor())) {
+            Button btnExcluir = new Button("X");
+            btnExcluir.getStyleClass().add("close-button-x");
+            btnExcluir.setOnAction(e -> excluirComentario(comentario));
+            autorInfo.getChildren().add(btnExcluir);
+        }
 
         Label lblTexto = new Label(comentario.getTexto());
         lblTexto.setWrapText(true);

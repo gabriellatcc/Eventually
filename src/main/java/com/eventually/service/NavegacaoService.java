@@ -547,7 +547,7 @@ public class NavegacaoService {
 
             Stage modalStage = new Stage();
 
-            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initModality(Modality.NONE);
             modalStage.initOwner(primaryStage);
             modalStage.initStyle(StageStyle.TRANSPARENT);
 
@@ -560,7 +560,7 @@ public class NavegacaoService {
             modalStage.setOnShown(event -> {
                 javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
                 modalStage.setX(((screenBounds.getWidth() - modalStage.getWidth()) / 2)+360);
-                modalStage.setY((screenBounds.getHeight() - modalStage.getHeight()) / 2);
+                modalStage.setY(((screenBounds.getHeight() - modalStage.getHeight()) / 2)-60);
             });
 
             modalStage.showAndWait();
@@ -581,7 +581,8 @@ public class NavegacaoService {
 
                 Stage modalStage = new Stage();
 
-                modalStage.initModality(Modality.APPLICATION_MODAL);
+                modalStage.initModality(Modality.NONE);
+
                 modalStage.initOwner(primaryStage);
                 modalStage.initStyle(StageStyle.TRANSPARENT);
 

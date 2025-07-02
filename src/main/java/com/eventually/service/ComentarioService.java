@@ -40,4 +40,16 @@ public class ComentarioService {
         }
         return Collections.emptyList();
     }
+
+    public void removerComentario(EventoModel evento, ComentarioModel comentario) {
+        if (evento != null && comentario != null) {
+            boolean removido = evento.getComentarios().remove(comentario);
+
+            if (removido) {
+                System.out.println("Comentário removido com sucesso do evento: " + evento.getNome());
+            } else {
+                System.out.println("O comentário não pôde ser encontrado e removido do evento: " + evento.getNome());
+            }
+        }
+    }
 }
