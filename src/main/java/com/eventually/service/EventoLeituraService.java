@@ -16,7 +16,7 @@ import java.util.Set;
  * É responsável por buscar eventos e seus atributos específicos através de um ID.
  * A classe acessa a coleção de eventos diretamente através do {@link EventoCriacaoService}.
  * @author Gabriella Tavares Costa Corrêa (Adaptação baseada na UsuarioSessaoService)
- * @version 1.0
+ * @version 1.01
  * @since 2025-06-27
  */
 public final class EventoLeituraService {
@@ -77,7 +77,7 @@ public final class EventoLeituraService {
         try {
             Optional<EventoModel> evento = procurarEventoPorId(id);
 
-            if (evento.isPresent()) {return evento.get().getNomeEvento();}
+            if (evento.isPresent()) {return evento.get().getNome();}
 
             alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
@@ -203,7 +203,7 @@ public final class EventoLeituraService {
         try{
             Optional<EventoModel> evento = procurarEventoPorId(id);
 
-            if (evento.isPresent()) {return evento.get().getFotoEvento();}
+            if (evento.isPresent()) {return evento.get().getFoto();}
 
             alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
@@ -329,7 +329,7 @@ public final class EventoLeituraService {
         try{
             Optional<EventoModel> evento = procurarEventoPorId(id);
 
-            if (evento.isPresent()) {return evento.get().getTemasEvento();}
+            if (evento.isPresent()) {return evento.get().getTemas();}
 
             alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;
@@ -371,7 +371,7 @@ public final class EventoLeituraService {
         try{
             Optional<EventoModel> evento = procurarEventoPorId(id);
 
-            if (evento.isPresent()) {return evento.get().isEstadoDoEvento();}
+            if (evento.isPresent()) {return evento.get().isEstado();}
 
             alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return false;

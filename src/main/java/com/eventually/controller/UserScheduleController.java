@@ -17,14 +17,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-/** PASSÍVEL A ALTERAÇÃO
+/**
  * Classe controladora da tela de programação do usuário, é responsável pela comunicação
  * da tela de programação com o backend.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.07
+ * @version 1.08
  * @since 2025-04-25
  */
 public class UserScheduleController {
@@ -209,11 +208,11 @@ public class UserScheduleController {
      * @return Um registro pronto para a view.
      */
     private UserScheduleView.EventoUS converterParaView(EventoModel model) {
-        String titulo = model.getNomeEvento();
+        String titulo = model.getNome();
 
         String local = (model.getFormato() == FormatoSelecionado.ONLINE) ? "Evento Online" : model.getLocalizacao();
 
-        String categoria = model.getTemasEvento().stream()
+        String categoria = model.getTemas().stream()
                 .findFirst()
                 .map(t -> t.toString().substring(0, 1).toUpperCase() + t.toString().substring(1).toLowerCase())
                 .orElse("Geral");
@@ -255,7 +254,7 @@ public class UserScheduleController {
             eventosParaView.add(converterParaView(todosOsEventos.get(i)));
             EventoMECartao cartao = new EventoMECartao();
 
-            cartao.setLblTitulo(todosOsEventos.get(i).getNomeEvento());
+            cartao.setLblTitulo(todosOsEventos.get(i).getNome());
             cartao.setLblLocal(todosOsEventos.get(i).getLocalizacao());
             cartao.setLblCapacidadeValor(String.valueOf(todosOsEventos.get(i).getnParticipantes()));
             configurarDataDoCartao(cartao, todosOsEventos.get(i));

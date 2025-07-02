@@ -1,6 +1,5 @@
 package com.eventually.model;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -10,36 +9,40 @@ import java.util.*;
  * email, senha, localização, data de nascimento, foto de usuário, eventos que participa,
  * eventos organizados, temas preferidos.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.06
+ * @version 1.07
  * @since 2025-04-08
  */
 public class UsuarioModel {
     private int idUsuario;
-    private String nomePessoa;
+    private String nome;
     private String email;
     private String senha;
-    private String localizacaoUsuario;
+    private String cidade;
     private LocalDate dataNascimento;
-    private Image fotoUsuario;
-    private List<EventoModel> eventosParticipa = new ArrayList<>();
+    private Image foto;
+    private List<EventoModel> eventosInscrito = new ArrayList<>();
     private List<EventoModel> eventosOrganizados = new ArrayList<>();
     private Set<TemaPreferencia> temasPreferidos = new HashSet<>();
-    private boolean estadoDoUsuario=true;
+    private boolean estado =true;
 
-    public UsuarioModel(String nomePessoa, String email, String senha, String localizacaoUsuario,
-                        LocalDate dataNascimento, Image fotoUsuario, List<EventoModel> eventosCriados, List<EventoModel> eventosInscritos,
-                        Set<TemaPreferencia> temasPreferidos, boolean estadoDoUsuario)
+    public UsuarioModel(String nome, String email, String senha, String cidade,
+                        LocalDate dataNascimento, Image foto, List<EventoModel> eventosCriados, List<EventoModel> eventosInscritos,
+                        Set<TemaPreferencia> temasPreferidos, boolean estado)
     {
-        this.nomePessoa = nomePessoa;
+        this.nome = nome;
         this.email = email;
         this.senha = senha;
-        this.localizacaoUsuario = localizacaoUsuario;
+        this.cidade = cidade;
         this.dataNascimento = dataNascimento;
-        this.fotoUsuario = new Image(getClass().getResourceAsStream("/images/icone-padrao-usuario.png"));
+        if (foto != null) {
+            this.foto = foto;
+        } else {
+            this.foto = new Image(getClass().getResourceAsStream("/images/icone-padrao-usuario.png"));
+        }
         this.eventosOrganizados = eventosCriados;
-        this.eventosParticipa = eventosInscritos;
+        this.eventosInscrito = eventosInscritos;
         this.temasPreferidos = temasPreferidos;
-        this.estadoDoUsuario = true; //comeca ativa
+        this.estado = true; //comeca ativa
     }
 
     /**
@@ -48,8 +51,8 @@ public class UsuarioModel {
     public int getId() {return idUsuario;}
     public void setId(int id) {this.idUsuario = id;}
 
-    public String getNomePessoa() {return nomePessoa;}
-    public void setNomePessoa(String nomePessoa) {this.nomePessoa = nomePessoa;}
+    public String getNome() {return nome;}
+    public void setNome(String nome) {this.nome = nome;}
 
     public String getEmail() {return email;}
     public void setEmail(String email) {this.email = email;}
@@ -60,23 +63,23 @@ public class UsuarioModel {
     public LocalDate getDataNascimento() {return dataNascimento;}
     public void setDataNascimento(LocalDate dataNascimento) {this.dataNascimento = dataNascimento;}
 
-    public String getLocalizacaoUsuario() {return localizacaoUsuario;}
-    public void setLocalizacaoUsuario(String localizacaoUsuario) {this.localizacaoUsuario = localizacaoUsuario;}
+    public String getCidade() {return cidade;}
+    public void setCidade(String cidade) {this.cidade = cidade;}
 
-    public Image getFotoUsuario() {return fotoUsuario;}
-    public void setFotoUsuario(Image fotoUsuario) {this.fotoUsuario = fotoUsuario;}
+    public Image getFoto() {return foto;}
+    public void setFoto(Image foto) {this.foto = foto;}
 
     public List<EventoModel> getEventosOrganizados() {return eventosOrganizados;}
     public void setEventosOrganizados(List<EventoModel> eventosOrganizados) {this.eventosOrganizados = eventosOrganizados;}
 
-    public List<EventoModel> getEventosParticipa() {return eventosParticipa;}
-    public void setEventosParticipa(List<EventoModel> eventosParticipa) {this.eventosParticipa = eventosParticipa;}
+    public List<EventoModel> getEventosInscrito() {return eventosInscrito;}
+    public void setEventosInscrito(List<EventoModel> eventosInscrito) {this.eventosInscrito = eventosInscrito;}
 
     public Set<TemaPreferencia> getTemasPreferidos() {return temasPreferidos;}
     public void setTemasPreferidos(Set<TemaPreferencia> temasPreferidos) {this.temasPreferidos = temasPreferidos;}
 
-    public boolean isEstadoDoUsuario() {return estadoDoUsuario;}
-    public void setEstadoDoUsuario(boolean estadoDoUsuario) {this.estadoDoUsuario = estadoDoUsuario;}
+    public boolean isEstado() {return estado;}
+    public void setEstado(boolean estado) {this.estado = estado;}
 
     @Override
     public boolean equals(Object o) {

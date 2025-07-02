@@ -4,7 +4,6 @@ import com.eventually.model.EventoModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.util.Optional;
 
 /**
@@ -13,7 +12,7 @@ import java.util.Optional;
  * Esta classe utiliza a instância única de {@link EventoCriacaoService} para acessar e manipular os dados
  * dos eventos em memória.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.00
+ * @version 1.01
  * @since 2025-05-18
  */
 
@@ -67,7 +66,7 @@ public class EventoExclusaoService {
 
             if (eventoModel.isPresent()) {
                 EventoModel evento = eventoModel.get();
-                evento.setEstadoDoEvento(novoEstado);
+                evento.setEstado(novoEstado);
                 sistemaDeLogger.info("Estado do evento com ID " + idEvento + " alterado para " + (novoEstado ? "ATIVO" : "INATIVO") + ".");
                 alertaService.alertarInfo("Sucesso: Estado do evento alterado!");
                 return true;

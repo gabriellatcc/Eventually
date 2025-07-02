@@ -7,6 +7,7 @@ import com.eventually.view.*;
 import com.eventually.view.modal.*;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -17,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.List;
 
-/** PASSÍVEL DE ALTERÇÕES
+/**
  * Serviço responsável por gerenciar a navegação entre as diferentes telas da aplicação, centraliza a lógica de
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
@@ -99,7 +100,7 @@ public class NavegacaoService {
      * @param usuarioAutenticado O modelo de usuário autenticado, necessário para inicializar a HomeView.
      */
     public void navegarParaHome(UsuarioModel usuarioAutenticado) {
-        sistemaDeLogger.info("Navegando para a tela inicial (HomeView) para o usuário: " + usuarioAutenticado.getNomePessoa());
+        sistemaDeLogger.info("Navegando para a tela inicial (HomeView) para o usuário: " + usuarioAutenticado.getNome());
         try {
             HomeView homeView = new HomeView();
             HomeController homeController = new HomeController(usuarioAutenticado.getEmail(), homeView, primaryStage);
@@ -509,7 +510,65 @@ public class NavegacaoService {
         }
     }
 
-    public void abrirModalParticipantes(HomeView.EventoH eventoH) {
+    /**
+     * Este método cria e exibe o modal de compartilhamento para um evento específico.
+     * @param eventoParaCompartilhar Os dados do evento que foi clicado.
+     */
+    public void abrirModalDeCompartilhamento(HomeView.EventoH eventoParaCompartilhar) {
+        try {
+            CompartilharEventoModal modalView = new CompartilharEventoModal(eventoParaCompartilhar);
+            CompartilharEventoController controller = new CompartilharEventoController(modalView, eventoParaCompartilhar);
 
+            Scene modalScene = new Scene(modalView);
+
+            String cssPath = getClass().getResource("/styles/modal-styles.css").toExternalForm();
+            modalScene.getStylesheets().add(cssPath);
+
+            modalScene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+
+            Stage modalStage = new Stage();
+            modalStage.setTitle("Compartilhar Evento");
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.setScene(modalScene);
+
+            modalStage.initOwner(primaryStage);
+
+            modalStage.showAndWait();
+        } catch (Exception e) {
+            sistemaDeLogger.error("Falha ao abrir o modal de compartilhamento: "+ e);
+        }
+    }
+
+    public void abrirModalParticipantes(HomeView.EventoH eventoH) {
+        sistemaDeLogger.info("Abrindo modal de participantes para o evento: " + eventoH.titulo());
+        try {
+            ParticipantesModal modal = new ParticipantesModal(eventoH);
+
+            Stage modalStage = new Stage();
+
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(primaryStage);
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
+
+            Scene modalScene = new Scene(modal);
+            modalScene.setFill(Color.TRANSPARENT);
+
+            modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
+
+            modalStage.setScene(modalScene);
+
+            modalStage.setOnShown(event -> {
+                javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+                modalStage.setX(((screenBounds.getWidth() - modalStage.getWidth()) / 2)+360);
+                modalStage.setY((screenBounds.getHeight() - modalStage.getHeight()) / 2);
+            });
+
+            modalStage.showAndWait();
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao abrir o modal de participantes: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

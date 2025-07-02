@@ -4,12 +4,9 @@ import com.eventually.model.EventoModel;
 import com.eventually.model.FormatoSelecionado;
 import com.eventually.model.UsuarioModel;
 import com.eventually.service.AlertaService;
-import com.eventually.service.EventoCriacaoService;
 import com.eventually.service.NavegacaoService;
 import com.eventually.service.UsuarioSessaoService;
 import com.eventually.view.*;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -23,12 +20,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-/** PASSÍVEL DE ALTERAÇÕES
+/**
  * Classe controladora da tela de eventos participados e criados pelo usuário, é responsável pela comunicação
  * com o backend.
  * Contém métodos privados para que os acesso sejam somente por esta classe.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.04
+ * @version 1.05
  * @since 2025-06-18
  */
 public class MyEventsController {
@@ -190,11 +187,11 @@ public class MyEventsController {
      * @return Um registro pronto para a view.
      */
     private MyEventsView.EventoMM converterParaView(EventoModel model) {
-        String titulo = model.getNomeEvento();
+        String titulo = model.getNome();
 
         String local = (model.getFormato() == FormatoSelecionado.ONLINE) ? "Evento Online" : model.getLocalizacao();
 
-        String categoria = model.getTemasEvento().stream()
+        String categoria = model.getTemas().stream()
                 .findFirst()
                 .map(t -> t.toString().substring(0, 1).toUpperCase() + t.toString().substring(1).toLowerCase())
                 .orElse("Geral");
@@ -236,7 +233,7 @@ public class MyEventsController {
             eventosParaView.add(converterParaView(todosOsEventos.get(i)));
             EventoMECartao cartao = new EventoMECartao();
 
-            cartao.setLblTitulo(todosOsEventos.get(i).getNomeEvento());
+            cartao.setLblTitulo(todosOsEventos.get(i).getNome());
             cartao.setLblLocal(todosOsEventos.get(i).getLocalizacao());
 
             List<UsuarioModel> listaDeInscritos = todosOsEventos.get(i).getParticipantes();

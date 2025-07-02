@@ -18,7 +18,7 @@ import java.util.Set;
  * fornecendo acesso a informações como nome, ID, email, senha e outros atributos do {@link UsuarioModel} (por enquanto, em memória).
  * A classe acessa a coleção de usuários diretamente através do {@link UsuarioCadastroService}.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.05
+ * @version 1.06
  * @since 2025-04-22
  */
 public final class UsuarioSessaoService {
@@ -192,7 +192,7 @@ public final class UsuarioSessaoService {
             UsuarioModel usuario = procurarUsuario(email);
 
             if (usuario != null) {
-                return usuario.getEventosParticipa();
+                return usuario.getEventosInscrito();
             } else {
                 alertaService.alertarErro("Usuário com o email informado não foi encontrado ao buscar eventos.");
                 return new ArrayList<>();
@@ -223,7 +223,7 @@ public final class UsuarioSessaoService {
                     .filter(usuario -> usuario.getEmail().equalsIgnoreCase(email))
                     .findFirst();
 
-            if (usuarioOptional.isPresent()) {return usuarioOptional.get().isEstadoDoUsuario();}
+            if (usuarioOptional.isPresent()) {return usuarioOptional.get().isEstado();}
             else {
                 alertaService.alertarErro("Usuário com o email informado não foi encontrado.");
                 return null;
@@ -254,7 +254,7 @@ public final class UsuarioSessaoService {
                     .filter(usuario -> usuario.getEmail().equalsIgnoreCase(email))
                     .findFirst();
 
-            if (usuarioOptional.isPresent()) {return usuarioOptional.get().getNomePessoa();}
+            if (usuarioOptional.isPresent()) {return usuarioOptional.get().getNome();}
             else {
                 alertaService.alertarErro("Usuário com o email informado não foi encontrado.");
                 return null;
@@ -323,7 +323,7 @@ public final class UsuarioSessaoService {
                     .stream()
                     .filter(usuario -> usuario.getEmail().equalsIgnoreCase(email))
                     .findFirst();
-            if (usuarioOptional.isPresent()) {return usuarioOptional.get().getFotoUsuario();
+            if (usuarioOptional.isPresent()) {return usuarioOptional.get().getFoto();
             } else {
                 alertaService.alertarErro("Usuário com o email informado não foi encontrado.");
                 return null;
@@ -355,7 +355,7 @@ public final class UsuarioSessaoService {
                     .findFirst();
 
             if (usuarioOptional.isPresent()) {
-                return usuarioOptional.get().getLocalizacaoUsuario();
+                return usuarioOptional.get().getCidade();
             } else {
                 alertaService.alertarErro("Usuário com o email informado não foi encontrado.");
                 return null;

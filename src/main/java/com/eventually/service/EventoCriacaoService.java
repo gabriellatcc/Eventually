@@ -19,7 +19,7 @@ import java.util.*;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.04
+ * @version 1.05
  * @since 2025-05-15
  */
 public final class EventoCriacaoService {
@@ -229,7 +229,7 @@ public final class EventoCriacaoService {
 
         Optional<EventoModel> eventoModelOptional = getAllEventos()
                 .stream()
-                .filter(evento -> evento.getNomeEvento().equalsIgnoreCase(nome))
+                .filter(evento -> evento.getNome().equalsIgnoreCase(nome))
                 .findFirst();
         return eventoModelOptional.isPresent();
     }

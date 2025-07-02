@@ -16,7 +16,7 @@ import java.util.Set;
  * Esta classe utiliza a instância única de {@link UsuarioCadastroService} para acessar e manipular os dados
  * dos usuários em memória.
  * @author Gabriella Tavares Costa Corrêa (Criação,documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.04
+ * @version 1.05
  * @since 2025-05-18
  */
 public final class UsuarioAtualizacaoService {
@@ -63,7 +63,7 @@ public final class UsuarioAtualizacaoService {
         if (usuarioOpt.isEmpty()) return false;
 
         if (usuarioCadastroService.isRegraNomeCumprida(novoNome)) {
-            usuarioOpt.get().setNomePessoa(novoNome);
+            usuarioOpt.get().setNome(novoNome);
             notificarSucesso("Nome", idUsuario);
             return true;
         } else {
@@ -134,7 +134,7 @@ public final class UsuarioAtualizacaoService {
         if (usuarioOpt.isEmpty()) return false;
 
         if (usuarioCadastroService.isRegraCidadeCumprida(novaCidade)) {
-            usuarioOpt.get().setLocalizacaoUsuario(novaCidade);
+            usuarioOpt.get().setCidade(novaCidade);
             notificarSucesso("Cidade", idUsuario);
             return true;
         } else {
@@ -173,7 +173,7 @@ public final class UsuarioAtualizacaoService {
         Optional<UsuarioModel> usuarioOpt = buscarUsuarioParaAtualizacao(idUsuario);
         if (usuarioOpt.isEmpty()) return false;
         else{
-            usuarioOpt.get().setFotoUsuario(novaFoto);
+            usuarioOpt.get().setFoto(novaFoto);
             notificarSucesso("Foto", idUsuario);
             return true;
         }

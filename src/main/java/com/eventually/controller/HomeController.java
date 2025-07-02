@@ -1,6 +1,7 @@
 package com.eventually.controller;
 
 import com.eventually.model.EventoModel;
+import com.eventually.model.UsuarioModel;
 import com.eventually.model.FormatoSelecionado;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.service.*;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.08
+ * @version 1.09
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -208,9 +209,9 @@ public class HomeController {
      * @return Um registro pronto para a view.
      */
     private HomeView.EventoH converterParaView(EventoModel model) {
-        String titulo = model.getNomeEvento();
+        String titulo = model.getNome();
         String local = model.getFormato() == FormatoSelecionado.ONLINE ? "Evento Online" : model.getLocalizacao();
-        Image imagem = model.getFotoEvento();
+        Image imagem = model.getFoto();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE dd, MMM uuuu", new Locale("pt", "BR"));
         String dataHora1 = String.format("%s - %s", model.getDataInicial().format(formatter).toUpperCase(), model.getHoraInicial());
         String dataHora2 = String.format("%s - %s", model.getDataFinal().format(formatter).toUpperCase(), model.getHoraFinal());
@@ -222,7 +223,9 @@ public class HomeController {
         String formatoStr = model.getFormato().toString();
         formatoStr = formatoStr.substring(0, 1).toUpperCase() + formatoStr.substring(1).toLowerCase();
 
-        Set<String> preferencias = model.getTemasEvento().stream()
+        List<UsuarioModel> participantes = model.getParticipantes();
+
+        Set<String> preferencias = model.getTemas().stream()
                 .map(Enum::toString)
                 .collect(Collectors.toSet());
         String categoria = preferencias.stream().findFirst().orElse("Geral");
@@ -246,6 +249,7 @@ public class HomeController {
                 capacidade,
                 formatoStr,
                 preferencias,
+                participantes,
                 linkAcesso,
                 dataI,
                 dataF,

@@ -16,7 +16,7 @@ import javafx.stage.Stage;
  * Classe responsável pelo modal de "Inscrição no Evento".
  * Exibe os detalhes de um evento específico e permite que o usuário interaja com ele.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e parte lógica)
- * @version 1.03
+ * @version 1.04
  * @since 2025-06-27
  */
 public class EventoModal extends Parent {
@@ -36,12 +36,13 @@ public class EventoModal extends Parent {
 
     private Button btnInscrever;
     private Button btnCancelarInscricao;
-    private Button btnVerParticipantes;
+    private Button btnVerParticipantes, btnComentarios, btnCompartilhar;
     private Button btnEditar;
     private Button btnExcluir;
     private Button btnSair;
 
     private VBox vbBotoesAcao;
+
     /**
      * Construtor padrão da classe.
      */
@@ -90,7 +91,7 @@ public class EventoModal extends Parent {
         imgTopoEvento.setFitHeight(180);
         imgTopoEvento.setPreserveRatio(false);
 
-        VBox contentContainer = new VBox(10);
+        VBox contentContainer = new VBox(5);
         contentContainer.setAlignment(Pos.TOP_LEFT);
         contentContainer.setPadding(new Insets(0, 25, 20, 25));
 
@@ -110,7 +111,7 @@ public class EventoModal extends Parent {
         lblHeaderDescricao.getStyleClass().add("title-label-modal");
         lblHeaderDescricao.setStyle("-fx-font-size: 20px;");
         lblDescricao = new Label();
-            lblDescricao.setWrapText(true);
+        lblDescricao.setWrapText(true);
         lblDescricao.getStyleClass().add("label-modal");
 
         Label lblHeaderVagas = new Label("Vagas do Evento");
@@ -118,6 +119,7 @@ public class EventoModal extends Parent {
         lblHeaderVagas.setStyle("-fx-font-size: 20px;");
 
         HBox hbVagas = new HBox(10);
+        hbVagas.setMinHeight(70);
         hbVagas.setAlignment(Pos.CENTER_LEFT);
 
         Label iconParticipante = new Label("\uD83D\uDC64");
@@ -147,36 +149,58 @@ public class EventoModal extends Parent {
         btnCancelarInscricao.getStyleClass().add("modal-close-button");
         btnCancelarInscricao.setMaxWidth(Double.MAX_VALUE);
 
-        btnVerParticipantes = new Button("Ver Participantes");
-        btnVerParticipantes.getStyleClass().add("modal-interact-button-secondary");
+        FlowPane vbAcoes = new FlowPane(10, 10);
+        vbAcoes.setPadding(new Insets(5,0,0,0));
+        vbAcoes.setAlignment(Pos.CENTER);
+        btnVerParticipantes = new Button("Participantes");
+        btnVerParticipantes.getStyleClass().add("action-interact-button");
         btnVerParticipantes.setMaxWidth(Double.MAX_VALUE);
 
-        btnEditar = new Button("Editar");
-        btnEditar.getStyleClass().add("modal-interact-button-secondary");
-        btnEditar.setMaxWidth(Double.MAX_VALUE);
+        btnCompartilhar = new Button("Compartilhar");
+        btnCompartilhar.getStyleClass().add("action-interact-button");
+        btnCompartilhar.setMaxWidth(Double.MAX_VALUE);
 
-        btnExcluir = new Button("Excluir Evento");
-        btnExcluir.getStyleClass().add("modal-close-button");
-        btnExcluir.setMaxWidth(Double.MAX_VALUE);
+        btnComentarios = new Button("Comentários");
+        btnComentarios.getStyleClass().add("action-interact-button");
+        btnComentarios.setMaxWidth(Double.MAX_VALUE);
+
+        btnSair = new Button("Sair");
+        btnSair.getStyleClass().add("sair-button");
+        btnSair.setMaxWidth(Double.MAX_VALUE);
+
+        vbAcoes.getChildren().addAll(btnVerParticipantes, btnComentarios, btnCompartilhar, btnSair);
 
         vbBotoesAcao = new VBox(10);
-        Button btnComentarios = new Button("Ver Comentários");
-        vbBotoesAcao.getChildren().add(btnComentarios);
 
-        HBox hboxLocalizacaoFormato = new HBox();
+        btnEditar = new Button("Editar");
+        btnEditar.getStyleClass().add("edit-button");
+        btnEditar.setMaxWidth(Double.MAX_VALUE);
+
+        btnExcluir = new Button("Excluir");
+        btnExcluir.getStyleClass().add("delet-button");
+        btnExcluir.setMaxWidth(Double.MAX_VALUE);
+
+        HBox vbAcoesFechar = new HBox();
+        vbAcoesFechar.setPadding(new Insets(5, 10, 0, 10));
+        vbAcoesFechar.setAlignment(Pos.CENTER);
+
+        Pane espacador = new Pane();
+        vbAcoesFechar.setHgrow(espacador, Priority.ALWAYS);
+
+        vbAcoesFechar.getChildren().addAll(vbBotoesAcao,espacador,btnSair);
+
+        HBox hboxLocalizacaoFormato = new HBox(5);
+        hboxLocalizacaoFormato.setPadding(new Insets(5, 0, 0, 0));
         hboxLocalizacaoFormato.setAlignment(Pos.CENTER_LEFT);
 
         Label lblHeaderLocalizacao = new Label("Localização");
         lblHeaderLocalizacao.getStyleClass().add("title-label-modal");
         lblHeaderLocalizacao.setStyle("-fx-font-size: 20px;");
 
-        Pane espacad = new Pane();
-        HBox.setHgrow(espacad, Priority.ALWAYS);
-
         lblFormato = new Label();
         lblFormato.getStyleClass().add("formato-label");
 
-        hboxLocalizacaoFormato.getChildren().addAll(lblHeaderLocalizacao, espacad, lblFormato);
+        hboxLocalizacaoFormato.getChildren().addAll(lblHeaderLocalizacao, lblFormato);
 
         lblLocalizacao = new Label();
         lblLocalizacao.setWrapText(true);
@@ -185,20 +209,11 @@ public class EventoModal extends Parent {
         flowPaneTags = new FlowPane(10, 10);
         flowPaneTags.setAlignment(Pos.CENTER_LEFT);
 
-        btnSair = new Button("Sair");
-        btnSair.setAlignment(Pos.CENTER);
-        btnSair.getStyleClass().add("modal-interact-button");
-        btnSair.setMaxWidth(130);
-        HBox hboxSair = new HBox(btnSair);
-        hboxSair.setAlignment(Pos.CENTER);
-
         contentContainer.getChildren().addAll(
-                lblTituloEvento, hbDataHora,
+                flowPaneTags, lblTituloEvento, hbDataHora,
                 lblHeaderDescricao, lblDescricao,
                 lblHeaderVagas, hbVagas,
-                vbBotoesAcao,
-                hboxLocalizacaoFormato, lblLocalizacao,
-                flowPaneTags, hboxSair
+                hboxLocalizacaoFormato, lblLocalizacao,vbAcoes, vbAcoesFechar
         );
 
         layout.getChildren().addAll(imgTopoEvento, contentContainer);
@@ -217,38 +232,25 @@ public class EventoModal extends Parent {
 
     public Button getBtnInscrever() {return btnInscrever;}
     public Button getBtnCancelarInscricao() { return btnCancelarInscricao; }
+
+    public Button getBtnComentarios() {return btnComentarios;}
+    public Button getBtnCompartilhar() {return btnCompartilhar;}
     public Button getBtnVerParticipantes() {return btnVerParticipantes;}
+
     public Button getBtnEditar() { return btnEditar; }
     public Button getBtnExcluir() { return btnExcluir; }
     public Button getBtnSair() {return btnSair;}
 
     public VBox getVbBotoesAcao() { return vbBotoesAcao; }
 
-    //get titulo
     public Label getLblTituloEvento() {return lblTituloEvento;}
-
-    //get data
     public Label getLblDataHoraFim() {return lblDataHoraFim;}
     public Label getLblDataHoraInicio() {return lblDataHoraInicio;}
-
-    //get descricao
     public Label getLblDescricao() {return lblDescricao;}
-
-    //get inscritos
     public Label getLblParticipantesInscritos() {return lblParticipantesInscritos;}
-
-    //get n participantes
     public Label getLblVagasDisponiveis() {return lblVagasDisponiveis;}
-
-    // get imagem
     public ImageView getImgTopoEvento() {return imgTopoEvento;}
-
-    //get localizacao
     public Label getLblLocalizacao() {return lblLocalizacao;}
-
-    // get foramto
     public Label getLblFormato() {return lblFormato;}
-
-    //get preferencias -> loop de preferencias
     public FlowPane getFlowPaneTags() {return flowPaneTags;}
 }

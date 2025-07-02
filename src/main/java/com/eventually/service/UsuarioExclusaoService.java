@@ -12,7 +12,7 @@ import java.util.Optional;
  * Esta classe utiliza a instância única de {@link UsuarioCadastroService} para acessar e manipular os dados
  * dos usuários em memória.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.01
+ * @version 1.02
  * @since 2025-05-18
  */
 public final class UsuarioExclusaoService {
@@ -65,7 +65,7 @@ public final class UsuarioExclusaoService {
 
             if (usuarioOptional.isPresent()) {
                 UsuarioModel usuario = usuarioOptional.get();
-                usuario.setEstadoDoUsuario(novoEstado);
+                usuario.setEstado(novoEstado);
                 sistemaDeLogger.info("Estado do usuário com ID " + idUsuario + " alterado para " + (novoEstado ? "ATIVO" : "INATIVO") + ".");
                 alertaService.alertarInfo("Sucesso: Estado do usuário alterado!");
                 return true;

@@ -1,6 +1,7 @@
 package com.eventually.view;
 
 import com.eventually.controller.HomeController;
+import com.eventually.model.UsuarioModel;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -19,7 +20,7 @@ import java.util.Set;
  * Esta classe é responsável por exibir a página principal
  * com filtros de eventoHS e listagem de evento disponíveis.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.10
+ * @version 1.11
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-05-29
@@ -54,6 +55,7 @@ public class HomeView extends BorderPane {
             int capacidade,
             String formato,
             Set<String> preferencias,
+            List<UsuarioModel> participantes,
             String linkAcesso,
             LocalDate dataI,
             LocalDate dataF,

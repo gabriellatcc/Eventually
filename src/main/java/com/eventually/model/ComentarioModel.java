@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 
 /**
  * A classe {@code ComentarioModel} representa um comentário feito em um evento.
+ * @author Gabriella Tavares Costa Corrêa
+ * @version 1.0
+ * @since 2025-07-02
  */
 public class ComentarioModel {
     private String texto;
@@ -40,7 +43,7 @@ public class ComentarioModel {
     public String toString() {
         return "ComentarioModel{" +
                 "texto='" + texto + '\'' +
-                ", autor=" + autor.getNomePessoa() +
+                ", autor=" + autor.getNome() +
                 ", dataHora=" + dataHora +
                 '}';
     }

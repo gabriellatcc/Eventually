@@ -2,24 +2,34 @@ package com.eventually.service;
 
 import com.eventually.model.EventoModel;
 import com.eventually.model.FormatoSelecionado;
+import com.eventually.model.UsuarioModel;
+import com.eventually.view.HomeView;
 import com.eventually.view.modal.EditaEventoModal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
  * Serviço Singleton responsável pela lógica de negócio da edição de eventos.
  * Ele pega os dados da view e os aplica ao objeto de modelo do evento.
- * @version 1.0
+ * @version 1.01
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação e revisão da parte lógica da estrutura)
  * @since 2025-07-01
  */
 public class EditaEventoService {
     private static EditaEventoService instance;
+
     private EventoLeituraService eventoLeituraService;
+    private UsuarioSessaoService usuarioSessaoService;
 
     private EditaEventoService() {
+        this.usuarioSessaoService=UsuarioSessaoService.getInstancia();
         this.eventoLeituraService=EventoLeituraService.getInstancia();
     }
+
+    private static final Logger logger = LoggerFactory.getLogger(EditaEventoService.class);
 
     public static EditaEventoService getInstance() {
         if (instance == null) {
@@ -44,11 +54,11 @@ public class EditaEventoService {
         }
 
         EventoModel eventoParaAtualizar = optionalEvento.get();
-        System.out.println("Iniciando atualização para o evento real: " + eventoParaAtualizar.getNomeEvento());
+        System.out.println("Iniciando atualização para o evento real: " + eventoParaAtualizar.getNome());
 
         String novoNome = modal.getFldNomeEvento().getText();
         if (novoNome != null && !novoNome.isBlank()) {
-            eventoParaAtualizar.setNomeEvento(novoNome);
+            eventoParaAtualizar.setNome(novoNome);
         }
 
         String novaDescricao = modal.getTaDescricao().getText();
@@ -81,6 +91,33 @@ public class EditaEventoService {
             eventoParaAtualizar.setFormato(FormatoSelecionado.valueOf(novoFormato));
         }
 
-        System.out.println("Evento atualizado para: " + eventoParaAtualizar.getNomeEvento());
+        System.out.println("Evento atualizado para: " + eventoParaAtualizar.getNome());
+    }
+
+    public boolean adicionarParticipante(HomeView.EventoH eventoH, String email) {
+        logger.info("Tentando adicionar usuário '{}' ao evento ID '{}'", email, eventoH.id());
+
+        Optional<EventoModel> optionalEvento = eventoLeituraService.procurarEventoPorId(eventoH.id());
+
+        Optional<UsuarioModel> optionalUsuario = Optional.ofNullable(usuarioSessaoService.procurarUsuario(email));
+
+        if (optionalEvento.isPresent() && optionalUsuario.isPresent()) {
+            EventoModel evento = optionalEvento.get();
+            UsuarioModel usuario = optionalUsuario.get();
+
+            List<UsuarioModel> participantes = evento.getParticipantes();
+
+            if (participantes.contains(usuario)) {
+                logger.warn("Usuário '{}' já está inscrito no evento '{}'. Operação cancelada.", email, evento.getNome());
+                return false;
+            }
+
+            participantes.add(usuario);
+            logger.info("Usuário '{}' adicionado com sucesso à lista de participantes do evento '{}'.", usuario.getNome(), evento.getNome());
+
+            return true;
+        }
+
+        return false;
     }
 }
