@@ -1,4 +1,4 @@
-package com.eventually.view;
+package com.eventually.view.modal;
 
 import com.eventually.controller.EditaTemasController;
 import com.eventually.model.TemaPreferencia;
@@ -21,14 +21,14 @@ import java.util.Map;
  * @author Gabriella Tavares Costa Corrêa (Criação, Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-07-01
  */
-public class ModalEditaTemas extends Parent {
+public class EditaTemasModal extends Parent {
     private EditaTemasController controller;
 
     private final Map<TemaPreferencia, CheckBox> mapaDeCheckBoxes = new EnumMap<>(TemaPreferencia.class);
     private Button btnSalvar;
     private Button btnCancelar;
 
-    public ModalEditaTemas() {
+    public EditaTemasModal() {
         setupUI();
     }
 

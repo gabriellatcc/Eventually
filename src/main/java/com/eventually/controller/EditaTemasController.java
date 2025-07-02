@@ -3,7 +3,7 @@ package com.eventually.controller;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.service.UsuarioAtualizacaoService;
 import com.eventually.service.UsuarioSessaoService;
-import com.eventually.view.ModalEditaTemas;
+import com.eventually.view.modal.EditaTemasModal;
 import javafx.scene.control.CheckBox;
 
 import java.util.HashSet;
@@ -16,12 +16,12 @@ import java.util.Set;
  * @since 2025-07-01
  */
 public class EditaTemasController {
-    private final ModalEditaTemas view;
+    private final EditaTemasModal view;
     private UsuarioAtualizacaoService atualizacaoService;
     private UsuarioSessaoService sessaoService;
     private final String emailRecebido;
 
-    public EditaTemasController(ModalEditaTemas view, String emailRecebido) {
+    public EditaTemasController(EditaTemasModal view, String emailRecebido) {
         this.atualizacaoService = UsuarioAtualizacaoService.getInstancia();
         this.sessaoService = UsuarioSessaoService.getInstancia();
 

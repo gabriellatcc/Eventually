@@ -1,4 +1,4 @@
-package com.eventually.view;
+package com.eventually.view.modal;
 
 import com.eventually.controller.MudancaController;
 import javafx.geometry.Insets;

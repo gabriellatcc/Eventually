@@ -7,7 +7,6 @@ import com.eventually.view.*;
 import com.eventually.view.modal.*;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -419,7 +418,7 @@ public class NavegacaoService {
     public void abrirModalEditarFiltros(String emailRecebido) {
         sistemaDeLogger.info("Método abrirModalEditarFiltros() chamado.");
         try{
-            ModalEditaTemas modal=new ModalEditaTemas();
+            EditaTemasModal modal=new EditaTemasModal();
             EditaTemasController modalController= new EditaTemasController(modal,emailRecebido);
             modal.setEditaTemasController(modalController);
             Stage modalStage = new Stage();
@@ -483,7 +482,7 @@ public class NavegacaoService {
     }
 
     public void abrirModalConfimarExclusao(HomeView.EventoH eventoH) {
-        ModalConfirmarExclusao confirmModal = new ModalConfirmarExclusao();
+        ConfirmarExclusaoModal confirmModal = new ConfirmarExclusaoModal();
         int id = eventoH.id();
 
         boolean usuarioConfirmou = confirmModal.showAndWait(primaryStage);

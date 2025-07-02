@@ -20,7 +20,7 @@ import javafx.stage.StageStyle;
  * @version 1.0
  * @since 2025-07-01
  */
-public class ModalConfirmarExclusao {
+public class ConfirmarExclusaoModal {
     private boolean result = false;
 
     /**

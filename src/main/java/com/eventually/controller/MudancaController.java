@@ -1,7 +1,7 @@
 package com.eventually.controller;
 
 import com.eventually.service.*;
-import com.eventually.view.MudancaModal;
+import com.eventually.view.modal.MudancaModal;
 import com.eventually.view.SettingsView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
