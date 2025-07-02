@@ -213,7 +213,8 @@ public class EventoModal extends Parent {
                 flowPaneTags, lblTituloEvento, hbDataHora,
                 lblHeaderDescricao, lblDescricao,
                 lblHeaderVagas, hbVagas,
-                hboxLocalizacaoFormato, lblLocalizacao,vbAcoes, vbAcoesFechar
+                hboxLocalizacaoFormato, lblLocalizacao,
+                vbAcoes, vbAcoesFechar
         );
 
         layout.getChildren().addAll(imgTopoEvento, contentContainer);

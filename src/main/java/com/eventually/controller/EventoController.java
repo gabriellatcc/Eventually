@@ -3,8 +3,6 @@ package com.eventually.controller;
 import com.eventually.model.EventoModel;
 import com.eventually.service.*;
 import com.eventually.view.HomeView;
-import com.eventually.view.modal.ComentarioModal;
-import com.eventually.view.modal.EditaEventoModal;
 import com.eventually.view.modal.EventoModal;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -88,7 +86,8 @@ public class EventoController {
         configurarBotoesDeAcao();
         view.getBtnSair().setOnAction(e -> view.close());
         view.getBtnVerParticipantes().setOnAction(e -> {processarVerParticipantes(eventoH);});
-        view.getBtnComentarios().setOnAction(e -> {abrirComentarioModal(eventoH);});
+        int id = eventoH.id();
+        view.getBtnComentarios().setOnAction(e -> {navegacaoService.abrirModalComentarios(id,email);});
         view.getBtnCompartilhar().setOnAction(e -> {navegacaoService.abrirModalDeCompartilhamento(eventoH);});
     }
 
@@ -155,32 +154,4 @@ public class EventoController {
         view.close();
     }
 
-    private void abrirComentarioModal(HomeView.EventoH eventoH) {
-        ComentarioModal comentarioModal = new ComentarioModal();
-        Stage stage = new Stage();
-        stage.setScene(new Scene(comentarioModal));
-        stage.setTitle("Comentários");
-
-        comentarioModal.getBtnEnviar().setOnAction(e -> {
-            String comentario = comentarioModal.getTxtComentario().getText();
-            if (!comentario.isEmpty()) {
-                ComentarioService.getInstancia().adicionarComentario(comentario);
-                atualizarComentarios(comentarioModal);
-                comentarioModal.getTxtComentario().clear();
-            }
-        });
-
-        comentarioModal.getBtnAnexarImagem().setOnAction(e -> {
-        });
-
-        stage.show();
-    }
-
-    private void atualizarComentarios(ComentarioModal comentarioModal) {
-        comentarioModal.getComentariosContainer().getChildren().clear();
-        for (String comentario : ComentarioService.getInstancia().getComentarios()) {
-            Label lblComentario = new Label(comentario);
-            comentarioModal.getComentariosContainer().getChildren().add(lblComentario);
-        }
-    }
 }

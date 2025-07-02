@@ -14,7 +14,7 @@
     -fx-border-color: #BDBDBD;
     -fx-border-width: 1px;
     -fx-border-radius: 20px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 18, 0, 0, 5);
 }
 
 .card-dot {
@@ -315,10 +315,58 @@
     -fx-text-fill: #555555;
 }
 
+.comentarios-scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.comentarios-scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.comment-card {
+    -fx-background-color: #f1f3f5;
+    -fx-padding: 12px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 5, 0, 0, 2);
+}
+
+.comment-author-name {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #212529;
+}
+
+.comment-date {
+    -fx-font-size: 11px;
+    -fx-text-fill: #868e96;
+}
+
+.comment-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #495057;
+}
+
 .info-label {
     -fx-font-size: 13px;
-    -fx-text-fill: #888888;
-    -fx-font-style: italic;
+    -fx-text-fill: #868e96;
+    -fx-alignment: center;
+}
+
+.comentarios-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8;
+}
+
+.comentarios-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #ced4da;
+    -fx-background-radius: 4;
+}
+
+.comentarios-scroll-pane .scroll-bar:vertical .increment-button,
+.comentarios-scroll-pane .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
 }
 
 .close-button-x {

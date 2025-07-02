@@ -1,95 +1,169 @@
 package com.eventually.view.modal;
 
+import com.eventually.model.ComentarioModel;
+import com.eventually.model.EventoModel;
+import com.eventually.model.UsuarioModel;
+import com.eventually.service.ComentarioService;
+import com.eventually.service.UsuarioSessaoService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import java.time.format.DateTimeFormatter;
 
-/**
- * Classe responsável pelo modal de comentários.
- * Permite que os usuários comentem e anexem imagens.
- */
-public class ComentarioModal extends Parent {
-    private TextArea txtComentario;
-    private Button btnEnviar;
-    private Button btnAnexarImagem;
-    private VBox vbComentarios;
+public class ComentarioModal extends VBox {
+    private final EventoModel evento;
+    private final ComentarioService comentarioService;
+    private final UsuarioSessaoService sessaoService;
+    private final VBox listaComentariosVBox;
 
-    /**
-     * Construtor padrão da classe.
-     */
-    public ComentarioModal() {
-        setup();
+    private String email;
+
+    public ComentarioModal(EventoModel evento, String email) {
+        super(15);
+        this.evento = evento;
+        this.email=email;
+        this.comentarioService = ComentarioService.getInstancia();
+        this.sessaoService = UsuarioSessaoService.getInstancia();
+        this.listaComentariosVBox = new VBox(15);
+
+        setupUI();
     }
 
-    /**
-     * Configura e constrói o layout inicial do modal.
-     */
-    private void setup() {
-        VBox modalContent = criarLayoutPrincipal();
-
-        StackPane wrapper = new StackPane(modalContent);
-        StackPane.setAlignment(modalContent, Pos.CENTER);
-
-        this.getChildren().add(wrapper);
-    }
-
-    /**
-     * Cria o layout principal e todos os seus componentes aninhados.
-     * @return um VBox contendo toda a estrutura do modal.
-     */
-    public VBox criarLayoutPrincipal() {
+    private void setupUI() {
         final double MODAL_WIDTH = 450;
-        final double MODAL_HEIGHT = 600;
+        final double MODAL_HEIGHT = 400;
 
-        VBox layout = new VBox(15);
-        layout.setAlignment(Pos.TOP_CENTER);
-        layout.setPadding(new Insets(20));
-        layout.setPrefSize(MODAL_WIDTH, MODAL_HEIGHT);
+        this.getStyleClass().add("layout-pane");
+        this.setMaxSize(MODAL_WIDTH, MODAL_HEIGHT);
+        this.setPrefSize(MODAL_WIDTH, MODAL_HEIGHT);
+        this.setPadding(new Insets(15));
 
-        txtComentario = new TextArea();
-        txtComentario.setPromptText("Escreva seu comentário aqui...");
-        txtComentario.setWrapText(true);
+        Rectangle rect = new Rectangle(MODAL_WIDTH, MODAL_HEIGHT);
+        rect.setArcWidth(20);
+        rect.setArcHeight(20);
+        this.setClip(rect);
 
-        btnEnviar = new Button("Enviar Comentário");
-        btnAnexarImagem = new Button("Anexar Imagem");
+        HBox headerPane = criarHeader();
 
-        vbComentarios = new VBox();
-        vbComentarios.setSpacing(10);
-        vbComentarios.setAlignment(Pos.TOP_LEFT);
+        ScrollPane scrollPane = criarAreaDeComentarios();
 
-        layout.getChildren().addAll(txtComentario, btnAnexarImagem, btnEnviar, vbComentarios);
-        return layout;
+        VBox areaDeInput = criarAreaDeInput();
+
+        this.getChildren().addAll(headerPane, scrollPane, areaDeInput);
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
+
+        atualizarListaDeComentarios();
     }
 
-    /**
-     * Fecha a janela (Stage) do modal.
-     */
-    public void close() {
-        Stage stage = (Stage) this.getScene().getWindow();
-        if (stage != null) {
-            stage.close();
+    private HBox criarHeader() {
+        Label lblTitulo = new Label("Comentários do Evento");
+        lblTitulo.getStyleClass().add("modal-title");
+        Button btnCloseX = new Button("X");
+        btnCloseX.getStyleClass().add("close-button-x");
+        btnCloseX.setOnAction(e -> fecharModal());
+        Pane spacer = new Pane();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        return new HBox(lblTitulo, spacer, btnCloseX);
+    }
+
+    private ScrollPane criarAreaDeComentarios() {
+        listaComentariosVBox.setPadding(new Insets(10, 5, 10, 5));
+        ScrollPane scrollPane = new ScrollPane(listaComentariosVBox);
+        scrollPane.setFitToWidth(true);
+        scrollPane.getStyleClass().add("comentarios-scroll-pane");
+        return scrollPane;
+    }
+
+    private VBox criarAreaDeInput() {
+        TextArea txtNovoComentario = new TextArea();
+        txtNovoComentario.setPromptText("Escreva um comentário...");
+        txtNovoComentario.setWrapText(true);
+        txtNovoComentario.setPrefHeight(80);
+
+        Button btnPublicar = new Button("Publicar");
+        btnPublicar.getStyleClass().add("modal-interact-button");
+        btnPublicar.setOnAction(e -> {
+            publicarComentario(txtNovoComentario.getText());
+            txtNovoComentario.clear();
+        });
+
+        HBox acoesInput = new HBox(btnPublicar);
+        acoesInput.setAlignment(Pos.CENTER_RIGHT);
+
+        return new VBox(5, new Separator(), txtNovoComentario, acoesInput);
+    }
+
+    private void publicarComentario(String texto) {
+        if (texto == null || texto.isBlank()) return;
+
+        UsuarioModel autor = sessaoService.procurarUsuario(email);
+
+        ComentarioModel novoComentario = new ComentarioModel(texto, autor, evento);
+        comentarioService.adicionarComentario(evento, novoComentario);
+
+        atualizarListaDeComentarios();
+    }
+
+    private void atualizarListaDeComentarios() {
+        listaComentariosVBox.getChildren().clear();
+
+        if (evento.getComentarios().isEmpty()) {
+            Label infoLabel = new Label("Nenhum comentário ainda. Seja o primeiro!");
+            infoLabel.getStyleClass().add("info-label");
+            listaComentariosVBox.getChildren().add(infoLabel);
+        } else {
+            for (ComentarioModel comentario : evento.getComentarios()) {
+                VBox cardComentario = criarCardComentario(comentario);
+                listaComentariosVBox.getChildren().add(cardComentario);
+            }
         }
     }
 
-    public Button getBtnEnviar() {
-        return btnEnviar;
+    private VBox criarCardComentario(ComentarioModel comentario) {
+        ImageView fotoAutorView = new ImageView(comentario.getAutor().getFoto());
+        configurarFotoCircular(fotoAutorView, 40);
+
+        Label lblNomeAutor = new Label(comentario.getAutor().getNome());
+        lblNomeAutor.getStyleClass().add("comment-author-name");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy 'às' HH:mm");
+        Label lblData = new Label(comentario.getDataHora().format(formatter));
+        lblData.getStyleClass().add("comment-date");
+
+        HBox autorInfo = new HBox(10, fotoAutorView, new VBox(2, lblNomeAutor, lblData));
+        autorInfo.setAlignment(Pos.CENTER_LEFT);
+
+        Label lblTexto = new Label(comentario.getTexto());
+        lblTexto.setWrapText(true);
+        lblTexto.setMaxWidth(380);
+        lblTexto.getStyleClass().add("comment-text");
+
+        VBox card = new VBox(8, autorInfo, lblTexto);
+        if (comentario.getFotoAnexada() != null) {
+            ImageView fotoAnexadaView = new ImageView(comentario.getFotoAnexada());
+            fotoAnexadaView.setFitWidth(380);
+            fotoAnexadaView.setPreserveRatio(true);
+            card.getChildren().add(fotoAnexadaView);
+        }
+
+        card.getStyleClass().add("comment-card");
+        return card;
     }
 
-    public Button getBtnAnexarImagem() {
-        return btnAnexarImagem;
+    private void configurarFotoCircular(ImageView imageView, double tamanho) {
+        imageView.setFitWidth(tamanho);
+        imageView.setFitHeight(tamanho);
+        Circle clip = new Circle(tamanho / 2, tamanho / 2, tamanho / 2);
+        imageView.setClip(clip);
     }
 
-    public VBox getComentariosContainer() {
-        return vbComentarios;
-    }
-
-    public TextArea getTxtComentario() {
-        return txtComentario;
+    private void fecharModal() {
+        Stage stage = (Stage) this.getScene().getWindow();
+        if (stage != null) stage.close();
     }
 }

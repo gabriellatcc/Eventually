@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Serviço responsável por gerenciar a navegação entre as diferentes telas da aplicação, centraliza a lógica de
@@ -368,7 +369,7 @@ public class NavegacaoService {
             modalStage.setOnShown(event -> {
                 javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
                 modalStage.setX((screenBounds.getWidth() - modalStage.getWidth()) / 2);
-                modalStage.setY((screenBounds.getHeight() - modalStage.getHeight()) / 2);
+                modalStage.setY(((screenBounds.getHeight() - modalStage.getHeight()) / 2)+40);
             });
 
             modalScene.setFill(Color.TRANSPARENT);
@@ -549,13 +550,11 @@ public class NavegacaoService {
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.initOwner(primaryStage);
             modalStage.initStyle(StageStyle.TRANSPARENT);
-            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
 
             Scene modalScene = new Scene(modal);
             modalScene.setFill(Color.TRANSPARENT);
 
             modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
-
             modalStage.setScene(modalScene);
 
             modalStage.setOnShown(event -> {
@@ -568,6 +567,42 @@ public class NavegacaoService {
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao abrir o modal de participantes: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    public void abrirModalComentarios(int eventoId,String email) {
+        Optional<EventoModel> optionalEvento = EventoLeituraService.getInstancia().procurarEventoPorId(eventoId);
+
+        if (optionalEvento.isPresent()) {
+            EventoModel evento = optionalEvento.get();
+
+            try {
+                ComentarioModal modal = new ComentarioModal(evento,email);
+
+                Stage modalStage = new Stage();
+
+                modalStage.initModality(Modality.APPLICATION_MODAL);
+                modalStage.initOwner(primaryStage);
+                modalStage.initStyle(StageStyle.TRANSPARENT);
+
+                Scene modalScene = new Scene(modal);
+                modalScene.setFill(Color.TRANSPARENT);
+
+                modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
+                modalStage.setScene(modalScene);
+
+                modalStage.setOnShown(event -> {
+                    javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+                    modalStage.setX(((screenBounds.getWidth() - modalStage.getWidth()) / 2)+454);
+                    modalStage.setY(((screenBounds.getHeight() - modalStage.getHeight()) / 2)+200);
+                });
+
+                modalStage.showAndWait();
+            } catch (Exception e) {
+                sistemaDeLogger.error("Falha ao abrir o modal de comentários: " + e.getMessage());
+            }
+        } else {
+            sistemaDeLogger.error("Tentativa de abrir comentários para evento não encontrado. ID: " + eventoId);
         }
     }
 }
