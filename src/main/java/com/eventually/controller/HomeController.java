@@ -189,13 +189,13 @@ public class HomeController {
 
             Set<EventoModel> todosOsEventosModel = eventoCriacaoService.getAllEventos();
 
-            List<HomeView.EventoH> eventosParaView = new ArrayList<>();
-
-            for (EventoModel model : todosOsEventosModel) {
-                eventosParaView.add(converterParaView(model));
-            }
+            List<HomeView.EventoH> eventosParaView = todosOsEventosModel.stream()
+                    .filter(EventoModel::isEstado)
+                    .map(this::converterParaView)
+                    .collect(Collectors.toList());
 
             homeView.setEventos(eventosParaView);
+
         } catch (Exception ex) {
             sistemaDeLogger.error("Erro ao carregar eventos: " + ex.getMessage());
             ex.printStackTrace();
@@ -259,6 +259,6 @@ public class HomeController {
     }
 
     public void abrir(HomeView.EventoH eventoH) {
-        navegacaoService.abrirModalVerEvento(emailRecebido, eventoH);
+        navegacaoService.abrirModalVerEvento(emailRecebido, eventoH, this::processarCarregamentoEventos);
     }
 }

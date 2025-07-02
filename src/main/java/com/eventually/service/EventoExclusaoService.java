@@ -12,7 +12,7 @@ import java.util.Optional;
  * Esta classe utiliza a instância única de {@link EventoCriacaoService} para acessar e manipular os dados
  * dos eventos em memória.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.01
+ * @version 1.02
  * @since 2025-05-18
  */
 
@@ -68,10 +68,8 @@ public class EventoExclusaoService {
                 EventoModel evento = eventoModel.get();
                 evento.setEstado(novoEstado);
                 sistemaDeLogger.info("Estado do evento com ID " + idEvento + " alterado para " + (novoEstado ? "ATIVO" : "INATIVO") + ".");
-                alertaService.alertarInfo("Sucesso: Estado do evento alterado!");
                 return true;
             } else {
-                alertaService.alertarWarn("Alteração de Estado Inválida", "EventoH com ID " + idEvento + " não encontrado.");
                 sistemaDeLogger.info("EventoH com ID " + idEvento + " não encontrado para alterar estado.");
                 return false;
             }

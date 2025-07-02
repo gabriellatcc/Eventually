@@ -1,5 +1,7 @@
 package com.eventually.service;
 
+import com.eventually.controller.EventoController;
+import com.eventually.model.EventoModel;
 import com.eventually.model.TemaPreferencia;
 import com.eventually.model.UsuarioModel;
 import com.eventually.view.HomeView;
@@ -7,6 +9,7 @@ import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,14 +19,15 @@ import java.util.Set;
  * Esta classe utiliza a instância única de {@link UsuarioCadastroService} para acessar e manipular os dados
  * dos usuários em memória.
  * @author Gabriella Tavares Costa Corrêa (Criação,documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.05
+ * @version 1.06
  * @since 2025-05-18
  */
 public final class UsuarioAtualizacaoService {
     private static UsuarioAtualizacaoService instancia;
 
-    private final UsuarioCadastroService usuarioCadastroService;
-    private final UsuarioSessaoService usuarioSessaoService;
+    private UsuarioCadastroService usuarioCadastroService;
+    private UsuarioSessaoService usuarioSessaoService;
+    private EventoLeituraService eventoLeituraService;
     private AlertaService alertaService = new AlertaService();
 
     private static final Logger sistemaDeLogger = LoggerFactory.getLogger(UsuarioAtualizacaoService.class);
@@ -31,6 +35,8 @@ public final class UsuarioAtualizacaoService {
     private UsuarioAtualizacaoService() {
         this.usuarioCadastroService = UsuarioCadastroService.getInstancia();
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
+        this.eventoLeituraService = EventoLeituraService.getInstancia();
+
         sistemaDeLogger.info("Inicializado e conectado ao UsuarioSessaoService e UsuarioCadastroService.");
     }
 
@@ -231,5 +237,51 @@ public final class UsuarioAtualizacaoService {
     }
 
     public void atualizarEventoParticipado(String email, HomeView.EventoH eventoH) {
+        UsuarioModel usuario = usuarioSessaoService.procurarUsuario(email);
+
+        Optional<EventoModel> eventoOptional = eventoLeituraService.procurarEventoPorId(eventoH.id());
+
+        if (usuario != null && eventoOptional.isPresent()) {
+            EventoModel eventoReal = eventoOptional.get();
+            List<EventoModel> eventosInscritos = usuario.getEventosInscrito();
+
+            if (!eventosInscritos.contains(eventoReal)) {
+                eventosInscritos.add(eventoReal);
+                sistemaDeLogger.info("Evento '{}' adicionado à lista de inscrições do usuário '{}'.", eventoReal.getNome(), email);
+            } else {
+                sistemaDeLogger.warn("Usuário '{}' já estava inscrito no evento '{}'. Nenhuma ação necessária.", email, eventoReal.getNome());
+            }
+
+        } else {
+            if (usuario == null) {
+                sistemaDeLogger.error("Falha ao atualizar evento participado: usuário '{}' não encontrado.", email);
+            }
+            if (eventoOptional.isEmpty()) {
+                sistemaDeLogger.error("Falha ao atualizar evento participado: evento com ID '{}' não encontrado.", eventoH.id());
+            }
+        }
+    }
+
+    /**
+     * Remove a inscrição de um usuário em um evento específico.
+     * Este método atualiza a lista de eventos inscritos do próprio usuário.
+     * @param email o email do usuário cuja inscrição será removida.
+     * @param eventoH o evento (no formato record/DTO) do qual o usuário está se desinscrevendo.
+     */
+    public void removerInscricao(String email, HomeView.EventoH eventoH) {
+        UsuarioSessaoService sessaoService = UsuarioSessaoService.getInstancia();
+        UsuarioModel usuario = sessaoService.procurarUsuario(email);
+
+        if (usuario != null) {
+            List<EventoModel> eventosInscritos = usuario.getEventosInscrito();
+
+            boolean removido = eventosInscritos.removeIf(evento -> evento.getId() == eventoH.id());
+
+            if (removido) {
+                System.out.println("Evento ID " + eventoH.id() + " removido da lista de inscrições do usuário " + email);
+            }
+        } else {
+            System.out.println("Erro: Usuário com email " + email + " não encontrado para remover inscrição.");
+        }
     }
 }

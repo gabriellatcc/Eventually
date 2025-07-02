@@ -17,7 +17,7 @@ import javafx.stage.StageStyle;
 /**
  * Esta classe representa o modal de confirmar encerrar sessão.
  * @author Yuri Garcia Maia
- * @version 1.0
+ * @version 1.02
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação e revisão da parte lógica da estrutura)
  * @since 2025-07-01

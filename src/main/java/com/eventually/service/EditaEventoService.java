@@ -14,7 +14,7 @@ import java.util.Optional;
 /**
  * Serviço Singleton responsável pela lógica de negócio da edição de eventos.
  * Ele pega os dados da view e os aplica ao objeto de modelo do evento.
- * @version 1.01
+ * @version 1.02
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação e revisão da parte lógica da estrutura)
  * @since 2025-07-01
  */
@@ -119,5 +119,32 @@ public class EditaEventoService {
         }
 
         return false;
+    }
+
+    /**
+     * Remove um participante da lista de um evento específico.
+     * Este método atualiza a lista de participantes do próprio evento.
+     * @param eventoH o evento (no formato record/DTO) que perderá um participante.
+     * @param email o email do participante a ser removido.
+     */
+    public void removerParticipante(HomeView.EventoH eventoH, String email) {
+        Optional<EventoModel> eventoOptional = eventoLeituraService.procurarEventoPorId(eventoH.id());
+
+        if (eventoOptional.isPresent()) {
+            EventoModel eventoEncontrado = eventoOptional.get();
+
+            List<UsuarioModel> participantes = eventoEncontrado.getParticipantes();
+
+            boolean removido = participantes.removeIf(participante -> participante.getEmail().equals(email));
+
+            if (removido) {
+                int novoValor = eventoEncontrado.getnParticipantes() - 1;
+                eventoEncontrado.setnParticipantes(novoValor);
+
+                System.out.println("Participante " + email + " removido do evento " + eventoEncontrado.getNome());
+            }
+        } else {
+            System.out.println("Erro: Evento ID " + eventoH.id() + " não encontrado para remover participante.");
+        }
     }
 }

@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,7 +22,7 @@ import java.util.Optional;
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.08
+ * @version 1.09
  * @since 2025-06-19
  */
 public class NavegacaoService {
@@ -339,32 +338,20 @@ public class NavegacaoService {
      * Neste método é manipulado o clique no cartão de evento da tela de início e, em
      * caso de erro, é exibida uma mensagem no console.
      */
-    public void abrirModalVerEvento(String emailRecebido, HomeView.EventoH eventoH) {
+    public void abrirModalVerEvento(String emailRecebido, HomeView.EventoH eventoH, Runnable refreshCallback) {
         sistemaDeLogger.info("Método abrirModalVerEvento() chamado.");
         try {
-            List<EventoModel> listaDeEventosCriados = usuarioSessaoService.procurarEventosCriados(emailRecebido);
-            List<EventoModel> listaDeEventosInscritos = usuarioSessaoService.procurarEventosInscritos(emailRecebido);
+            EventoModal modalView = new EventoModal();
 
-            EventoModal modal = new EventoModal();
+            EventoController controller = new EventoController(emailRecebido, modalView, eventoH, primaryStage, refreshCallback);
+            modalView.setInscricaoController(controller);
 
             Stage modalStage = new Stage();
             modalStage.initModality(Modality.APPLICATION_MODAL);
             modalStage.initOwner(primaryStage);
             modalStage.initStyle(StageStyle.TRANSPARENT);
-            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
 
-            EventoController modalController = new EventoController(
-                    emailRecebido,
-                    modal,
-                    eventoH,
-                    listaDeEventosCriados,
-                    listaDeEventosInscritos,
-                    modalStage
-            );
-            modal.setInscricaoController(modalController);
-
-
-            Scene modalScene = new Scene(modal);
+            Scene modalScene = new Scene(modalView);
 
             modalStage.setOnShown(event -> {
                 javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
@@ -375,8 +362,8 @@ public class NavegacaoService {
             modalScene.setFill(Color.TRANSPARENT);
             modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
             modalStage.setScene(modalScene);
-
             modalStage.showAndWait();
+
         } catch (Exception ex) {
             sistemaDeLogger.error("Erro ao abrir modal para exibir evento: " + ex.getMessage());
             ex.printStackTrace();
@@ -482,32 +469,18 @@ public class NavegacaoService {
         }
     }
 
-    public void abrirModalConfimarExclusao(HomeView.EventoH eventoH) {
+    public boolean abrirModalConfimarExclusao() {
         ConfirmarExclusaoModal confirmModal = new ConfirmarExclusaoModal();
-        int id = eventoH.id();
 
         boolean usuarioConfirmou = confirmModal.showAndWait(primaryStage);
-        if (usuarioConfirmou) {
 
-            eventoExclusaoService.alterarEstadoDoEvento(id,false);
-            alertaService.alertarInfo("Evento excluído com sucesso!");
-        } else {
-            System.out.println("O usuário excluiu o evento.");
-        }
+        return usuarioConfirmou;
     }
 
-    public void abrirModalCancInscricao(HomeView.EventoH eventoH) {
+    public boolean abrirModalCancInscricao() {
         CancelaInscricaoModal confirmModal = new CancelaInscricaoModal();
-        int id = eventoH.id();
 
-        boolean usuarioConfirmou = confirmModal.showAndWait(primaryStage);
-        if (usuarioConfirmou) {
-
-            eventoExclusaoService.alterarEstadoDoEvento(id,false);
-            alertaService.alertarInfo("Evento excluído com sucesso!");
-        } else {
-            System.out.println("O usuário cancelou a inscricao do evento.");
-        }
+        return confirmModal.showAndWait(primaryStage);
     }
 
     /**
