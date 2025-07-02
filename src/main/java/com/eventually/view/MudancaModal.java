@@ -80,11 +80,11 @@ public class MudancaModal extends Parent {
         hbBotoes.setAlignment(Pos.CENTER);
 
         btnSalvarSenha = new Button("Salvar");
-        btnSalvarSenha.getStyleClass().add("save-button");
+        btnSalvarSenha.getStyleClass().add("modal-save-button");
         btnSalvarSenha.setPrefWidth(100);
 
         btnFechar = new Button("Fechar");
-        btnFechar.getStyleClass().add("close-button");
+        btnFechar.getStyleClass().add("modal-close-button");
         btnFechar.setPrefWidth(100);
 
         hbBotoes.getChildren().addAll(btnSalvarSenha, btnFechar);
