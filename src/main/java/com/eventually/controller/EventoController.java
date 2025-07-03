@@ -19,7 +19,7 @@ import java.util.Set;
  * Controller para o modal de Inscrição/Visualização de Evento.
  * Gerencia as interações do usuário com o modal.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e parte lógica)
- * @version 1.06
+ * @version 1.07
  * @since 2025-06-27
  */
 public class EventoController {
@@ -35,7 +35,7 @@ public class EventoController {
 
     private Runnable aoFecharCallback;
 
-    private EditaEventoService editaEventoService;
+    private EventoEdicaoService eventoEdicaoService;
     private NavegacaoService navegacaoService;
 
     private AlertaService alertaService =new AlertaService();
@@ -55,7 +55,7 @@ public class EventoController {
 
         this.usuarioSessaoService = UsuarioSessaoService.getInstancia();
         this.usuarioAtualizacaoService = UsuarioAtualizacaoService.getInstancia();
-        this.editaEventoService = EditaEventoService.getInstance();
+        this.eventoEdicaoService = EventoEdicaoService.getInstance();
         this.eventoExclusaoService=EventoExclusaoService.getInstancia();
         this.eventoLeituraService=EventoLeituraService.getInstancia();
         this.navegacaoService = new NavegacaoService(primaryStage);
@@ -182,7 +182,7 @@ public class EventoController {
     private void processarInscricao() {
         usuarioAtualizacaoService.atualizarEventoParticipado(email, eventoH);
 
-        editaEventoService.adicionarParticipante(eventoH,email);
+        eventoEdicaoService.adicionarParticipante(eventoH,email);
 
         alertaService.alertarInfo("Você está inscrito com sucesso!");
 
@@ -196,7 +196,7 @@ public class EventoController {
 
         if (usuarioConfirmou) {
             usuarioAtualizacaoService.removerInscricao(email, eventoH);
-            editaEventoService.removerParticipante(eventoH, email);
+            eventoEdicaoService.removerParticipante(eventoH, email);
 
             alertaService.alertarInfo("Sua inscrição foi cancelada.");
 

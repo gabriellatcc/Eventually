@@ -5,6 +5,8 @@ import com.eventually.model.FormatoSelecionado;
 import com.eventually.model.UsuarioModel;
 import com.eventually.service.*;
 import com.eventually.view.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
@@ -17,13 +19,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * Classe controladora da tela de programação do usuário, é responsável pela comunicação
  * da tela de programação com o backend.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.09
+ * @version 1.10
  * @since 2025-04-25
  */
 public class UserScheduleController {
@@ -77,7 +80,6 @@ public class UserScheduleController {
             userScheduleView.getLbNomeUsuario().setText(definirNome(emailRecebido));
             userScheduleView.setAvatarImagem(definirImagem(emailRecebido));
 
-            processarCarregamentoEventos();
 
             if (userScheduleView.getGrupoDatas() != null) {
                 userScheduleView.getGrupoDatas().selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
@@ -86,6 +88,8 @@ public class UserScheduleController {
                     }
                 });
             }
+            carregarEventosParaData(LocalDate.now());
+
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores da tela de programação: "+e.getMessage());
             e.printStackTrace();
@@ -171,11 +175,9 @@ public class UserScheduleController {
         carregarEventosParaData(dataSelecionada);
     }
 
-    /**
-     * Aceita uma data e filtrar os eventos.
-     * @param dataAlvo A data para a qual os eventos devem ser filtrados e exibidos.
-     */
     private void carregarEventosParaData(LocalDate dataAlvo) {
+        userScheduleView.getListaEventos().getChildren().clear();
+
         List<EventoModel> todosOsEventos = new ArrayList<>();
         List<EventoModel> listaDeEventosCriados = usuarioSessaoService.procurarEventosCriados(emailRecebido);
         List<EventoModel> listaDeEventosInscritos = usuarioSessaoService.procurarEventosInscritos(emailRecebido);
@@ -185,7 +187,7 @@ public class UserScheduleController {
 
         List<EventoModel> eventosFiltrados = todosOsEventos.stream()
                 .filter(evento -> {
-                    if (evento.getDataInicial() == null || evento.getDataFinal() == null) {return false;}
+                    if (evento.getDataInicial() == null || evento.getDataFinal() == null) { return false; }
                     boolean comecaNoDia = evento.getDataInicial().equals(dataAlvo);
                     boolean terminaNoDia = evento.getDataFinal().equals(dataAlvo);
                     boolean estaNoMeio = dataAlvo.isAfter(evento.getDataInicial()) && dataAlvo.isBefore(evento.getDataFinal());
@@ -193,74 +195,56 @@ public class UserScheduleController {
                 })
                 .collect(Collectors.toList());
 
-        List<UserScheduleView.EventoUS> eventosParaView = eventosFiltrados.stream()
-                .map(this::converterParaView)
-                .collect(Collectors.toList());
-
-        userScheduleView.setEventos(eventosParaView);
         sistemaDeLogger.info("Encontrados {} eventos para a data {}.", eventosFiltrados.size(), dataAlvo);
-    }
 
-    /**
-     * Converte um EventoModel em um registro HomeView.EventoUS para popular a UI.
-     * (Este método não precisou de alterações)
-     * @param model O modelo de dados do evento.
-     * @return Um registro pronto para a view.
-     */
-    private UserScheduleView.EventoUS converterParaView(EventoModel model) {
-        String titulo = model.getNome();
+        if (eventosFiltrados.isEmpty()) {
+            Label placeholder = new Label("Nenhum evento agendado para este dia.");
+            placeholder.getStyleClass().add("placeholder-label");
+            userScheduleView.getListaEventos().getChildren().add(placeholder);
+            return;
+        }
 
-        String local = (model.getFormato() == FormatoSelecionado.ONLINE) ? "Evento Online" : model.getLocalizacao();
-
-        String categoria = model.getComunidades().stream()
-                .findFirst()
-                .map(t -> t.toString().substring(0, 1).toUpperCase() + t.toString().substring(1).toLowerCase())
-                .orElse("Geral");
-
-        List<UsuarioModel> listaInscritos = model.getParticipantes();
-        int nInscritos = (listaInscritos != null) ? listaInscritos.size() : 0;
-        int nParticipantes = model.getnParticipantes();
-
-        return new UserScheduleView.EventoUS(
-                titulo,
-                local,
-                categoria,
-                nParticipantes,
-                nInscritos,
-                model.getDataInicial(),
-                model.getHoraInicial(),
-                model.getDataFinal(),
-                model.getHoraFinal()
-        );
-    }
-
-    private void processarCarregamentoEventos() {
-        sistemaDeLogger.info("Carregando eventos reais do serviço...");
-
-        List<UserScheduleView.EventoUS> eventosParaView = new ArrayList<>();
-
-        List<EventoModel> listaDeEventosCriados = usuarioSessaoService.procurarEventosCriados(emailRecebido);
-        List<EventoModel> listaDeEventosInscritos = usuarioSessaoService.procurarEventosInscritos(emailRecebido);
-
-        int quantidadeCriados = (listaDeEventosCriados != null) ? listaDeEventosCriados.size() : 0;
-        int quantidadeInscritos = (listaDeEventosInscritos != null) ? listaDeEventosInscritos.size() : 0;
-        int valoreventos = quantidadeCriados + quantidadeInscritos;
-
-        List<EventoModel> todosOsEventos = new ArrayList<>();
-        todosOsEventos.addAll(listaDeEventosCriados);
-        todosOsEventos.addAll(listaDeEventosInscritos);
-
-        for (int i = 0; i < valoreventos; i++) {
-            eventosParaView.add(converterParaView(todosOsEventos.get(i)));
+        for (EventoModel evento : eventosFiltrados) {
             EventoMECartao cartao = new EventoMECartao();
 
-            cartao.setLblTitulo(todosOsEventos.get(i).getNome());
-            cartao.setLblLocal(todosOsEventos.get(i).getLocalizacao());
-            cartao.setLblCapacidadeValor(String.valueOf(todosOsEventos.get(i).getnParticipantes()));
-            configurarDataDoCartao(cartao, todosOsEventos.get(i));
+            cartao.setLblTitulo(evento.getNome());
+            cartao.setLblLocal(evento.getLocalizacao());
+            String textoCapacidade = evento.getParticipantes().size() + "/" + evento.getnParticipantes();
+            cartao.setLblCapacidadeValor(textoCapacidade);
+            configurarDataDoCartao(cartao, evento);
+
+            Button botaoVer = cartao.getBtnVer();
+
+            botaoVer.setOnAction(e -> {
+                HomeView.EventoH eventoH = converterParaEventoH(evento);
+
+                navegacaoService.abrirModalVerEvento(this.emailRecebido, eventoH, () -> carregarEventosParaData(dataAlvo));
+            });
 
             userScheduleView.getListaEventos().getChildren().add(cartao);
         }
+    }
+
+    /**
+     * Converte um EventoModel para o record EventoH usado pelo modal de visualização.
+     */
+    private HomeView.EventoH converterParaEventoH(EventoModel model) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE dd, MMM uuuu", new Locale("pt", "BR"));
+        String dataHora1 = String.format("%s - %s", model.getDataInicial().format(formatter).toUpperCase(), model.getHoraInicial());
+        String dataHora2 = String.format("%s - %s", model.getDataFinal().format(formatter).toUpperCase(), model.getHoraFinal());
+        String formatoStr = model.getFormato().toString().substring(0, 1).toUpperCase() + model.getFormato().toString().substring(1).toLowerCase();
+        Set<String> preferencias = model.getComunidades().stream().map(Enum::toString).collect(Collectors.toSet());
+        String categoria = preferencias.stream().findFirst().orElse("Geral");
+        String horaI = String.valueOf(model.getHoraInicial());
+        String horaF = String.valueOf(model.getHoraFinal());
+        String local = (model.getFormato() == FormatoSelecionado.ONLINE) ? "Evento Online" : model.getLocalizacao();
+
+        return new HomeView.EventoH(
+                model.getId(), model.getNome(), local, dataHora1, dataHora2,
+                categoria, model.getFoto(), model.getDescricao(), model.getParticipantes().size(),
+                model.getnParticipantes(), formatoStr, preferencias, model.getParticipantes(),
+                model.getLinkAcesso(), model.getDataInicial(), model.getDataFinal(), horaI, horaF
+        );
     }
 
     /**

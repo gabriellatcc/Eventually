@@ -1,6 +1,7 @@
 package com.eventually.view;
 
 import com.eventually.controller.MyEventsController;
+import com.eventually.model.UsuarioModel;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -15,10 +16,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Esta classe representa a visualização da tela de programação de eventos do usuário
- * @version 1.08
+ * @version 1.09
  * @author Gabriela Tavares Costa Corrêa (Criação, documentação e revisão da classe)
  * @since 2025-04-06
  */
@@ -27,7 +29,7 @@ public class MyEventsView extends BorderPane {
 
     private BarraBuilder barraBuilder;
 
-    private ToggleButton btnEventosCriados, btnInscricoes;
+    private ToggleButton btnEventosCriados, btnInscricoes, btnEventosFinalizados;
 
     private Label lbNomeUsuario, lbEmailUsuario;
     private ImageView avatarView;
@@ -39,17 +41,25 @@ public class MyEventsView extends BorderPane {
     private ScrollPane scrollEventos;
 
     public record EventoMM(
+            int id,
             String titulo,
             String local,
+            String dataHoraInicio,
+            String dataHoraFim,
             String categoria,
-            int nParticipantes,
-            int nInscritos,
-            LocalDate dataInicial,
-            LocalTime horaInicial,
-            LocalDate dataFinal,
-            LocalTime horaFinal
-    ){}
-
+            Image imagem,
+            String descricao,
+            int inscritos,
+            int capacidade,
+            String formato,
+            Set<String> preferencias,
+            List<UsuarioModel> participantes,
+            String linkAcesso,
+            LocalDate dataI,
+            LocalDate dataF,
+            String horaI,
+            String horaF
+    ) {}
     /**
      *Construtor da classe {@code MyEventsView}.
      */
@@ -99,7 +109,12 @@ public class MyEventsView extends BorderPane {
         btnInscricoes.setToggleGroup(groupFiltroEventos);
         btnInscricoes.getStyleClass().add("filter-button");
 
-        HBox filtroBox = new HBox(10, btnEventosCriados, btnInscricoes);
+        btnEventosFinalizados = new ToggleButton("Finalizados");
+        btnEventosFinalizados.setToggleGroup(groupFiltroEventos);
+        btnEventosFinalizados.getStyleClass().add("filter-button");
+
+        HBox filtroBox = new HBox(10, btnEventosCriados, btnInscricoes, btnEventosFinalizados);
+
         filtroBox.setAlignment(Pos.CENTER_LEFT);
 
         lbNomeUsuario = new Label();
@@ -176,15 +191,15 @@ public class MyEventsView extends BorderPane {
         for (MyEventsView.EventoMM eventoMe: eventoUS) {
             EventoMECartao cardEvento = new EventoMECartao();
 
-            String inscritos = String.valueOf(eventoMe.nInscritos());
-            String max = String.valueOf(eventoMe.nParticipantes());
+            String inscritos = String.valueOf(eventoMe.inscritos());
+            String max = String.valueOf(eventoMe.capacidade());
             cardEvento.setLblCapacidadeValor(inscritos+"/"+max);
 
             cardEvento.setLblTitulo(eventoMe.titulo());
             cardEvento.setLblLocal(eventoMe.local());
 
-            String dataHoraInicio = eventoMe.dataInicial().format(formatoData) + " " + eventoMe.horaInicial().format(formatoHora);
-            String dataHoraFim = eventoMe.dataFinal().format(formatoData) + " " + eventoMe.horaFinal().format(formatoHora);
+            String dataHoraInicio = eventoMe.dataI().format(formatoData) + " " + eventoMe.horaI().format(String.valueOf(formatoHora));
+            String dataHoraFim = eventoMe.dataF().format(formatoData) + " " + eventoMe.horaF().format(String.valueOf(formatoHora));
 
             cardEvento.setLblDataLinha1(dataHoraInicio);
             cardEvento.setLblDataLinha2(dataHoraFim);
@@ -222,6 +237,7 @@ public class MyEventsView extends BorderPane {
 
     public ToggleButton getBtnEventosCriados() {return btnEventosCriados;}
     public ToggleButton getBtnInscricoes() {return btnInscricoes;}
+    public ToggleButton getBtnEventosFinalizados() {return this.btnEventosFinalizados;}
 
     public void setNomeUsuario(String nome) {if (nome != null) {this.lbNomeUsuario.setText(nome);}}
     public void setEmailUsuario(String email) {if (email != null) {this.lbEmailUsuario.setText(email);}}

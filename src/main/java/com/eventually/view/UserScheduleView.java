@@ -2,6 +2,7 @@
 package com.eventually.view;
 
 import com.eventually.controller.UserScheduleController;
+import com.eventually.model.UsuarioModel;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -18,11 +19,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Esta classe representa a visualização da tela de programação de eventos do usuário
  * @author Yuri Garcia Maia
- * @version 1.10
+ * @version 1.11
  * @author Gabriela Tavares Costa Corrêa (Documentação e revisão da classe)
  * @since 2025-04-06
  */
@@ -46,17 +48,25 @@ public class UserScheduleView extends BorderPane {
     private HBox seletorDataContainer;
 
     public record EventoUS(
+            int id,
             String titulo,
             String local,
+            String dataHoraInicio,
+            String dataHoraFim,
             String categoria,
-            int nParticipantes,
-            int nInscritos,
-            LocalDate dataInicial,
-            LocalTime horaInicial,
-            LocalDate dataFinal,
-            LocalTime horaFinal
-    ){}
-
+            Image imagem,
+            String descricao,
+            int inscritos,
+            int capacidade,
+            String formato,
+            Set<String> preferencias,
+            List<UsuarioModel> participantes,
+            String linkAcesso,
+            LocalDate dataI,
+            LocalDate dataF,
+            String horaI,
+            String horaF
+    ) {}
     /**
      *Construtor da classe {@code UserScheduleView}.
      */
@@ -200,14 +210,14 @@ public class UserScheduleView extends BorderPane {
             cardEvento.setLblTitulo(eventoU.titulo());
             cardEvento.setLblLocal(eventoU.local());
 
-            String dataHoraInicio = eventoU.dataInicial().format(formatoData) + " " + eventoU.horaInicial().format(formatoHora);
-            String dataHoraFim = eventoU.dataFinal().format(formatoData) + " " + eventoU.horaFinal().format(formatoHora);
+            String dataHoraInicio = eventoU.dataI().format(formatoData) + " " + eventoU.horaI().format(String.valueOf(formatoHora));
+            String dataHoraFim = eventoU.dataF().format(formatoData) + " " + eventoU.horaF().format(String.valueOf(formatoHora));
 
             cardEvento.setLblDataLinha1(dataHoraInicio);
             cardEvento.setLblDataLinha2(dataHoraFim);
 
-            String inscritos = String.valueOf(eventoU.nInscritos());
-            String max = String.valueOf(eventoU.nParticipantes());
+            String inscritos = String.valueOf(eventoU.inscritos());
+            String max = String.valueOf(eventoU.capacidade());
             cardEvento.setLblCapacidadeValor(inscritos+"/"+max);
 
             listaEventos.getChildren().add(cardEvento);

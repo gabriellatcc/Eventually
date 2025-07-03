@@ -20,7 +20,7 @@ import java.util.*;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.07
+ * @version 1.08
  * @since 2025-05-15
  */
 public final class EventoCriacaoService {
@@ -108,7 +108,6 @@ public final class EventoCriacaoService {
      * de falha, é exibida uma mensagem no console.
      * @param dto o objeto {@code EventoModel} contendo as informações do evento a ser criado.
      */
-
     private void criarEvento(CriarEventoDto dto, String link, String localizacao, Image foto) {
         UsuarioModel organizador = usuarioSessaoService.procurarUsuario(dto.emailOrganizador());
         if (organizador == null) {

@@ -14,26 +14,26 @@ import java.util.Optional;
 /**
  * Serviço Singleton responsável pela lógica de negócio da edição de eventos.
  * Ele pega os dados da view e os aplica ao objeto de modelo do evento.
- * @version 1.03
+ * @version 1.04
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação e revisão da parte lógica da estrutura)
  * @since 2025-07-01
  */
-public class EditaEventoService {
-    private static EditaEventoService instance;
+public class EventoEdicaoService {
+    private static EventoEdicaoService instance;
 
     private EventoLeituraService eventoLeituraService;
     private UsuarioSessaoService usuarioSessaoService;
 
-    private EditaEventoService() {
+    private EventoEdicaoService() {
         this.usuarioSessaoService=UsuarioSessaoService.getInstancia();
         this.eventoLeituraService=EventoLeituraService.getInstancia();
     }
 
-    private static final Logger logger = LoggerFactory.getLogger(EditaEventoService.class);
+    private static final Logger logger = LoggerFactory.getLogger(EventoEdicaoService.class);
 
-    public static EditaEventoService getInstance() {
+    public static EventoEdicaoService getInstance() {
         if (instance == null) {
-            instance = new EditaEventoService();
+            instance = new EventoEdicaoService();
         }
         return instance;
     }

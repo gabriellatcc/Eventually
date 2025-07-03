@@ -12,8 +12,7 @@ import javafx.scene.shape.Circle;
  * Representa um card de evento em formato de lista horizontal.
  * Este componente exibe título, local, datas e informações de capacidade/vagas,
  * além de um botão de ação. É flexível para exibir eventos de um ou múltiplos dias.
- *
- * @version 1.01
+ * @version 1.02
  * @author Gabriella Tavares Costa Corrêa
  * @since 2025-06-28
  */
@@ -26,8 +25,6 @@ public class EventoMECartao extends HBox {
     private Label lblCapacidadeDesc;
     private Button btnVer;
     private Circle dotCapacidade;
-
-    private NavegacaoService navegacaoService;
 
     /**
      * Construtor que inicializa a UI do card.
@@ -98,7 +95,6 @@ public class EventoMECartao extends HBox {
         btnVer = new Button("Ver");
         btnVer.getStyleClass().add("card-button");
         btnVer.setPrefWidth(120);
-     //   btnVer.setOnAction(event -> {navegacaoService.abrirModalVerEvento(emailRecebido, EventoMe);});
 
         rightPane.getChildren().addAll(capacityInfoBox, btnVer);
 
@@ -133,4 +129,5 @@ public class EventoMECartao extends HBox {
     public void setLblCapacidadeValor(String ncapa) {this.lblCapacidadeValor.setText(ncapa);}
     public void setLblDataLinha1(String lblDataLinha1) {this.lblDataLinha1.setText(lblDataLinha1);}
     public void setLblDataLinha2(String lblDataLinha2) {this.lblDataLinha2.setText(lblDataLinha2);}
+    public Button getBtnVer() {return this.btnVer;}
 }

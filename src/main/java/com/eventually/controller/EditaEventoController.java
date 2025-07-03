@@ -2,7 +2,7 @@ package com.eventually.controller;
 
 import com.eventually.model.Comunidade;
 import com.eventually.service.AlertaService;
-import com.eventually.service.EditaEventoService;
+import com.eventually.service.EventoEdicaoService;
 import com.eventually.view.HomeView;
 import com.eventually.view.modal.EditaEventoModal;
 import javafx.scene.image.Image;
@@ -14,16 +14,15 @@ import java.util.Set;
 /**
  * Controller para a view EditaEventoModal.
  * Responsável por popular os dados iniciais do evento no formulário e por
- * lidar com as ações do usuário, delegando a lógica de salvamento para o EditaEventoService.
- * @version 1.02
+ * lidar com as ações do usuário, delegando a lógica de salvamento para o EventoEdicaoService.
+ * @version 1.03
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação e revisão da parte lógica da estrutura)
  * @since 2025-07-01
  */
 public class EditaEventoController {
-
     private final EditaEventoModal view;
     private final HomeView.EventoH eventoParaEditar;
-    private final EditaEventoService editaEventoService;
+    private final EventoEdicaoService eventoEdicaoService;
     private AlertaService alertaService = new AlertaService();
     private Runnable aoFecharCallback;
     /**
@@ -37,7 +36,7 @@ public class EditaEventoController {
         this.aoFecharCallback = aoSalvarCallback;
         this.view = view;
         this.eventoParaEditar = eventoParaEditar;
-        this.editaEventoService = EditaEventoService.getInstance();
+        this.eventoEdicaoService = EventoEdicaoService.getInstance();
         initialize();
     }
 
@@ -110,7 +109,7 @@ public class EditaEventoController {
     private void handleSalvar() {
         int idDoEvento = eventoParaEditar.id();
 
-        editaEventoService.atualizarEvento(idDoEvento, view);
+        eventoEdicaoService.atualizarEvento(idDoEvento, view);
 
         alertaService.alertarInfo("Atualizado com sucesso!");
 
