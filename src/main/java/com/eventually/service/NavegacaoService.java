@@ -22,7 +22,7 @@ import java.util.Optional;
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.09
+ * @version 1.10
  * @since 2025-06-19
  */
 public class NavegacaoService {
@@ -30,8 +30,6 @@ public class NavegacaoService {
 
     private UsuarioSessaoService usuarioSessaoService;
     private EventoExclusaoService eventoExclusaoService;
-
-    private AlertaService alertaService =new AlertaService();
 
     private final TelaService telaService;
 
@@ -436,11 +434,11 @@ public class NavegacaoService {
         }
     }
 
-    public void abrirModalEdicao(HomeView.EventoH eventoH) {
+    public void abrirModalEdicao(HomeView.EventoH eventoH, Runnable aoSalvarCallback) {
         sistemaDeLogger.info("Método abrirModalEdicao() chamado.");
         try {
             EditaEventoModal modal=new EditaEventoModal();
-            EditaEventoController modalController= new EditaEventoController(modal,eventoH);
+            EditaEventoController modalController= new EditaEventoController(modal,eventoH, aoSalvarCallback);
             modal.setEditaEventoController(modalController);
             Stage modalStage = new Stage();
 

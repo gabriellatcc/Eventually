@@ -22,7 +22,7 @@ import java.util.Locale;
  * A View (janela) para o modal de "Compartilhar evento".
  * Esta versão é baseada na estrutura do CriaEventoModal para garantir consistência visual.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.01
+ * @version 1.02
  * @since 2025-07-02
  */
 public class CompartilharEventoModal extends Parent {
@@ -140,12 +140,16 @@ public class CompartilharEventoModal extends Parent {
         lbDataTitulo.getStyleClass().add("subtitle-label-modal");
 
         Locale brasil = new Locale("pt", "BR");
-        DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("EEE, dd 'de' MMMM 'de' yyyy", brasil);
-        DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
-        String dataFormatada = String.format("De %s às %s\nAté %s às %s",
-                evento.dataI().format(formatoData), evento.horaI().format(String.valueOf(formatoHora)),
-                evento.dataF().format(formatoData), evento.horaF().format(String.valueOf(formatoHora))
+
+        DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("EEE, dd, MMM uuuu", brasil);
+
+        String dataFormatada = String.format("Início: %s às %s\nFim:    %s às %s",
+                evento.dataI().format(formatoData),
+                evento.horaI(),
+                evento.dataF().format(formatoData),
+                evento.horaF()
         );
+
         Label lbDataValor = new Label(dataFormatada);
         lbDataValor.getStyleClass().add("info-label-modal");
         vbox.getChildren().addAll(lbDataTitulo, lbDataValor);

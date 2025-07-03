@@ -1,14 +1,13 @@
 package com.eventually.controller;
 
-import com.eventually.model.EventoModel;
 import com.eventually.model.TemaPreferencia;
+import com.eventually.service.AlertaService;
 import com.eventually.service.EditaEventoService;
 import com.eventually.view.HomeView;
 import com.eventually.view.modal.EditaEventoModal;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
+
 import java.io.File;
 import java.util.Set;
 
@@ -16,7 +15,7 @@ import java.util.Set;
  * Controller para a view EditaEventoModal.
  * Responsável por popular os dados iniciais do evento no formulário e por
  * lidar com as ações do usuário, delegando a lógica de salvamento para o EditaEventoService.
- * @version 1.0
+ * @version 1.01
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação e revisão da parte lógica da estrutura)
  * @since 2025-07-01
  */
@@ -25,13 +24,17 @@ public class EditaEventoController {
     private final EditaEventoModal view;
     private final HomeView.EventoH eventoParaEditar;
     private final EditaEventoService editaEventoService;
-
+    private AlertaService alertaService = new AlertaService();
+    private Runnable aoFecharCallback;
     /**
      * Construtor que estabelece as conexões entre a View, o Model e o Service.
-     * @param view A instância do modal de edição.
+     *
+     * @param view             A instância do modal de edição.
      * @param eventoParaEditar O objeto de evento a ser modificado.
+     * @param aoSalvarCallback
      */
-    public EditaEventoController(EditaEventoModal view, HomeView.EventoH eventoParaEditar) {
+    public EditaEventoController(EditaEventoModal view, HomeView.EventoH eventoParaEditar, Runnable aoSalvarCallback) {
+        this.aoFecharCallback = aoSalvarCallback;
         this.view = view;
         this.eventoParaEditar = eventoParaEditar;
         this.editaEventoService = EditaEventoService.getInstance();
@@ -109,10 +112,11 @@ public class EditaEventoController {
 
         editaEventoService.atualizarEvento(idDoEvento, view);
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "As alterações foram salvas com sucesso.", ButtonType.OK);
-        alert.setTitle("Evento Atualizado");
-        alert.setHeaderText(null);
-        alert.showAndWait();
+        alertaService.alertarInfo("Atualizado com sucesso!");
+
+        if (aoFecharCallback != null) {
+            aoFecharCallback.run();
+        }
 
         view.close();
     }

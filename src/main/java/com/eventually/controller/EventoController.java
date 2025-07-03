@@ -21,7 +21,7 @@ import java.util.Set;
  * Controller para o modal de Inscrição/Visualização de Evento.
  * Gerencia as interações do usuário com o modal.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e parte lógica)
- * @version 1.04
+ * @version 1.05
  * @since 2025-06-27
  */
 public class EventoController {
@@ -145,9 +145,10 @@ public class EventoController {
     }
 
     private void processarEditar() {
-       navegacaoService.abrirModalEdicao(eventoH);
+       navegacaoService.abrirModalEdicao(eventoH,aoFecharCallback);
        view.close();
     }
+
     private void processarExcluir() {
         boolean usuarioConfirmou = navegacaoService.abrirModalConfimarExclusao();
 

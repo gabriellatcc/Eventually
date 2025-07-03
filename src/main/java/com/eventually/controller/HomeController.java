@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.09
+ * @version 1.10
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -36,8 +36,6 @@ public class HomeController {
     private EventoCriacaoService eventoCriacaoService;
 
     private String emailRecebido;
-
-    private AlertaService alertaService =new AlertaService();
 
     private static final Logger sistemaDeLogger = LoggerFactory.getLogger(HomeController.class);
 
@@ -136,7 +134,6 @@ public class HomeController {
             homeView.getFlowPaneTags().getChildren().add(tagLabel);
         }
     }
-
 
     private String formatarNomeTema(TemaPreferencia tema) {
         String nomeEnum = tema.name();
