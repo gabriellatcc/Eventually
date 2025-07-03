@@ -382,3 +382,18 @@
 .close-button-x:hover {
     -fx-text-fill: #d32f2f;
 }
+
+.compartilhar-button{
+    -fx-font-family: 'Poppins Bold';
+    -fx-pref-height: 40px;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+    -fx-background-color: #e05ce4;
+    -fx-pref-width: 170px;
+}
+.compartilhar-button:hover {
+    -fx-background-color: #A329A8;
+}

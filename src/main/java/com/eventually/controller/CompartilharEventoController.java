@@ -1,36 +1,63 @@
 package com.eventually.controller;
 
 import com.eventually.model.EventoModel;
+import com.eventually.model.UsuarioModel;
 import com.eventually.service.AlertaService;
+import com.eventually.service.EventoLeituraService;
 import com.eventually.view.HomeView;
 import com.eventually.view.modal.CompartilharEventoModal;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import java.awt.Desktop;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 /**
  * Controlador para o modal de "Compartilhar evento".
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.0
+ * @version 1.01
  * @since 2025-07-02
  */
 public class CompartilharEventoController {
     private final CompartilharEventoModal modalView;
 
+    private static final String IMGUR_CLIENT_ID = "SEU_CLIENT_ID_AQUI";
+
+    private final Random random = new Random();
+
+    private static final List<String> FRASES_COMPARTILHAMENTO = List.of(
+            "Eu vou no evento",
+            "Presença confirmada no evento",
+            "Contando os dias para o",
+            "Partiu",
+            "Ansioso(a) para o"
+    );
+
     private HomeView.EventoH evento;
     private final AlertaService alertaService;
+    private EventoLeituraService eventoLeituraService;
 
     private static final Logger sistemaDeLogger = LoggerFactory.getLogger(CompartilharEventoController.class);
 
     public CompartilharEventoController(CompartilharEventoModal modalView, HomeView.EventoH evento) {
+        this.eventoLeituraService=EventoLeituraService.getInstancia();
         this.modalView = modalView;
         this.evento = evento;
         this.alertaService = new AlertaService();
@@ -48,20 +75,74 @@ public class CompartilharEventoController {
         }
     }
 
-    private void compartilharNoTwitter() {
-        String text = String.format("EU VOU NO ", evento.titulo() +"!");
+    public void compartilharNoTwitter() {
+        Image imagemDoEvento = evento.imagem();
+        String nomeEvento = evento.titulo();
+
+        String fraseAleatoria = FRASES_COMPARTILHAMENTO.get(random.nextInt(FRASES_COMPARTILHAMENTO.size()));
+        Optional<EventoModel> real = eventoLeituraService.procurarEventoPorId(evento.id());
+
+        String nomeOrganizador = real.map(EventoModel::getOrganizador)
+                .map(UsuarioModel::getNome)
+                .orElse("Organizador não encontrado");
+
+        String textoCompleto = String.format("%s \"%s\", organizado por %s! #eventually",
+                fraseAleatoria, nomeEvento, nomeOrganizador);
 
         try {
-            String encodedText = URLEncoder.encode(text, StandardCharsets.UTF_8);
-            String twitterUrl = "https://twitter.com/intent/tweet?text=" + encodedText;
-            abrirPaginaWeb(twitterUrl);
+            final Clipboard clipboard = Clipboard.getSystemClipboard();
+            final ClipboardContent content = new ClipboardContent();
+            content.putImage(imagemDoEvento);
+            clipboard.setContent(content);
+            System.out.println("Imagem do evento copiada para a área de transferência!");
         } catch (Exception e) {
+            System.err.println("Erro ao copiar imagem para o clipboard: " + e.getMessage());
+        }
+
+        try {
+            String textoCodificado = URLEncoder.encode(textoCompleto, StandardCharsets.UTF_8);
+            String twitterUrl = "https://twitter.com/intent/tweet?text=" + textoCodificado;
+            abrirPaginaWeb(twitterUrl);
+            alertaService.alertarInfo("A imagem do evento foi copiada!\nCole no Twitter com Ctrl+V.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Envia uma imagem para o Imgur de forma anônima e retorna o link público.
+     * @param image A imagem JavaFX a ser enviada.
+     * @return A URL da imagem no Imgur, ou null se falhar.
+     */
+    private String uploadParaImgur(Image image) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputStream);
+            String base64Image = Base64.getEncoder().encodeToString(outputStream.toByteArray());
+
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.imgur.com/3/image"))
+                    .header("Authorization", "Client-ID " + IMGUR_CLIENT_ID)
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString("image=" + URLEncoder.encode(base64Image, StandardCharsets.UTF_8)))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() == 200) {
+                return response.body().split("\"link\":\"")[1].split("\"")[0].replace("\\/", "/");
+            } else {
+                System.err.println("Erro do Imgur: " + response.statusCode() + " - " + response.body());
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
     private void compartilharNoFacebook() {
         String eventUrl = "https://www.eventually.com/eventos/" + evento.id();
-
         try {
             String encodedUrl = URLEncoder.encode(eventUrl, StandardCharsets.UTF_8);
             String facebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" + encodedUrl;

@@ -1,6 +1,5 @@
 package com.eventually.view.modal;
 
-import com.eventually.model.EventoModel;
 import com.eventually.view.HomeView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -23,7 +22,7 @@ import java.util.Locale;
  * A View (janela) para o modal de "Compartilhar evento".
  * Esta versão é baseada na estrutura do CriaEventoModal para garantir consistência visual.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.0
+ * @version 1.01
  * @since 2025-07-02
  */
 public class CompartilharEventoModal extends Parent {
@@ -159,8 +158,10 @@ public class CompartilharEventoModal extends Parent {
      * @return Um HBox contendo os botões de ação.
      */
     private HBox criarAreaDeBotoes() {
-        btnCompartilhar = new MenuButton("Compartilhar em...");
-        btnCompartilhar.getStyleClass().add("modal-interact-button");
+        btnCompartilhar = new MenuButton("Compartilhar em");
+        btnCompartilhar.getStyleClass().add("compartilhar-button");
+        btnCompartilhar.setPrefWidth(150);
+        btnCompartilhar.setPrefHeight(40);
 
         twitterItem = new MenuItem("Compartilhar no Twitter");
         facebookItem = new MenuItem("Compartilhar no Facebook");
