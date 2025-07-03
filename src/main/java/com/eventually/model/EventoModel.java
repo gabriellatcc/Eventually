@@ -11,7 +11,7 @@ import java.util.*;
  * datas de início e término, quantidade de participantes, classificação etária, presença de
  * certificado e participantes do evento.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.06
+ * @version 1.07
  * @since 2025-04-04
  */
 public class EventoModel {
@@ -28,7 +28,7 @@ public class EventoModel {
     private LocalTime horaInicial, horaFinal;
     private LocalDate dataInicial, dataFinal;
 
-    private Set<TemaPreferencia> temas = new HashSet<>();
+    private Set<Comunidade> comunidades = new HashSet<>();
     private List<UsuarioModel> participantes = new ArrayList<>();
     private List<ComentarioModel> comentarios = new ArrayList<>();
 
@@ -36,7 +36,7 @@ public class EventoModel {
     private boolean isFinalizado=false;
     public EventoModel(UsuarioModel organizador, String nomeEvento, String descricao, FormatoSelecionado formato, String linkAcesso,
                        String localizacao, Image foto, int nParticipantes, LocalDate dataInicial, LocalTime horaInicial,
-                       LocalDate dataFinal, LocalTime horaFinal, Set<TemaPreferencia> temas, List<UsuarioModel> participantes, boolean estado, boolean isFinalizado, List<ComentarioModel> comentarios) {
+                       LocalDate dataFinal, LocalTime horaFinal, Set<Comunidade> comunidades, List<UsuarioModel> participantes, boolean estado, boolean isFinalizado, List<ComentarioModel> comentarios) {
         this.organizador = organizador;
         this.nome = nomeEvento;
         this.descricao = descricao;
@@ -48,7 +48,7 @@ public class EventoModel {
         this.horaInicial = horaInicial;
         this.dataFinal = dataFinal;
         this.horaFinal = horaFinal;
-        this.temas = temas;
+        this.comunidades = comunidades;
         if (participantes != null) {
             this.participantes = participantes;
         } else {
@@ -107,8 +107,8 @@ public class EventoModel {
     public LocalTime getHoraFinal() {return horaFinal;}
     public void setHoraFinal(LocalTime horaFinal) {this.horaFinal = horaFinal;}
 
-    public Set<TemaPreferencia> getTemas() {return temas;}
-    public void setTemas(Set<TemaPreferencia> temas) {this.temas = temas;}
+    public Set<Comunidade> getComunidades() {return comunidades;}
+    public void setComunidades(Set<Comunidade> comunidades) {this.comunidades = comunidades;}
 
     public boolean isEstado() {return estado;}
     public void setEstado(boolean estado) {this.estado = estado;}

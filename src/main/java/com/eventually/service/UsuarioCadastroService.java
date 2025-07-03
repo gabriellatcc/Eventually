@@ -3,7 +3,6 @@ package com.eventually.service;
 import com.eventually.dto.CadastrarUsuarioDto;
 import com.eventually.dto.PreferenciasUsuarioDto;
 import com.eventually.model.*;
-import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +17,7 @@ import java.util.regex.Pattern;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.04
+ * @version 1.05
  * @since 2025-05-15
  */
 public final class UsuarioCadastroService {
@@ -46,10 +45,10 @@ public final class UsuarioCadastroService {
         listaUsuarios = new HashSet<>();
 
         //usuario teste abaixo:
-        Set<TemaPreferencia> preferenciasDoUsuario = new HashSet<>();
-        preferenciasDoUsuario.add(TemaPreferencia.CORPORATIVO);
-        preferenciasDoUsuario.add(TemaPreferencia.CULTURAL);
-        preferenciasDoUsuario.add(TemaPreferencia.SOCIAL);
+        Set<Comunidade> preferenciasDoUsuario = new HashSet<>();
+        preferenciasDoUsuario.add(Comunidade.CORPORATIVO);
+        preferenciasDoUsuario.add(Comunidade.CULTURAL);
+        preferenciasDoUsuario.add(Comunidade.SOCIAL);
 
         UsuarioModel usuarioTesteModel = new UsuarioModel(
                 "gab tav",
@@ -69,8 +68,8 @@ public final class UsuarioCadastroService {
         LocalDate depoisAmanha = dataDeHoje.plusDays(2);
         LocalTime horaEspecificaTeste1 = LocalTime.of(10, 30);
         LocalTime horaEspecificaTeste2 = LocalTime.of(12, 30);
-        Set<TemaPreferencia> preferenciasEvento = new HashSet<>();
-        preferenciasEvento.add(TemaPreferencia.CORPORATIVO);
+        Set<Comunidade> preferenciasEvento = new HashSet<>();
+        preferenciasEvento.add(Comunidade.CORPORATIVO);
 
         List<ComentarioModel> comentarios = new ArrayList<>();
 
@@ -370,7 +369,7 @@ public final class UsuarioCadastroService {
     public void criarUsuario(CadastrarUsuarioDto dto){
         sistemaDeLogger.info("Método criarUsuario() chamado.");
         try {
-            Set<TemaPreferencia> temasPreferidos = MapeamentoPreferenciasService.mapearPreferencias(dto.preferencias());
+            Set<Comunidade> temasPreferidos = MapeamentoPreferenciasService.mapearPreferencias(dto.preferencias());
 
             UsuarioModel novoUsuario = new UsuarioModel(
                     dto.nomePessoa(),

@@ -1,13 +1,11 @@
 package com.eventually.view;
 
 import com.eventually.controller.SettingsController;
-import com.eventually.model.TemaPreferencia;
-import javafx.geometry.Pos;
+import com.eventually.model.Comunidade;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -19,7 +17,7 @@ import java.util.Map;
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
  * @author Yuri Garcia Maia (Criação)
  * @since 22-05-2025
- * @version 1.07
+ * @version 1.08
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, lógica e da estrutura da classe)
  * @since 22-05-2025
  */
@@ -37,7 +35,7 @@ public class SettingsView extends BorderPane {
 
     private ImageView avatarView;
 
-    private final Map<TemaPreferencia, CheckBox> mapaDeCheckBoxesDeTemas = new EnumMap<>(TemaPreferencia.class);
+    private final Map<Comunidade, CheckBox> mapaDeCheckBoxesDeComunidades = new EnumMap<>(Comunidade.class);
 
     public SettingsView() {
         setupUI();
@@ -95,43 +93,43 @@ public class SettingsView extends BorderPane {
 
         cbCorporativo = new CheckBox("Corporativos");
         cbCorporativo.getStyleClass().add("purple-checkbox");
-        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.CORPORATIVO, cbCorporativo);
+        mapaDeCheckBoxesDeComunidades.put(Comunidade.CORPORATIVO, cbCorporativo);
         Label descCorporativo = new Label("(palestras, workshops, feiras de negócios)");
         leftColumn.getChildren().add(new VBox(cbCorporativo, descCorporativo));
 
         cbEducacional = new CheckBox("Educacionais");
         cbEducacional.getStyleClass().add("purple-checkbox");
-        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.EDUCACIONAL, cbEducacional);
+        mapaDeCheckBoxesDeComunidades.put(Comunidade.EDUCACIONAL, cbEducacional);
         Label descEducacional = new Label("(palestras, seminários, cursos)");
         leftColumn.getChildren().add(new VBox(cbEducacional, descEducacional));
 
         cbCultural = new CheckBox("Culturais");
         cbCultural.getStyleClass().add("purple-checkbox");
-        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.CULTURAL, cbCultural);
+        mapaDeCheckBoxesDeComunidades.put(Comunidade.CULTURAL, cbCultural);
         Label descCultural = new Label("(shows, exposições, festivais)");
         leftColumn.getChildren().add(new VBox(cbCultural, descCultural));
 
         cbEsportivo = new CheckBox("Esportivos");
         cbEsportivo.getStyleClass().add("purple-checkbox");
-        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.ESPORTIVO, cbEsportivo);
+        mapaDeCheckBoxesDeComunidades.put(Comunidade.ESPORTIVO, cbEsportivo);
         Label descEsportivo = new Label("(competições, maratonas, torneios)");
         leftColumn.getChildren().add(new VBox(cbEsportivo, descEsportivo));
 
         cbBeneficente = new CheckBox("Beneficentes");
         cbBeneficente.getStyleClass().add("purple-checkbox");
-        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.BENEFICENTE, cbBeneficente);
+        mapaDeCheckBoxesDeComunidades.put(Comunidade.BENEFICENTE, cbBeneficente);
         Label descBeneficente = new Label("(arrecadação de fundos, campanhas sociais)");
         rightColumn.getChildren().add(new VBox(cbBeneficente, descBeneficente));
 
         cbReligioso = new CheckBox("Religiosos");
         cbReligioso.getStyleClass().add("purple-checkbox");
-        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.RELIGIOSO, cbReligioso);
+        mapaDeCheckBoxesDeComunidades.put(Comunidade.RELIGIOSO, cbReligioso);
         Label descReligioso = new Label("(cultos, retiros, encontros espirituais)");
         rightColumn.getChildren().add(new VBox(cbReligioso, descReligioso));
 
         cbSocial = new CheckBox("Sociais");
         cbSocial.getStyleClass().add("purple-checkbox");
-        mapaDeCheckBoxesDeTemas.put(TemaPreferencia.SOCIAL, cbSocial);
+        mapaDeCheckBoxesDeComunidades.put(Comunidade.SOCIAL, cbSocial);
         Label descSocial = new Label("(aniversários, casamentos, confraternizações)");
         rightColumn.getChildren().add(new VBox(cbSocial, descSocial));
 
@@ -141,7 +139,7 @@ public class SettingsView extends BorderPane {
             l.getStyleClass().add("description-label-list");
         }
 
-        for (CheckBox cb : mapaDeCheckBoxesDeTemas.values()) {
+        for (CheckBox cb : mapaDeCheckBoxesDeComunidades.values()) {
             cb.setDisable(true);
         }
 
@@ -276,7 +274,7 @@ public class SettingsView extends BorderPane {
             this.avatarView.setImage(avatarImagem);
         }
     }
-    public Map<TemaPreferencia, CheckBox> getMapaDeCheckBoxesDeTemas() {
-        return mapaDeCheckBoxesDeTemas;
+    public Map<Comunidade, CheckBox> getMapaDeCheckBoxesDeComunidades() {
+        return mapaDeCheckBoxesDeComunidades;
     }
 }

@@ -1,7 +1,7 @@
 package com.eventually.view.modal;
 
-import com.eventually.controller.EditaTemasController;
-import com.eventually.model.TemaPreferencia;
+import com.eventually.controller.EditaComunidadeController;
+import com.eventually.model.Comunidade;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -17,18 +17,18 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * @version 1.00
+ * @version 1.01
  * @author Gabriella Tavares Costa Corrêa (Criação, Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-07-01
  */
-public class EditaTemasModal extends Parent {
-    private EditaTemasController controller;
+public class EditaComunidadeModal extends Parent {
+    private EditaComunidadeController controller;
 
-    private final Map<TemaPreferencia, CheckBox> mapaDeCheckBoxes = new EnumMap<>(TemaPreferencia.class);
+    private final Map<Comunidade, CheckBox> mapaDeCheckBoxes = new EnumMap<>(Comunidade.class);
     private Button btnSalvar;
     private Button btnCancelar;
 
-    public EditaTemasModal() {
+    public EditaComunidadeModal() {
         setupUI();
     }
 
@@ -37,7 +37,7 @@ public class EditaTemasModal extends Parent {
         this.getChildren().add(layout);
     }
 
-    public void setEditaTemasController(EditaTemasController controller) {
+    public void setEditaComunidadesController(EditaComunidadeController controller) {
         this.controller = controller;
     }
 
@@ -63,10 +63,10 @@ public class EditaTemasModal extends Parent {
         containerCheckBoxes.setAlignment(Pos.CENTER_LEFT);
         containerCheckBoxes.setPadding(new Insets(10, 0, 10, 50));
 
-        for (TemaPreferencia tema : TemaPreferencia.values()) {
-            CheckBox cb = new CheckBox(formatarNomeTema(tema.name()));
+        for (Comunidade comum : Comunidade.values()) {
+            CheckBox cb = new CheckBox(formatarNomeComum(comum.name()));
             cb.getStyleClass().add("purple-checkbox");
-            mapaDeCheckBoxes.put(tema, cb);
+            mapaDeCheckBoxes.put(comum, cb);
             containerCheckBoxes.getChildren().add(cb);
         }
 
@@ -83,7 +83,7 @@ public class EditaTemasModal extends Parent {
         return layout;
     }
 
-    private String formatarNomeTema(String nomeEnum) {
+    private String formatarNomeComum(String nomeEnum) {
         if (nomeEnum == null || nomeEnum.isEmpty()) return "";
         return nomeEnum.charAt(0) + nomeEnum.substring(1).toLowerCase();
     }
@@ -95,7 +95,7 @@ public class EditaTemasModal extends Parent {
         }
     }
 
-    public Map<TemaPreferencia, CheckBox> getMapaDeCheckBoxes() {return mapaDeCheckBoxes;}
+    public Map<Comunidade, CheckBox> getMapaDeCheckBoxes() {return mapaDeCheckBoxes;}
     public Button getBtnSalvar() {return btnSalvar;}
     public Button getBtnCancelar() {return btnCancelar;}
 }

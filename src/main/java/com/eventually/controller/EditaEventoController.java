@@ -1,6 +1,6 @@
 package com.eventually.controller;
 
-import com.eventually.model.TemaPreferencia;
+import com.eventually.model.Comunidade;
 import com.eventually.service.AlertaService;
 import com.eventually.service.EditaEventoService;
 import com.eventually.view.HomeView;
@@ -15,7 +15,7 @@ import java.util.Set;
  * Controller para a view EditaEventoModal.
  * Responsável por popular os dados iniciais do evento no formulário e por
  * lidar com as ações do usuário, delegando a lógica de salvamento para o EditaEventoService.
- * @version 1.01
+ * @version 1.02
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação e revisão da parte lógica da estrutura)
  * @since 2025-07-01
  */
@@ -83,13 +83,13 @@ public class EditaEventoController {
         }
 
         Set<String> tagsAtuais = eventoParaEditar.preferencias();
-        if (tagsAtuais.contains(TemaPreferencia.CORPORATIVO)) view.getCbCorporativo().setSelected(true);
-        if (tagsAtuais.contains(TemaPreferencia.BENEFICENTE)) view.getCbBeneficente().setSelected(true);
-        if (tagsAtuais.contains(TemaPreferencia.EDUCACIONAL)) view.getCbEducacional().setSelected(true);
-        if (tagsAtuais.contains(TemaPreferencia.CULTURAL)) view.getCbCultural().setSelected(true);
-        if (tagsAtuais.contains(TemaPreferencia.ESPORTIVO)) view.getCbEsportivo().setSelected(true);
-        if (tagsAtuais.contains(TemaPreferencia.RELIGIOSO)) view.getCbReligioso().setSelected(true);
-        if (tagsAtuais.contains(TemaPreferencia.SOCIAL)) view.getCbSocial().setSelected(true);
+        if (tagsAtuais.contains(Comunidade.CORPORATIVO)) view.getCbCorporativo().setSelected(true);
+        if (tagsAtuais.contains(Comunidade.BENEFICENTE)) view.getCbBeneficente().setSelected(true);
+        if (tagsAtuais.contains(Comunidade.EDUCACIONAL)) view.getCbEducacional().setSelected(true);
+        if (tagsAtuais.contains(Comunidade.CULTURAL)) view.getCbCultural().setSelected(true);
+        if (tagsAtuais.contains(Comunidade.ESPORTIVO)) view.getCbEsportivo().setSelected(true);
+        if (tagsAtuais.contains(Comunidade.RELIGIOSO)) view.getCbReligioso().setSelected(true);
+        if (tagsAtuais.contains(Comunidade.SOCIAL)) view.getCbSocial().setSelected(true);
     }
 
     /**

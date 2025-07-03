@@ -1,6 +1,6 @@
 package com.eventually.controller;
 
-import com.eventually.model.TemaPreferencia;
+import com.eventually.model.Comunidade;
 import com.eventually.service.*;
 import com.eventually.view.*;
 import javafx.scene.control.CheckBox;
@@ -16,7 +16,7 @@ import java.util.Set;
  * Classe controladora da tela de Configurações do usuário, é responsável pela comunicação da tela de de configurações
  * com o backend.
  * Contém todos os métodos como privados para que seu acesso seja somente por esta classe.
- * @version 1.06
+ * @version 1.07
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-22
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
@@ -99,7 +99,7 @@ public class SettingsController {
     private void abrirModalParaEdicao() {
         navegacaoService.abrirModalEditarFiltros(emailRecebido);
 
-        sistemaDeLogger.info("Modal de edição de temas fechado. Atualizando a tela de configurações.");
+        sistemaDeLogger.info("Modal de edição de comunidades fechado. Atualizando a tela de configurações.");
         atualizarVisualizacaoPreferencias();
     }
 
@@ -109,10 +109,10 @@ public class SettingsController {
      * @param email o email do usuário para buscar as preferências.
      */
     private void definirCheckBox(String email) {
-        Set<TemaPreferencia> temasSalvos = usuarioSessaoService.procurarPreferencias(email);;
+        Set<Comunidade> comunidadesSalvas = usuarioSessaoService.procurarPreferencias(email);;
 
-        if (temasSalvos == null) {
-            sistemaDeLogger.info("Usuário não possui preferências de tema salvas. Desmarcando todos os checkboxes.");
+        if (comunidadesSalvas == null) {
+            sistemaDeLogger.info("Usuário não possui preferências de comunidades salvas. Desmarcando todos os checkboxes.");
             settingsView.getCbCorporativo().setSelected(false);
             settingsView.getCbEducacional().setSelected(false);
             settingsView.getCbCultural().setSelected(false);
@@ -123,13 +123,13 @@ public class SettingsController {
             return;
         }
 
-        settingsView.getCbCorporativo().setSelected(temasSalvos.contains(TemaPreferencia.CORPORATIVO));
-        settingsView.getCbEducacional().setSelected(temasSalvos.contains(TemaPreferencia.EDUCACIONAL));
-        settingsView.getCbCultural().setSelected(temasSalvos.contains(TemaPreferencia.CULTURAL));
-        settingsView.getCbEsportivo().setSelected(temasSalvos.contains(TemaPreferencia.ESPORTIVO));
-        settingsView.getCbBeneficente().setSelected(temasSalvos.contains(TemaPreferencia.BENEFICENTE));
-        settingsView.getCbReligioso().setSelected(temasSalvos.contains(TemaPreferencia.RELIGIOSO));
-        settingsView.getCbSocial().setSelected(temasSalvos.contains(TemaPreferencia.SOCIAL));
+        settingsView.getCbCorporativo().setSelected(comunidadesSalvas.contains(Comunidade.CORPORATIVO));
+        settingsView.getCbEducacional().setSelected(comunidadesSalvas.contains(Comunidade.EDUCACIONAL));
+        settingsView.getCbCultural().setSelected(comunidadesSalvas.contains(Comunidade.CULTURAL));
+        settingsView.getCbEsportivo().setSelected(comunidadesSalvas.contains(Comunidade.ESPORTIVO));
+        settingsView.getCbBeneficente().setSelected(comunidadesSalvas.contains(Comunidade.BENEFICENTE));
+        settingsView.getCbReligioso().setSelected(comunidadesSalvas.contains(Comunidade.RELIGIOSO));
+        settingsView.getCbSocial().setSelected(comunidadesSalvas.contains(Comunidade.SOCIAL));
     }
 
     /**
@@ -224,15 +224,15 @@ public class SettingsController {
     public void atualizarVisualizacaoPreferencias() {
         sistemaDeLogger.info("Atualizando visualização das preferências de conteúdo.");
 
-        Set<TemaPreferencia> temasAtuais = usuarioSessaoService.procurarPreferencias(emailRecebido);
+        Set<Comunidade> comumAtuais = usuarioSessaoService.procurarPreferencias(emailRecebido);
 
-        Map<TemaPreferencia, CheckBox> mapaCheckBoxes = settingsView.getMapaDeCheckBoxesDeTemas();
+        Map<Comunidade, CheckBox> mapaCheckBoxes = settingsView.getMapaDeCheckBoxesDeComunidades();
 
         mapaCheckBoxes.values().forEach(cb -> cb.setSelected(false));
 
-        for (TemaPreferencia tema : temasAtuais) {
-            if (mapaCheckBoxes.containsKey(tema)) {
-                mapaCheckBoxes.get(tema).setSelected(true);
+        for (Comunidade comm : comumAtuais) {
+            if (mapaCheckBoxes.containsKey(comm)) {
+                mapaCheckBoxes.get(comm).setSelected(true);
             }
         }
     }

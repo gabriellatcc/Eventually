@@ -28,7 +28,7 @@ import java.util.Map;
  * por cadastrar o usuário na memória.
  *
  * @author Yuri Garcia Maia
- * @version 1.02
+ * @version 1.03
  * @since 2025-05-13
  * @author Gabriella Tavares Costa Corrêa (Documentação e revisão da classe)
  * @since 2025-05-14
@@ -46,7 +46,7 @@ public class RegisterView extends BorderPane {
 
     private Label lbRegraNome, lbRegraEmail, lbRegraEspecial, lbRegraDigito, lbRegraLetra, lbRegraTamanho, lbRegraData, lbRegraCidade;
 
-    private Label lbRegraTema;
+    private Label lbRegraComunidade;
     private CheckBox cbCorporativo, cbBeneficente, cbEducacional, cbCultural, cbEsportivo, cbReligioso, cbSocial;
 
     private Button btnRegistrar;
@@ -142,22 +142,22 @@ public class RegisterView extends BorderPane {
     }
 
     /**
-     * Cria o CONTEÚDO do painel direito com os checkboxes de seleção de temas.
-     * @return o título e a lista de seleção de temas dentro de uma VBox.
+     * Cria o CONTEÚDO do painel direito com os checkboxes de seleção de comunidade.
+     * @return o título e a lista de seleção de comunidades dentro de uma VBox.
      */
     private VBox criarConteudoPainelDireito() {
-        VBox boxSelecaoTema = new VBox(15);
-        boxSelecaoTema.alignmentProperty().set(Pos.CENTER_LEFT);
-        boxSelecaoTema.setAlignment(Pos.CENTER_LEFT);
-        boxSelecaoTema.setPadding(new Insets(0, 0, 0, 0));
-        boxSelecaoTema.setMaxWidth(580);
-        boxSelecaoTema.setMaxHeight(310);
+        VBox boxSelecaoComunidade = new VBox(15);
+        boxSelecaoComunidade.alignmentProperty().set(Pos.CENTER_LEFT);
+        boxSelecaoComunidade.setAlignment(Pos.CENTER_LEFT);
+        boxSelecaoComunidade.setPadding(new Insets(0, 0, 0, 0));
+        boxSelecaoComunidade.setMaxWidth(580);
+        boxSelecaoComunidade.setMaxHeight(310);
 
-        Text tituloTemas = new Text("Selecione temas de eventos\nque te interessam:");
-        tituloTemas.setFont(Font.font("Arial", FontWeight.BOLD, 18));
-        tituloTemas.setFill(Color.WHITE);
+        Text tituloComunidade = new Text("Selecione as comunidade de eventos\nque deseja participar:");
+        tituloComunidade.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        tituloComunidade.setFill(Color.WHITE);
 
-        HBox titleBox = new HBox(tituloTemas);
+        HBox titleBox = new HBox(tituloComunidade);
         titleBox.setAlignment(Pos.CENTER);
         titleBox.setPadding(new Insets(0,0,30,0));
 
@@ -207,17 +207,17 @@ public class RegisterView extends BorderPane {
             cb.setTextFill(Color.WHITE);
         }
 
-        lbRegraTema = new Label("* Isso pode ser alterado depois.");
-        lbRegraTema.getStyleClass().add("form-field");
-        lbRegraTema.setWrapText(true);
-        lbRegraTema.setPadding(new Insets(1, 0, 0, 0));
+        lbRegraComunidade = new Label("* Isso pode ser alterado depois.");
+        lbRegraComunidade.getStyleClass().add("form-field");
+        lbRegraComunidade.setWrapText(true);
+        lbRegraComunidade.setPadding(new Insets(1, 0, 0, 0));
 
-        boxSelecaoTema.getChildren().addAll(
-                tituloTemas,
+        boxSelecaoComunidade.getChildren().addAll(
+                tituloComunidade,
                 cbCorporativo, cbBeneficente, cbEducacional,
-                cbCultural, cbEsportivo, cbReligioso, cbSocial,lbRegraTema
+                cbCultural, cbEsportivo, cbReligioso, cbSocial, lbRegraComunidade
         );
-        return boxSelecaoTema;
+        return boxSelecaoComunidade;
     }
 
     /**
@@ -373,7 +373,7 @@ public class RegisterView extends BorderPane {
         fldCidade.setPrefHeight(40);
         fldCidade.getStyleClass().add("register-field");
 
-        lbRegraCidade = new Label("Informe sua cidade para ver primeiro os eventos mais próximos de você.");
+        lbRegraCidade = new Label("Informe sua cidade.");
         lbRegraCidade.getStyleClass().add("form-field");
         lbRegraCidade.setWrapText(true);
         lbRegraCidade.setPadding(new Insets(1, 0, 0, 0));

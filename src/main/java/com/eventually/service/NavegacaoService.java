@@ -22,7 +22,7 @@ import java.util.Optional;
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.10
+ * @version 1.11
  * @since 2025-06-19
  */
 public class NavegacaoService {
@@ -404,9 +404,9 @@ public class NavegacaoService {
     public void abrirModalEditarFiltros(String emailRecebido) {
         sistemaDeLogger.info("Método abrirModalEditarFiltros() chamado.");
         try{
-            EditaTemasModal modal=new EditaTemasModal();
-            EditaTemasController modalController= new EditaTemasController(modal,emailRecebido);
-            modal.setEditaTemasController(modalController);
+            EditaComunidadeModal modal=new EditaComunidadeModal();
+            EditaComunidadeController modalController= new EditaComunidadeController(modal,emailRecebido);
+            modal.setEditaComunidadesController(modalController);
             Stage modalStage = new Stage();
 
             modalStage.initModality(Modality.APPLICATION_MODAL);

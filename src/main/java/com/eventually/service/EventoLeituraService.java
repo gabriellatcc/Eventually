@@ -16,7 +16,7 @@ import java.util.Set;
  * É responsável por buscar eventos e seus atributos específicos através de um ID.
  * A classe acessa a coleção de eventos diretamente através do {@link EventoCriacaoService}.
  * @author Gabriella Tavares Costa Corrêa (Adaptação baseada na UsuarioSessaoService)
- * @version 1.01
+ * @version 1.02
  * @since 2025-06-27
  */
 public final class EventoLeituraService {
@@ -325,11 +325,11 @@ public final class EventoLeituraService {
      * @param id o ID do evento.
      * @return um Set com os temas do evento, ou {@code null} se não for encontrado.
      */
-    public Set<TemaPreferencia> procurarTemas(int id) {
+    public Set<Comunidade> procurarTemas(int id) {
         try{
             Optional<EventoModel> evento = procurarEventoPorId(id);
 
-            if (evento.isPresent()) {return evento.get().getTemas();}
+            if (evento.isPresent()) {return evento.get().getComunidades();}
 
             alertaService.alertarErro("EventoH com o ID informado não foi encontrado.");
             return null;

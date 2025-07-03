@@ -1,7 +1,7 @@
 package com.eventually.service;
 import com.eventually.model.EventoModel;
 import com.eventually.model.StatusLogin;
-import com.eventually.model.TemaPreferencia;
+import com.eventually.model.Comunidade;
 import com.eventually.model.UsuarioModel;
 import javafx.scene.image.Image;
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ import java.util.Set;
  * fornecendo acesso a informações como nome, ID, email, senha e outros atributos do {@link UsuarioModel} (por enquanto, em memória).
  * A classe acessa a coleção de usuários diretamente através do {@link UsuarioCadastroService}.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.06
+ * @version 1.07
  * @since 2025-04-22
  */
 public final class UsuarioSessaoService {
@@ -406,7 +406,7 @@ public final class UsuarioSessaoService {
      * @param email o email do usuário a ter a cidade procurada.
      * @return os temas selecionados por uma pessoa serem encontrados, ou {@code null} se não forem encontrados.
      */
-    public Set<TemaPreferencia> procurarPreferencias(String email) {
+    public Set<Comunidade> procurarPreferencias(String email) {
         sistemaDeLogger.info("Método procurarDataNasc() chamado.");
         try {
             if (email == null || email.trim().isEmpty()) {
@@ -420,7 +420,7 @@ public final class UsuarioSessaoService {
                     .findFirst();
 
             if (usuarioOptional.isPresent()) {
-                return usuarioOptional.get().getTemasPreferidos();
+                return usuarioOptional.get().getComunidades();
             } else {
                 alertaService.alertarErro("Usuário com o email informado não foi encontrado.");
                 return null;

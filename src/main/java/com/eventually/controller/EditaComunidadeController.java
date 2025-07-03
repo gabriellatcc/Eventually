@@ -1,9 +1,9 @@
 package com.eventually.controller;
 
-import com.eventually.model.TemaPreferencia;
+import com.eventually.model.Comunidade;
 import com.eventually.service.UsuarioAtualizacaoService;
 import com.eventually.service.UsuarioSessaoService;
-import com.eventually.view.modal.EditaTemasModal;
+import com.eventually.view.modal.EditaComunidadeModal;
 import javafx.scene.control.CheckBox;
 
 import java.util.HashSet;
@@ -11,22 +11,22 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @version 1.01
+ * @version 1.02
  * @author Gabriella Tavares Costa Corrêa (Criação, Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-07-01
  */
-public class EditaTemasController {
-    private final EditaTemasModal view;
+public class EditaComunidadeController {
+    private final EditaComunidadeModal view;
     private UsuarioAtualizacaoService atualizacaoService;
     private UsuarioSessaoService sessaoService;
     private final String emailRecebido;
 
-    public EditaTemasController(EditaTemasModal view, String emailRecebido) {
+    public EditaComunidadeController(EditaComunidadeModal view, String emailRecebido) {
         this.atualizacaoService = UsuarioAtualizacaoService.getInstancia();
         this.sessaoService = UsuarioSessaoService.getInstancia();
 
         this.view = view;
-        this.view.setEditaTemasController(this);
+        this.view.setEditaComunidadesController(this);
 
         this.emailRecebido = emailRecebido;
 
@@ -41,28 +41,28 @@ public class EditaTemasController {
     }
 
     private void carregarPreferenciasAtuais() {
-        Set<TemaPreferencia> temasAtuais = sessaoService.procurarPreferencias(emailRecebido);
-        Map<TemaPreferencia, CheckBox> mapaCheckBoxes = view.getMapaDeCheckBoxes();
+        Set<Comunidade> comumAtuais = sessaoService.procurarPreferencias(emailRecebido);
+        Map<Comunidade, CheckBox> mapaCheckBoxes = view.getMapaDeCheckBoxes();
 
-        for (TemaPreferencia tema : temasAtuais) {
-            if (mapaCheckBoxes.containsKey(tema)) {
-                mapaCheckBoxes.get(tema).setSelected(true);
+        for (Comunidade comunidade : comumAtuais) {
+            if (mapaCheckBoxes.containsKey(comunidade)) {
+                mapaCheckBoxes.get(comunidade).setSelected(true);
             }
         }
     }
 
     private void salvarAlteracoes() {
         int id = sessaoService.procurarID(emailRecebido);
-        Set<TemaPreferencia> novosTemas = new HashSet<>();
-        Map<TemaPreferencia, CheckBox> mapaCheckBoxes = view.getMapaDeCheckBoxes();
+        Set<Comunidade> novasComunidades = new HashSet<>();
+        Map<Comunidade, CheckBox> mapaCheckBoxes = view.getMapaDeCheckBoxes();
 
-        for (Map.Entry<TemaPreferencia, CheckBox> entry : mapaCheckBoxes.entrySet()) {
+        for (Map.Entry<Comunidade, CheckBox> entry : mapaCheckBoxes.entrySet()) {
             if (entry.getValue().isSelected()) {
-                novosTemas.add(entry.getKey());
+                novasComunidades.add(entry.getKey());
             }
         }
 
-        boolean sucesso = atualizacaoService.atualizarTemas(id, novosTemas);
+        boolean sucesso = atualizacaoService.atualizarTemas(id, novasComunidades);
 
         if (sucesso) {
             view.close();

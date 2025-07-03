@@ -5,10 +5,10 @@ package com.eventually.model;
  * Cada constante representa um tipo de tema que pode ser associado
  * a eventos e usuários na aplicação.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.0
+ * @version 1.01
  * @since 2025-05-15
  */
-public enum TemaPreferencia {
+public enum Comunidade {
     CORPORATIVO,
     BENEFICENTE,
     EDUCACIONAL,

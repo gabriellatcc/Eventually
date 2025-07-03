@@ -1,8 +1,7 @@
 package com.eventually.service;
 
-import com.eventually.controller.EventoController;
 import com.eventually.model.EventoModel;
-import com.eventually.model.TemaPreferencia;
+import com.eventually.model.Comunidade;
 import com.eventually.model.UsuarioModel;
 import com.eventually.view.HomeView;
 import javafx.scene.image.Image;
@@ -19,7 +18,7 @@ import java.util.Set;
  * Esta classe utiliza a instância única de {@link UsuarioCadastroService} para acessar e manipular os dados
  * dos usuários em memória.
  * @author Gabriella Tavares Costa Corrêa (Criação,documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.06
+ * @version 1.07
  * @since 2025-05-18
  */
 public final class UsuarioAtualizacaoService {
@@ -214,7 +213,7 @@ public final class UsuarioAtualizacaoService {
      * @param novosTemas o novo conjunto de temas de preferência.
      * @return true se a atualização for bem-sucedida, false caso contrário.
      */
-    public boolean atualizarTemas(int idUsuario, Set<TemaPreferencia> novosTemas) {
+    public boolean atualizarTemas(int idUsuario, Set<Comunidade> novosTemas) {
         Optional<UsuarioModel> usuarioOpt = buscarUsuarioParaAtualizacao(idUsuario);
 
         if (usuarioOpt.isEmpty()) {
@@ -224,7 +223,7 @@ public final class UsuarioAtualizacaoService {
 
         try {
             UsuarioModel usuario = usuarioOpt.get();
-            usuario.setTemasPreferidos(novosTemas);
+            usuario.setComunidades(novosTemas);
 
             sistemaDeLogger.info("Temas do usuário com ID {} atualizados com sucesso.", idUsuario);
             notificarSucesso("Temas", idUsuario);

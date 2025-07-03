@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Classe responsável pelo modal de "Criar evento".
  * @author Yuri Garcia Maia
- * @version 1.04
+ * @version 1.05
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação e parte lógica)
  * @since 2025-06-19
@@ -304,7 +304,7 @@ public class CriaEventoModal extends Parent {
         Label lbTags = new Label("Tags");
         lbTags.getStyleClass().add("subtitle-label-modal");
         vbox.getChildren().add(lbTags);
-        Label lbTagsNota = new Label("Selecione os temas que mais se relacionam com o evento");
+        Label lbTagsNota = new Label("Selecione as comunidades mais combinam com o evento");
 
         lbTagsNota.setWrapText(true);
         lbTagsNota.setTextAlignment(TextAlignment.LEFT);

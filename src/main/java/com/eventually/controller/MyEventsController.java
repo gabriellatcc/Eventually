@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * com o backend.
  * Contém métodos privados para que os acesso sejam somente por esta classe.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.05
+ * @version 1.06
  * @since 2025-06-18
  */
 public class MyEventsController {
@@ -191,7 +191,7 @@ public class MyEventsController {
 
         String local = (model.getFormato() == FormatoSelecionado.ONLINE) ? "Evento Online" : model.getLocalizacao();
 
-        String categoria = model.getTemas().stream()
+        String categoria = model.getComunidades().stream()
                 .findFirst()
                 .map(t -> t.toString().substring(0, 1).toUpperCase() + t.toString().substring(1).toLowerCase())
                 .orElse("Geral");

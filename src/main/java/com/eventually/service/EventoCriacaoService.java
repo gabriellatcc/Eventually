@@ -19,7 +19,7 @@ import java.util.*;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.05
+ * @version 1.06
  * @since 2025-05-15
  */
 public final class EventoCriacaoService {
@@ -109,7 +109,7 @@ public final class EventoCriacaoService {
     public void criarEvento(CriarEventoDto dto, String link, String localizacaoEvento, Image fotoEvento) {
         sistemaDeLogger.info("Método criarEvento() chamado.");
         try {
-            Set<TemaPreferencia> temasPreferidos = MapeamentoPreferenciasService.mapearPreferencias(dto.preferenciasEvento());
+            Set<Comunidade> temasPreferidos = MapeamentoPreferenciasService.mapearPreferencias(dto.preferenciasEvento());
 
             usuarioSessaoService = UsuarioSessaoService.getInstancia();
             UsuarioModel usuario = usuarioSessaoService.procurarUsuario(dto.emailOrganizador());

@@ -7,9 +7,9 @@ import java.util.*;
 /** PASSÍVEL DE ALTERAÇÃO
  * A classe {@code UsuarioModel} contém atributos como nome da pessoa que criou a conta,
  * email, senha, localização, data de nascimento, foto de usuário, eventos que participa,
- * eventos organizados, temas preferidos.
+ * eventos organizados, comundidades preferidos.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.07
+ * @version 1.08
  * @since 2025-04-08
  */
 public class UsuarioModel {
@@ -22,12 +22,12 @@ public class UsuarioModel {
     private Image foto;
     private List<EventoModel> eventosInscrito = new ArrayList<>();
     private List<EventoModel> eventosOrganizados = new ArrayList<>();
-    private Set<TemaPreferencia> temasPreferidos = new HashSet<>();
+    private Set<Comunidade> comunidades = new HashSet<>();
     private boolean estado =true;
 
     public UsuarioModel(String nome, String email, String senha, String cidade,
                         LocalDate dataNascimento, Image foto, List<EventoModel> eventosCriados, List<EventoModel> eventosInscritos,
-                        Set<TemaPreferencia> temasPreferidos, boolean estado)
+                        Set<Comunidade> comunidades, boolean estado)
     {
         this.nome = nome;
         this.email = email;
@@ -41,7 +41,7 @@ public class UsuarioModel {
         }
         this.eventosOrganizados = eventosCriados;
         this.eventosInscrito = eventosInscritos;
-        this.temasPreferidos = temasPreferidos;
+        this.comunidades = comunidades;
         this.estado = true; //comeca ativa
     }
 
@@ -75,8 +75,8 @@ public class UsuarioModel {
     public List<EventoModel> getEventosInscrito() {return eventosInscrito;}
     public void setEventosInscrito(List<EventoModel> eventosInscrito) {this.eventosInscrito = eventosInscrito;}
 
-    public Set<TemaPreferencia> getTemasPreferidos() {return temasPreferidos;}
-    public void setTemasPreferidos(Set<TemaPreferencia> temasPreferidos) {this.temasPreferidos = temasPreferidos;}
+    public Set<Comunidade> getComunidades() {return comunidades;}
+    public void setComunidades(Set<Comunidade> comunidades) {this.comunidades = comunidades;}
 
     public boolean isEstado() {return estado;}
     public void setEstado(boolean estado) {this.estado = estado;}

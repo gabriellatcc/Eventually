@@ -3,7 +3,7 @@ package com.eventually.controller;
 import com.eventually.model.EventoModel;
 import com.eventually.model.UsuarioModel;
 import com.eventually.model.FormatoSelecionado;
-import com.eventually.model.TemaPreferencia;
+import com.eventually.model.Comunidade;
 import com.eventually.service.*;
 import com.eventually.view.*;
 import javafx.scene.control.Label;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.10
+ * @version 1.11
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -80,10 +80,10 @@ public class HomeController {
 
             homeView.getBtnCriarEvento().setOnAction(e -> navegacaoService.abrirModalCriarEvento(emailRecebido, this::processarCarregamentoEventos));
 
-            Set<TemaPreferencia> temasUsuario = usuarioSessaoService.procurarPreferencias(emailRecebido);
+            Set<Comunidade> comunidadeUsuario = usuarioSessaoService.procurarPreferencias(emailRecebido);
 
-            Set<String> tags = temasUsuario.stream()
-                    .map(TemaPreferencia::name)
+            Set<String> tags = comunidadeUsuario.stream()
+                    .map(Comunidade::name)
                     .collect(Collectors.toSet());
 
             for (String nomeTag : tags) {
@@ -109,12 +109,12 @@ public class HomeController {
     private void abrirModalParaEdicao() {
         navegacaoService.abrirModalEditarFiltros(emailRecebido);
 
-        sistemaDeLogger.info("Modal de edição de temas fechado. Atualizando a tela de configurações.");
+        sistemaDeLogger.info("Modal de edição de comunidades fechado. Atualizando a tela de configurações.");
         atualizarVisualizacaoPreferencias();
     }
 
     /**
-     * Carrega as preferências de tema mais recentes do serviço
+     * Carrega as preferências de comuidades mais recentes do serviço
      * e atualiza o estado das checkboxes na tela de configurações.
      */
     public void atualizarVisualizacaoPreferencias() {
@@ -122,10 +122,10 @@ public class HomeController {
 
         homeView.getFlowPaneTags().getChildren().clear();
 
-        Set<TemaPreferencia> temasAtuais = usuarioSessaoService.procurarPreferencias(emailRecebido);
+        Set<Comunidade> comunidadesAtuais = usuarioSessaoService.procurarPreferencias(emailRecebido);
 
-        Set<String> novasTags = temasAtuais.stream()
-                .map(this::formatarNomeTema)
+        Set<String> novasTags = comunidadesAtuais.stream()
+                .map(this::formatarNomeComunidade)
                 .collect(Collectors.toSet());
 
         for (String nomeTag : novasTags) {
@@ -135,8 +135,8 @@ public class HomeController {
         }
     }
 
-    private String formatarNomeTema(TemaPreferencia tema) {
-        String nomeEnum = tema.name();
+    private String formatarNomeComunidade(Comunidade comunidade) {
+        String nomeEnum = comunidade.name();
         if (nomeEnum == null || nomeEnum.isEmpty()) return "";
         return nomeEnum.charAt(0) + nomeEnum.substring(1).toLowerCase();
     }
@@ -222,7 +222,7 @@ public class HomeController {
 
         List<UsuarioModel> participantes = model.getParticipantes();
 
-        Set<String> preferencias = model.getTemas().stream()
+        Set<String> preferencias = model.getComunidades().stream()
                 .map(Enum::toString)
                 .collect(Collectors.toSet());
         String categoria = preferencias.stream().findFirst().orElse("Geral");
