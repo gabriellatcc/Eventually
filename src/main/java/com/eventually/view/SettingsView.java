@@ -17,7 +17,7 @@ import java.util.Map;
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
  * @author Yuri Garcia Maia (Criação)
  * @since 22-05-2025
- * @version 1.08
+ * @version 1.09
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, lógica e da estrutura da classe)
  * @since 22-05-2025
  */
@@ -74,7 +74,7 @@ public class SettingsView extends BorderPane {
         VBox vbSessao = new VBox();
         vbSessao.getStyleClass().add("settings-section");
 
-        Label title = new Label("Preferências de conteúdo");
+        Label title = new Label("Preferências de conteúdo de comunidades");
         title.getStyleClass().add("section-title");
         btnAlterarPreferencias = new Button("Alterar");
         btnAlterarPreferencias.getStyleClass().add("interact-button");

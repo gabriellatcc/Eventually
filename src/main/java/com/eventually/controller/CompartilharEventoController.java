@@ -6,7 +6,6 @@ import com.eventually.service.AlertaService;
 import com.eventually.service.EventoLeituraService;
 import com.eventually.view.HomeView;
 import com.eventually.view.modal.CompartilharEventoModal;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -32,7 +31,7 @@ import java.util.Random;
 /**
  * Controlador para o modal de "Compartilhar evento".
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.01
+ * @version 1.02
  * @since 2025-07-02
  */
 public class CompartilharEventoController {
@@ -106,38 +105,6 @@ public class CompartilharEventoController {
             alertaService.alertarInfo("A imagem do evento foi copiada!\nCole no Twitter com Ctrl+V.");
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Envia uma imagem para o Imgur de forma anônima e retorna o link público.
-     * @param image A imagem JavaFX a ser enviada.
-     * @return A URL da imagem no Imgur, ou null se falhar.
-     */
-    private String uploadParaImgur(Image image) {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                ImageIO.write(SwingFXUtils.fromFXImage(image, null), "png", outputStream);
-            String base64Image = Base64.getEncoder().encodeToString(outputStream.toByteArray());
-
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://api.imgur.com/3/image"))
-                    .header("Authorization", "Client-ID " + IMGUR_CLIENT_ID)
-                    .header("Content-Type", "application/x-www-form-urlencoded")
-                    .POST(HttpRequest.BodyPublishers.ofString("image=" + URLEncoder.encode(base64Image, StandardCharsets.UTF_8)))
-                    .build();
-
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() == 200) {
-                return response.body().split("\"link\":\"")[1].split("\"")[0].replace("\\/", "/");
-            } else {
-                System.err.println("Erro do Imgur: " + response.statusCode() + " - " + response.body());
-                return null;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
         }
     }
 

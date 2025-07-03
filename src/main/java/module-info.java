@@ -7,7 +7,6 @@ module com.eventually {
     requires activation;
     requires org.slf4j;
     requires java.net.http;
-    requires javafx.swing;
 
     opens com.eventually to javafx.fxml;
 

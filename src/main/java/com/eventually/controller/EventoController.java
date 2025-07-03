@@ -6,7 +6,6 @@ import com.eventually.service.*;
 import com.eventually.view.HomeView;
 import com.eventually.view.modal.EventoModal;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
@@ -14,14 +13,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.util.List;
 import java.util.Set;
 
 /**
  * Controller para o modal de Inscrição/Visualização de Evento.
  * Gerencia as interações do usuário com o modal.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e parte lógica)
- * @version 1.05
+ * @version 1.06
  * @since 2025-06-27
  */
 public class EventoController {
@@ -33,6 +31,7 @@ public class EventoController {
     private UsuarioAtualizacaoService usuarioAtualizacaoService;
     private UsuarioSessaoService usuarioSessaoService;
     private EventoExclusaoService eventoExclusaoService;
+    private EventoLeituraService eventoLeituraService;
 
     private Runnable aoFecharCallback;
 
@@ -58,6 +57,7 @@ public class EventoController {
         this.usuarioAtualizacaoService = UsuarioAtualizacaoService.getInstancia();
         this.editaEventoService = EditaEventoService.getInstance();
         this.eventoExclusaoService=EventoExclusaoService.getInstancia();
+        this.eventoLeituraService=EventoLeituraService.getInstancia();
         this.navegacaoService = new NavegacaoService(primaryStage);
 
         this.email=email;
@@ -86,11 +86,11 @@ public class EventoController {
         view.getLblDataHoraFim().setText(eventoH.dataHoraFim());
         view.getLblDescricao().setText(eventoH.descricao());
         view.getLblParticipantesInscritos().setText(eventoH.inscritos()+ " participantes inscritos");
-        int sobras = eventoH.inscritos()-eventoH.capacidade();
-        if(sobras<0){
-            sobras = 0;
-        }
-        view.getLblVagasDisponiveis().setText(sobras+" de "+eventoH.capacidade()+" vagas disponíveis");
+
+        eventoLeituraService.procurarEventoPorId(eventoH.id()).ifPresent(eventoReal -> {
+            atualizarContagemDeVagas(eventoReal);
+        });
+
         view.getImgTopoEvento().setImage(eventoH.imagem());
         view.getLblLocalizacao().setText(eventoH.local());
         view.getLblFormato().setText(eventoH.formato());
@@ -186,6 +186,8 @@ public class EventoController {
 
         alertaService.alertarInfo("Você está inscrito com sucesso!");
 
+        eventoLeituraService.procurarEventoPorId(eventoH.id()).ifPresent(this::atualizarContagemDeVagas);
+
         atualizarEstadoBotoes(true);
     }
 
@@ -198,7 +200,35 @@ public class EventoController {
 
             alertaService.alertarInfo("Sua inscrição foi cancelada.");
 
+            eventoLeituraService.procurarEventoPorId(eventoH.id()).ifPresent(this::atualizarContagemDeVagas);
+
             atualizarEstadoBotoes(false);
         }
+    }
+
+    /**
+     * Atualiza os labels da UI com os dados mais recentes de um EventoModel.
+     * @param eventoAtualizado O objeto EventoModel com os dados frescos do serviço.
+     */
+    private void atualizarContagemDeVagas(EventoModel eventoAtualizado) {
+        int capacidade = eventoAtualizado.getnParticipantes();
+        int inscritosAtuais = eventoAtualizado.getParticipantes().size();
+
+        int vagasRestantes = capacidade - inscritosAtuais;
+
+        if (vagasRestantes < 0) {
+            vagasRestantes = 0;
+        }
+
+        view.getLblParticipantesInscritos().setText(inscritosAtuais + " participantes inscritos");
+        view.getLblVagasDisponiveis().setText(vagasRestantes + " de " + capacidade + " vagas disponíveis");
+    }
+
+    private int calcularVagas(int x, int y){
+        int z = x-y; // 200-1 ou 200 -0
+        if(z == x){//z = 200
+            z = 0; //z - 0
+        }
+        return z;
     }
 }

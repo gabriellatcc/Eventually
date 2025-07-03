@@ -14,7 +14,7 @@ import java.util.Optional;
 /**
  * Serviço Singleton responsável pela lógica de negócio da edição de eventos.
  * Ele pega os dados da view e os aplica ao objeto de modelo do evento.
- * @version 1.02
+ * @version 1.03
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação e revisão da parte lógica da estrutura)
  * @since 2025-07-01
  */
@@ -138,9 +138,6 @@ public class EditaEventoService {
             boolean removido = participantes.removeIf(participante -> participante.getEmail().equals(email));
 
             if (removido) {
-                int novoValor = eventoEncontrado.getnParticipantes() - 1;
-                eventoEncontrado.setnParticipantes(novoValor);
-
                 System.out.println("Participante " + email + " removido do evento " + eventoEncontrado.getNome());
             }
         } else {

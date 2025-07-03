@@ -17,7 +17,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * @version 1.01
+ * @version 1.02
  * @author Gabriella Tavares Costa Corrêa (Criação, Documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-07-01
  */
@@ -43,12 +43,12 @@ public class EditaComunidadeModal extends Parent {
 
     private VBox criarLayoutPrincipal() {
         final double MODAL_WIDTH = 400;
-        final double MODAL_HEIGHT = 400;
+        final double MODAL_HEIGHT = 420;
 
         VBox layout = new VBox(15);
         layout.setAlignment(Pos.TOP_CENTER);
         layout.setPrefSize(MODAL_WIDTH, MODAL_HEIGHT);
-        layout.setPadding(new Insets(10, 20, 10, 20));
+        layout.setPadding(new Insets(5, 20, 10, 20));
         layout.getStyleClass().add("layout-pane");
 
         Rectangle rect = new Rectangle(MODAL_WIDTH, MODAL_HEIGHT);
@@ -56,12 +56,19 @@ public class EditaComunidadeModal extends Parent {
         rect.setArcHeight(10);
         layout.setClip(rect);
 
-        Label lblTitulo = new Label("Edite suas Preferências");
-        lblTitulo.getStyleClass().add("title-label-modal");
+        Label lblTitulo = new Label("Selecione as comunidades dos eventos que deseja ver");
+        lblTitulo.setWrapText(true);
+        lblTitulo.setStyle(
+                "-fx-font-family: 'Poppins Bold';" +
+                        "-fx-font-size: 24px;" +
+                        "-fx-pref-height: 80;"+
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-fill: #7A2074;"
+        );
 
-        VBox containerCheckBoxes = new VBox(15);
+        VBox containerCheckBoxes = new VBox(10);
         containerCheckBoxes.setAlignment(Pos.CENTER_LEFT);
-        containerCheckBoxes.setPadding(new Insets(10, 0, 10, 50));
+        containerCheckBoxes.setPadding(new Insets(0, 0, 5, 50));
 
         for (Comunidade comum : Comunidade.values()) {
             CheckBox cb = new CheckBox(formatarNomeComum(comum.name()));
