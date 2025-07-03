@@ -461,3 +461,17 @@
     -fx-border-color: #800080;
     -fx-effect: none;
 }
+
+.like-toggle-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #adb5bd;
+    -fx-font-size: 16px;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+.like-toggle-button:selected {
+    -fx-text-fill: #e03131;
+}
+.like-toggle-button:hover {
+    -fx-opacity: 0.7;
+}

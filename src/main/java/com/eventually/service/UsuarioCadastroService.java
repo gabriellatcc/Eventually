@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.07
+ * @version 1.08
  * @since 2025-05-15
  */
 public final class UsuarioCadastroService {
@@ -82,27 +82,26 @@ public final class UsuarioCadastroService {
         Set<Comunidade> preferenciasEvento2 = new HashSet<>();
         preferenciasEvento2.add(Comunidade.EDUCACIONAL);
         preferenciasEvento2.add(Comunidade.CULTURAL);
-        List<ComentarioModel> comentarios = new ArrayList<>();
 
         EventoModel evento1 = new EventoModel(
                 usuarioTesteModel, "Conferência Tech Inovação", "Discussão sobre o futuro da tecnologia.",
                 FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções, SP", null, 200,
                 dataDeHoje, horaEspecificaTeste1, amanha, horaEspecificaTeste2,
-                preferenciasEvento, new ArrayList<>(), true, false, comentarios
+                preferenciasEvento, new ArrayList<>(), true, false,  new ArrayList<>()
         );
 
         EventoModel evento2 = new EventoModel(
                 usuarioTesteModel, "Workshop de Design UX/UI", "Aprenda na prática os fundamentos de UX.",
                 FormatoSelecionado.ONLINE, "https://zoom.us/j/123456", "Online", null, 50,
                 amanha, LocalTime.of(17, 30), depoisAmanha, LocalTime.of(18, 30),
-                preferenciasEvento1, new ArrayList<>(), true, false, comentarios
+                preferenciasEvento1, new ArrayList<>(), true, false,  new ArrayList<>()
         );
 
         EventoModel evento3 = new EventoModel(
                 usuarioTesteModel, "Festival de Música Indie", "Bandas independentes em um evento único.",
                 FormatoSelecionado.HIBRIDO, null, "Parque Ibirapuera, SP", null, 1000,
                 amanha, horaEspecificaTeste1, depoisAmanha, horaEspecificaTeste2,
-                preferenciasEvento2, new ArrayList<>(), true, false, comentarios
+                preferenciasEvento2, new ArrayList<>(), true, false,  new ArrayList<>()
         );
 
         usuarioTesteModel.getEventosOrganizados().add(evento1);

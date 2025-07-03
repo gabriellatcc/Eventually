@@ -15,6 +15,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * @author Gabriella Tavares Costa Corrêa
+ * @version 1.01
+ * @since 2025-07-03
+ */
 public class ComentarioModal extends VBox {
     private final EventoModel evento;
     private final ComentarioService comentarioService;
@@ -130,6 +135,8 @@ public class ComentarioModal extends VBox {
     }
 
     private VBox criarCardComentario(ComentarioModel comentario) {
+        UsuarioModel usuarioLogado = sessaoService.procurarUsuario(email);
+
         ImageView fotoAutorView = new ImageView(comentario.getAutor().getFoto());
         configurarFotoCircular(fotoAutorView, 40);
 
@@ -142,13 +149,36 @@ public class ComentarioModal extends VBox {
 
         VBox infoAutorVBox = new VBox(2, lblNomeAutor, lblData);
 
+        Label lblContadorCurtidas = new Label(String.valueOf(comentario.getCurtidas()));
+        lblContadorCurtidas.getStyleClass().add("like-count-label");
+
+        ToggleButton btnCurtir = new ToggleButton("❤");
+        btnCurtir.getStyleClass().add("like-toggle-button");
+
+        if (usuarioLogado != null) {
+            btnCurtir.setSelected(comentario.isCurtidoPor(usuarioLogado));
+        }
+
+        btnCurtir.setOnAction(e -> {
+            if (usuarioLogado == null) return;
+
+            if (btnCurtir.isSelected()) {
+                comentario.curtir(usuarioLogado);
+            } else {
+                comentario.descurtir(usuarioLogado);
+            }
+            lblContadorCurtidas.setText(String.valueOf(comentario.getCurtidas()));
+        });
+
+        HBox areaCurtidas = new HBox(5, lblContadorCurtidas, btnCurtir);
+        areaCurtidas.setAlignment(Pos.CENTER);
+
         Pane spacer = new Pane();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox autorInfo = new HBox(10, fotoAutorView, infoAutorVBox, spacer);
+        HBox autorInfo = new HBox(10, fotoAutorView, infoAutorVBox, spacer, areaCurtidas);
         autorInfo.setAlignment(Pos.CENTER_LEFT);
 
-        UsuarioModel usuarioLogado = sessaoService.procurarUsuario(email);
         if (usuarioLogado != null && usuarioLogado.equals(comentario.getAutor())) {
             Button btnExcluir = new Button("X");
             btnExcluir.getStyleClass().add("close-button-x");
