@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.11
+ * @version 1.12
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -216,6 +216,13 @@ public class HomeController {
 
         int inscritos = model.getParticipantes().size();
         int capacidade = model.getnParticipantes();
+
+        System.out.println(
+                String.format("[DIAGNÓSTICO] Convertendo Evento ID %d: '%s' -> Capacidade no Modelo: %d",
+                        model.getId(),
+                        model.getNome(),
+                        capacidade)
+        );
 
         String formatoStr = model.getFormato().toString();
         formatoStr = formatoStr.substring(0, 1).toUpperCase() + formatoStr.substring(1).toLowerCase();

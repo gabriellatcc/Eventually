@@ -19,7 +19,7 @@ import java.time.LocalTime;
 /** PASSÍVEL DE ALTERAÇÕES
  * Classe responsável pela comunicação do modal de "Criar evento" com o backend.
  * @author Yuri Garcia Maia (Estrutura base)
- * @version 1.08
+ * @version 1.09
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
  * @since 2025-06-19
@@ -102,7 +102,15 @@ public class CriaEventoController {
 
             Image fotoEvento = this.imageFinal;
 
-            int nParticipantes = criaEventoModal.getParticipantCount();
+            String capacidadeTexto = criaEventoModal.getFldNParticipantes().getText();
+            int nParticipantes = 0;
+
+            try {
+                nParticipantes = Integer.parseInt(capacidadeTexto);
+            } catch (NumberFormatException e) {
+                sistemaDeLogger.error("Valor de capacidade inválido no campo de texto: '{}'", capacidadeTexto);
+                alerta.alertarErro("O valor da capacidade é inválido.");
+            }
 
             String textoDaHora1 = criaEventoModal.getFldHoraInicio().getText();
             LocalTime horaInicial = LocalTime.parse(textoDaHora1);

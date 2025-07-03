@@ -1,6 +1,7 @@
 package com.eventually.service;
 
 import com.eventually.dto.CriarEventoDto;
+import com.eventually.dto.PreferenciaFormatoDto;
 import com.eventually.dto.PreferenciasUsuarioDto;
 import com.eventually.model.*;
 import javafx.scene.image.Image;
@@ -19,7 +20,7 @@ import java.util.*;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.06
+ * @version 1.07
  * @since 2025-05-15
  */
 public final class EventoCriacaoService {
@@ -39,6 +40,7 @@ public final class EventoCriacaoService {
      */
     private EventoCriacaoService() {
         listaEventos = new HashSet<>();
+        this.usuarioSessaoService=UsuarioSessaoService.getInstancia();
         sistemaDeLogger.info("Inicializado e lista de eventos criada. HashSet size: " + listaEventos.size());
     }
 
@@ -106,52 +108,75 @@ public final class EventoCriacaoService {
      * de falha, é exibida uma mensagem no console.
      * @param dto o objeto {@code EventoModel} contendo as informações do evento a ser criado.
      */
-    public void criarEvento(CriarEventoDto dto, String link, String localizacaoEvento, Image fotoEvento) {
-        sistemaDeLogger.info("Método criarEvento() chamado.");
-        try {
-            Set<Comunidade> temasPreferidos = MapeamentoPreferenciasService.mapearPreferencias(dto.preferenciasEvento());
 
-            usuarioSessaoService = UsuarioSessaoService.getInstancia();
-            UsuarioModel usuario = usuarioSessaoService.procurarUsuario(dto.emailOrganizador());
-
-            if (usuario == null) {
-                sistemaDeLogger.error("Não foi possível criar o evento pois o usuário organizador não foi encontrado: " + dto.emailOrganizador());
-                alertaService.alertarErro("Usuário organizador não encontrado. Não foi possível criar o evento.");
-                return;
-            }
-            FormatoSelecionado formatoEnum = FormatoSelecionadoService.mapearFormato(dto.preferenciaFormato());
-
-            List<ComentarioModel> comentarios = new ArrayList<>();
-
-            EventoModel novoEvento = new EventoModel(
-                    usuario,
-                    dto.tituloEvento(),
-                    dto.descricaoEvento(),
-                    formatoEnum,
-                    link,
-                    localizacaoEvento,
-                    fotoEvento,
-                    dto.nParticipantes(),
-                    dto.diaInicial(),
-                    dto.horaInicial(),
-                    dto.diaFinal(),
-                    dto.horaFinal(),
-                    temasPreferidos,
-                    new ArrayList<>(),
-                    true,
-                    false,
-                    comentarios
-            );
-
-            adicionarEvento(novoEvento);
+    private void criarEvento(CriarEventoDto dto, String link, String localizacao, Image foto) {
+        UsuarioModel organizador = usuarioSessaoService.procurarUsuario(dto.emailOrganizador());
+        if (organizador == null) {
+            sistemaDeLogger.error("CRÍTICO: Não foi possível criar o evento porque o organizador com email '{}' não foi encontrado.", dto.emailOrganizador());
+            return;
         }
-        catch (RuntimeException e) {
-            sistemaDeLogger.error("Erro ao criar evento: " + e.getMessage());
-            e.printStackTrace();
-            alertaService.alertarErro("Erro ao criar evento.");
+
+        FormatoSelecionado formato = converterFormato(dto.preferenciaFormato());
+        Set<Comunidade> comunidades = converterComunidades(dto.preferenciasEvento());
+
+        EventoModel novoEvento = new EventoModel(
+                organizador,
+                dto.tituloEvento(),
+                dto.descricaoEvento(),
+                formato,
+                link,
+                localizacao,
+                foto,
+                dto.nParticipantes(),
+                dto.diaInicial(),
+                dto.horaInicial(),
+                dto.diaFinal(),
+                dto.horaFinal(),
+                comunidades,
+                new ArrayList<>(),
+                true,
+                false,
+                new ArrayList<>()
+        );
+        novoEvento.setId(proximoId++);
+
+        boolean adicionado = this.listaEventos.add(novoEvento);
+
+        if (adicionado) {
+            sistemaDeLogger.info("Evento '{}' criado com ID {} e adicionado à lista geral.", novoEvento.getNome(), novoEvento.getId());
+
+            organizador.getEventosOrganizados().add(novoEvento);
+            sistemaDeLogger.info("CONEXÃO FEITA: Evento ID {} associado ao organizador '{}'.", novoEvento.getId(), organizador.getEmail());
+        } else {
+            sistemaDeLogger.warn("Evento '{}' não foi adicionado (possivelmente um duplicado).", novoEvento.getNome());
         }
     }
 
+    /**
+     * Converte o DTO de formato em um Enum FormatoSelecionado.
+     */
+    private FormatoSelecionado converterFormato(PreferenciaFormatoDto dto) {
+        if (dto.isPresencial()) return FormatoSelecionado.PRESENCIAL;
+        if (dto.isOnline()) return FormatoSelecionado.ONLINE;
+        if (dto.isHibrido()) return FormatoSelecionado.HIBRIDO;
+        return FormatoSelecionado.PRESENCIAL;
+    }
+
+    /**
+     * Converte o DTO de preferências em um Set de Enums Comunidade.
+     */
+    private Set<Comunidade> converterComunidades(PreferenciasUsuarioDto dto) {
+        Set<Comunidade> comunidadesSelecionadas = new HashSet<>();
+        if (dto.corporativo()) comunidadesSelecionadas.add(Comunidade.CORPORATIVO);
+        if (dto.beneficente()) comunidadesSelecionadas.add(Comunidade.BENEFICENTE);
+        if (dto.educacional()) comunidadesSelecionadas.add(Comunidade.EDUCACIONAL);
+        if (dto.cultural()) comunidadesSelecionadas.add(Comunidade.CULTURAL);
+        if (dto.esportivo()) comunidadesSelecionadas.add(Comunidade.ESPORTIVO);
+        if (dto.religioso()) comunidadesSelecionadas.add(Comunidade.RELIGIOSO);
+        if (dto.social()) comunidadesSelecionadas.add(Comunidade.SOCIAL);
+
+        return comunidadesSelecionadas;
+    }
     /**
      * Adiciona um novo evento à lista de eventos após validações e, em caso de falha, exibe uma mensagem no console.
      * @param evento o objeto {@code EventoModel} a ser adicionado.

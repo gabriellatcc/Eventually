@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.05
+ * @version 1.06
  * @since 2025-05-15
  */
 public final class UsuarioCadastroService {
@@ -40,28 +40,35 @@ public final class UsuarioCadastroService {
      * Construtor que inicializa a lista com um objeto teste do tipo {@link UsuarioModel}.
      */
     private UsuarioCadastroService() {
-        this.eventoCriacaoService = eventoCriacaoService.getInstancia();
-
         listaUsuarios = new HashSet<>();
+        sistemaDeLogger.info("ServicoCadastroUsuario inicializado e lista de usuários criada. HashSet size: " + listaUsuarios.size());
+    }
 
-        //usuario teste abaixo:
+    /**
+     * Inicializa a aplicação com dados de teste (um usuário e três eventos).
+     * Este método deve ser chamado apenas uma vez no início da aplicação para popular o sistema.
+     */
+    public void inicializarDadosDeTeste() {
+        if (!listaUsuarios.isEmpty()) {
+            sistemaDeLogger.info("Dados de teste já inicializados. Nenhuma ação foi tomada.");
+            return;
+        }
+
+        sistemaDeLogger.info("Inicializando dados de teste...");
+
+        EventoCriacaoService eventoCriacaoService = EventoCriacaoService.getInstancia();
+
         Set<Comunidade> preferenciasDoUsuario = new HashSet<>();
         preferenciasDoUsuario.add(Comunidade.CORPORATIVO);
         preferenciasDoUsuario.add(Comunidade.CULTURAL);
         preferenciasDoUsuario.add(Comunidade.SOCIAL);
 
         UsuarioModel usuarioTesteModel = new UsuarioModel(
-                "gab tav",
-                "gab@gmail.com",
-                "a1234$",
-                "crz",
-                LocalDate.of(2003, 2, 1),
-                null,
-                new ArrayList<>(),
-                new ArrayList<>(),
-                preferenciasDoUsuario,
-                true
+                "gab tav", "gab@gmail.com", "a1234$", "crz",
+                LocalDate.of(2003, 2, 1), null, new ArrayList<>(), new ArrayList<>(),
+                preferenciasDoUsuario, true
         );
+        this.adicionarUsuario(usuarioTesteModel);
 
         LocalDate dataDeHoje = LocalDate.now();
         LocalDate amanha = dataDeHoje.plusDays(1);
@@ -70,44 +77,39 @@ public final class UsuarioCadastroService {
         LocalTime horaEspecificaTeste2 = LocalTime.of(12, 30);
         Set<Comunidade> preferenciasEvento = new HashSet<>();
         preferenciasEvento.add(Comunidade.CORPORATIVO);
-
         List<ComentarioModel> comentarios = new ArrayList<>();
 
         EventoModel evento1 = new EventoModel(
                 usuarioTesteModel, "Conferência Tech Inovação", "Discussão sobre o futuro da tecnologia.",
                 FormatoSelecionado.PRESENCIAL, null, "Centro de Convenções, SP", null, 200,
-                dataDeHoje, horaEspecificaTeste1,
-                amanha, horaEspecificaTeste2,
-                preferenciasEvento, null, true, false, comentarios
+                dataDeHoje, horaEspecificaTeste1, amanha, horaEspecificaTeste2,
+                preferenciasEvento, new ArrayList<>(), true, false, comentarios
         );
 
         EventoModel evento2 = new EventoModel(
                 usuarioTesteModel, "Workshop de Design UX/UI", "Aprenda na prática os fundamentos de UX.",
                 FormatoSelecionado.ONLINE, "https://zoom.us/j/123456", "Online", null, 50,
-                amanha, LocalTime.of(17, 30),
-                depoisAmanha, LocalTime.of(18, 30),
-                preferenciasEvento, null, true, false, comentarios
+                amanha, LocalTime.of(17, 30), depoisAmanha, LocalTime.of(18, 30),
+                preferenciasEvento, new ArrayList<>(), true, false, comentarios
         );
 
         EventoModel evento3 = new EventoModel(
                 usuarioTesteModel, "Festival de Música Indie", "Bandas independentes em um evento único.",
                 FormatoSelecionado.HIBRIDO, null, "Parque Ibirapuera, SP", null, 1000,
-                amanha, horaEspecificaTeste1,
-                depoisAmanha, horaEspecificaTeste2,
-                preferenciasEvento, null, true, false, comentarios
+                amanha, horaEspecificaTeste1, depoisAmanha, horaEspecificaTeste2,
+                preferenciasEvento, new ArrayList<>(), true, false, comentarios
         );
 
         usuarioTesteModel.getEventosOrganizados().add(evento1);
-        usuarioTesteModel.getEventosOrganizados().add(evento2);
-        usuarioTesteModel.getEventosOrganizados().add(evento3);
         eventoCriacaoService.adicionarEvento(evento1);
+
+        usuarioTesteModel.getEventosOrganizados().add(evento2);
         eventoCriacaoService.adicionarEvento(evento2);
+
+        usuarioTesteModel.getEventosOrganizados().add(evento3);
         eventoCriacaoService.adicionarEvento(evento3);
 
-        listaUsuarios.add(usuarioTesteModel);
-        //usuario teste acima
-
-        sistemaDeLogger.info("ServicoCadastroUsuario inicializado e lista de usuários criada. HashSet size: " + listaUsuarios.size());
+        sistemaDeLogger.info("Dados de teste criados com sucesso.");
     }
 
     /**
@@ -369,6 +371,7 @@ public final class UsuarioCadastroService {
     public void criarUsuario(CadastrarUsuarioDto dto){
         sistemaDeLogger.info("Método criarUsuario() chamado.");
         try {
+
             Set<Comunidade> temasPreferidos = MapeamentoPreferenciasService.mapearPreferencias(dto.preferencias());
 
             UsuarioModel novoUsuario = new UsuarioModel(

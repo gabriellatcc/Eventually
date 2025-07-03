@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * com o backend.
  * Contém métodos privados para que os acesso sejam somente por esta classe.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.06
+ * @version 1.07
  * @since 2025-06-18
  */
 public class MyEventsController {
@@ -82,7 +82,6 @@ public class MyEventsController {
             myEventsView.setEmailUsuario(emailRecebido);
             myEventsView.setAvatar(definirImagem(emailRecebido));
 
-            processarCarregamentoEventos();
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores da tela de Meus Eventos: "+e.getMessage());
             e.printStackTrace();
@@ -128,21 +127,15 @@ public class MyEventsController {
         }
 
         grupoTipoEvento.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
-            if (newToggle == null) {
-                myEventsView.setEventos(new ArrayList<>());
-                return;
-            }
-
             if (newToggle == myEventsView.getBtnEventosCriados()) {
-                sistemaDeLogger.info("Botão 'Eventos Criados' selecionado. Carregando eventos do organizador.");
                 carregarEventosParaOrganizador();
             } else if (newToggle == myEventsView.getBtnInscricoes()) {
-                sistemaDeLogger.info("Botão 'Inscrições' selecionado. Carregando eventos inscritos.");
                 carregarEventosParaInscrito();
             }
         });
 
         myEventsView.getBtnEventosCriados().setSelected(true);
+        carregarEventosParaOrganizador();
     }
 
     private void carregarEventosParaOrganizador() {
