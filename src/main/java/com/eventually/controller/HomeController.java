@@ -1,5 +1,6 @@
 package com.eventually.controller;
 
+import com.eventually.dto.FiltroDto;
 import com.eventually.model.EventoModel;
 import com.eventually.model.UsuarioModel;
 import com.eventually.model.FormatoSelecionado;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  * Classe controladora da tela inicial responsável pela comunicação com o backend e navegação entre telas.
  * Contém métodos privados para que os acesso sejam somente por esta classe e métodos públicos para serem acessados
  * por outras classes.
- * @version 1.12
+ * @version 1.13
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-23
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -34,6 +35,8 @@ public class HomeController {
     private NavegacaoService navegacaoService;
     private UsuarioSessaoService usuarioSessaoService;
     private EventoCriacaoService eventoCriacaoService;
+
+    private FiltroDto filtroAtual;
 
     private String emailRecebido;
 
@@ -59,6 +62,10 @@ public class HomeController {
 
         this.primaryStage = primaryStage;
         this.navegacaoService = new NavegacaoService(primaryStage);
+
+        Set<Comunidade> preferenciasIniciais = usuarioSessaoService.procurarPreferencias(emailRecebido);
+
+        this.filtroAtual = new FiltroDto(preferenciasIniciais, Optional.empty());
 
         configManipuladoresEventoInicio();
     }
@@ -99,10 +106,40 @@ public class HomeController {
             atualizarVisualizacaoPreferencias();
             homeView.getBtnFiltros().setOnAction(e -> {abrirModalParaEdicao();});
 
+            homeView.getBtnFiltros().setOnAction(e -> abrirModalDeFiltro());
+
             processarCarregamentoEventos();
+            atualizarTagsDeFiltro();
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao configurar manipuladores da tela de início: "+e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Atualiza as tags visuais na tela Home com base no filtro atualmente ativo.
+     */
+    private void atualizarTagsDeFiltro() {
+        sistemaDeLogger.info("Atualizando tags de filtro na Home para: {}", filtroAtual.comunidades());
+        homeView.getFlowPaneTags().getChildren().clear();
+
+        Set<Comunidade> comunidadesDoFiltro = filtroAtual.comunidades();
+
+        if (comunidadesDoFiltro.isEmpty()) {
+            Label tagLabel = new Label("Todas as Comunidades");
+            tagLabel.getStyleClass().add("tag-label");
+            homeView.getFlowPaneTags().getChildren().add(tagLabel);
+            return;
+        }
+
+        Set<String> novasTags = comunidadesDoFiltro.stream()
+                .map(this::formatarNomeComunidade)
+                .collect(Collectors.toSet());
+
+        for (String nomeTag : novasTags) {
+            Label tagLabel = new Label(nomeTag);
+            tagLabel.getStyleClass().add("tag-label");
+            homeView.getFlowPaneTags().getChildren().add(tagLabel);
         }
     }
 
@@ -180,14 +217,27 @@ public class HomeController {
      * console.
      */
     public void processarCarregamentoEventos() {
-        sistemaDeLogger.info("Método processarCarregamentoEventos() chamado.");
+        sistemaDeLogger.info("Carregando eventos com filtro: {}", filtroAtual);
         try {
-            sistemaDeLogger.info("Carregando eventos reais do serviço...");
-
             Set<EventoModel> todosOsEventosModel = eventoCriacaoService.getAllEventos();
 
             List<HomeView.EventoH> eventosParaView = todosOsEventosModel.stream()
                     .filter(EventoModel::isEstado)
+
+                    .filter(evento -> {
+                        Set<Comunidade> filtroComunidades = filtroAtual.comunidades();
+
+                        if (filtroComunidades.isEmpty()) {
+                            return true;
+                        }
+
+                        return !Collections.disjoint(evento.getComunidades(), filtroComunidades);
+                    })
+
+                    .filter(evento ->
+                            filtroAtual.formato().isEmpty() || evento.getFormato() == filtroAtual.formato().get()
+                    )
+
                     .map(this::converterParaView)
                     .collect(Collectors.toList());
 
@@ -264,5 +314,13 @@ public class HomeController {
 
     public void abrir(HomeView.EventoH eventoH) {
         navegacaoService.abrirModalVerEvento(emailRecebido, eventoH, this::processarCarregamentoEventos);
+    }
+
+    private void abrirModalDeFiltro() {
+        navegacaoService.abrirModalFiltro(this.filtroAtual, novoFiltro -> {
+            this.filtroAtual = novoFiltro;
+            processarCarregamentoEventos();
+            atualizarTagsDeFiltro();
+        });
     }
 }

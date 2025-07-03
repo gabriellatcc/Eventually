@@ -413,3 +413,51 @@
     -fx-border-width: 3px;
     -fx-border-radius: 3px;
 }
+
+.filtro-titled-pane {
+    -fx-background-color: #f9f9f9;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.filtro-titled-pane > .title {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+.filtro-titled-pane > .title > .text {
+    -fx-font-family: 'Poppins Bold';
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5c1a58;
+}
+
+.filtro-titled-pane > .content {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.filter-radio-button .radio {
+    -fx-border-width: 3px;
+    -fx-border-color: #800080; /* Roxo */
+    -fx-background-color: white;
+    -fx-background-image: null;
+    -fx-border-radius: 50%;
+    -fx-padding: 4px;
+}
+
+.filter-radio-button:selected .radio .dot {
+    -fx-background-color: #800080;
+    -fx-background-insets: 0;
+}
+
+.filter-radio-button .text {
+    -fx-font-family: 'Poppins';
+    -fx-fill: #000000;
+}
+
+.filter-radio-button:focused .radio {
+    -fx-border-color: #800080;
+    -fx-effect: none;
+}

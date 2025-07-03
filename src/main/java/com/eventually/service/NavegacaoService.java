@@ -1,6 +1,7 @@
 package com.eventually.service;
 
 import com.eventually.controller.*;
+import com.eventually.dto.FiltroDto;
 import com.eventually.model.EventoModel;
 import com.eventually.model.UsuarioModel;
 import com.eventually.view.*;
@@ -16,13 +17,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * Serviço responsável por gerenciar a navegação entre as diferentes telas da aplicação, centraliza a lógica de
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.11
+ * @version 1.12
  * @since 2025-06-19
  */
 public class NavegacaoService {
@@ -575,6 +577,39 @@ public class NavegacaoService {
             }
         } else {
             sistemaDeLogger.error("Tentativa de abrir comentários para evento não encontrado. ID: " + eventoId);
+        }
+    }
+
+    public void abrirModalFiltro(FiltroDto filtroAtual, Consumer<FiltroDto> onAplicarCallback) {
+        sistemaDeLogger.info("Método abrirModalFiltro() chamado.");
+        try{
+            FiltroModal modal=new FiltroModal();
+            FiltroController modalController= new FiltroController(modal,filtroAtual,onAplicarCallback);
+            modal.setController(modalController);
+            Stage modalStage = new Stage();
+
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.initOwner(primaryStage);
+
+            modalStage.initStyle(StageStyle.TRANSPARENT);
+            modalStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
+
+            Scene modalScene = new Scene(modal, modalStage.getWidth()/2,  modalStage.getHeight()/2);
+
+            modalStage.setOnShown(event -> {
+                javafx.geometry.Rectangle2D screenBounds = javafx.stage.Screen.getPrimary().getVisualBounds();
+                modalStage.setX((screenBounds.getWidth() - modalStage.getWidth()) / 2);
+                modalStage.setY((screenBounds.getHeight() - modalStage.getHeight()) / 2);
+            });
+
+            modalScene.setFill(Color.TRANSPARENT);
+            modalScene.getStylesheets().add(getClass().getResource("/styles/modal-styles.css").toExternalForm());
+            modalStage.setScene(modalScene);
+
+            modalStage.showAndWait();
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao abrir o modal: "+e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -9,11 +9,14 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.Set;
+import java.util.concurrent.Flow;
+
 /**
  * Representa um card de evento.
  * Este componente encapsula a exibição de uma imagem e informações de um evento,
  * como título, data, local e tipo.
- * @version 1.03
+ * @version 1.04
  * @author Yuri Garcia Maia
  * @since 2025-06-22
  * @author Gabriella Tavares Costa Corrêa (Documentação, correção e revisão da parte lógica da estrutura da classe)
@@ -28,7 +31,7 @@ public class EventoHCartao extends VBox {
     private Label lblDataHoraInicio, lblDataHoraFim;
     private Label lblTitulo;
     private Label lblLocal;
-    private Label lblTipo;
+    private FlowPane tagsPane;
 
     /**
      * Construtor padrão que inicializa a UI do card.
@@ -83,10 +86,10 @@ public class EventoHCartao extends VBox {
         lblLocal = new Label("Local do evento");
         lblLocal.getStyleClass().add("hcard-location");
 
-        lblTipo = new Label("Tipo do evento");
-        lblTipo.getStyleClass().add("hcard-type");
+        tagsPane = new FlowPane(5, 5);
+        tagsPane.setPadding(new Insets(5, 0, 0, 0));
 
-        VBox titleLocationBox = new VBox(0, lblTitulo, lblLocal, lblTipo);
+        VBox titleLocationBox = new VBox(0, lblTitulo, lblLocal, tagsPane);
 
         HBox bottomInfoBox = new HBox(10, titleLocationBox);
 
@@ -99,8 +102,23 @@ public class EventoHCartao extends VBox {
     public void setLblDataHoraFim(String dataHora) {this.lblDataHoraFim.setText(dataHora);}
     public void setLblTitulo(String titulo) {this.lblTitulo.setText(titulo);}
     public void setLblLocal(String local) {this.lblLocal.setText(local);}
-    public void setLblTipo(String tipo) {this.lblTipo.setText(tipo);}
 
+    public void setTags(Set<String> tags) {
+        this.tagsPane.getChildren().clear();
+
+        if (tags == null || tags.isEmpty()) {
+            Label tagPadrao = new Label("Geral");
+            tagPadrao.getStyleClass().add("tag-label");
+            this.tagsPane.getChildren().add(tagPadrao);
+            return;
+        }
+
+        for (String nomeTag : tags) {
+            Label tagLabel = new Label(nomeTag);
+            tagLabel.getStyleClass().add("hcard-type");
+            this.tagsPane.getChildren().add(tagLabel);
+        }
+    }
     public void setImagem(Image imagem) {
         if(this.imagemEventoView != null &&  imagem != null ) {
             this.imagemEventoView.setImage(imagem);

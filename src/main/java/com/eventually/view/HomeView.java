@@ -219,7 +219,7 @@ public class HomeView extends BorderPane {
             cardEvento.setLblDataHoraInicio(eventoH.dataHoraInicio());
             cardEvento.setLblDataHoraFim(eventoH.dataHoraFim());
 
-            cardEvento.setLblTipo(eventoH.categoria());
+            cardEvento.setTags(eventoH.preferencias());
 
             cardEvento.setImagem(eventoH.imagem());
 
