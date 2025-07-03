@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Classe responsável pelo modal de "Criar evento".
  * @author Yuri Garcia Maia
- * @version 1.05
+ * @version 1.06
  * @since 2025-06-18
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação e parte lógica)
  * @since 2025-06-19
@@ -180,7 +180,7 @@ public class CriaEventoModal extends Parent {
         vbox.getChildren().add(lbLocalizacao);
 
         taLocalizacao = new TextArea();
-        taLocalizacao.setPromptText("Exemplo: R. Rua Altos Bosques Claros, 12, Jardim das Flores, Bela Vista - SP, 12345-678 ou https://meet.google.com/kpw-iwnw-nir");
+        taLocalizacao.setPromptText("R. ou Av., Nº, Bairro, Cidade - ESTADO, 12345-678 https://meet.google.com/kpw-iwnw-nir");
         taLocalizacao.setPrefHeight(60);
         taLocalizacao.setWrapText(true);
         taLocalizacao.getStyleClass().add("text-area");
@@ -210,7 +210,7 @@ public class CriaEventoModal extends Parent {
         btnIncrement.getStyleClass().add("crement-button");
 
         fldNParticipantes = new TextField("0");
-        fldNParticipantes.setPrefWidth(40);
+        fldNParticipantes.setPrefWidth(70);
         fldNParticipantes.setAlignment(Pos.CENTER);
         fldNParticipantes.getStyleClass().add("modal-field");
 
@@ -286,7 +286,7 @@ public class CriaEventoModal extends Parent {
         datePickerStart = new DatePicker();
         datePickerStart.setPromptText("dd/mm/yyyy");
         datePickerStart.setPrefHeight(28);
-        datePickerStart.getStyleClass().add("modal-field");
+        datePickerStart.getStyleClass().add("register-field");
         LocalDate hoje = LocalDate.now();
         hoje.minusDays(1);
         bloquearIntervaloData(datePickerStart,
@@ -294,7 +294,7 @@ public class CriaEventoModal extends Parent {
         datePickerEnd = new DatePicker();
         datePickerEnd.setPromptText("dd/mm/yyyy");
         datePickerEnd.setPrefHeight(28);
-        datePickerEnd.getStyleClass().add("modal-field");
+        datePickerEnd.getStyleClass().add("register-field");
         bloquearIntervaloData(datePickerEnd,
                 LocalDate.of(hoje.getYear(), hoje.getMonthValue(), hoje.getDayOfMonth()));
         hbdataPicker.getChildren().addAll(datePickerStart, datePickerEnd);

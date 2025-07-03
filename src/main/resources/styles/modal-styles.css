@@ -397,3 +397,19 @@
 .compartilhar-button:hover {
     -fx-background-color: #A329A8;
 }
+.register-field {
+    -fx-font-family: 'Poppins';
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 0px;
+    -fx-font-size: 14px;
+    -fx-padding: 8px;
+}
+
+.register-field:focused {
+    -fx-border-color: #7A2074;
+    -fx-border-width: 3px;
+    -fx-border-radius: 3px;
+}
