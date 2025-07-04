@@ -19,7 +19,7 @@ import java.util.Set;
  * Controller para o modal de Inscrição/Visualização de Evento.
  * Gerencia as interações do usuário com o modal.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e parte lógica)
- * @version 1.07
+ * @version 1.08
  * @since 2025-06-27
  */
 public class EventoController {
@@ -224,11 +224,4 @@ public class EventoController {
         view.getLblVagasDisponiveis().setText(vagasRestantes + " de " + capacidade + " vagas disponíveis");
     }
 
-    private int calcularVagas(int x, int y){
-        int z = x-y; // 200-1 ou 200 -0
-        if(z == x){//z = 200
-            z = 0; //z - 0
-        }
-        return z;
-    }
 }

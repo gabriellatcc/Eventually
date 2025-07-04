@@ -17,7 +17,7 @@ import javafx.stage.StageStyle;
 /**
  * Esta classe representa o modal de confirmar encerrar sessão.
  * @author Gabriella Tavares Costa Corrêa
- * @version 1.0
+ * @version 1.01
  * @since 2025-07-01
  */
 public class ConfirmarExclusaoModal {
@@ -53,7 +53,7 @@ public class ConfirmarExclusaoModal {
         title.getStyleClass().add("title-label-modal");
         title.setStyle("-fx-font-size: 26px;");
 
-        Label message = new Label("Tem certeza que deseja\ndeletar o evento?\uD83D\uDE14");
+        Label message = new Label("Tem certeza que deseja\ndeletar o evento?\nOs usuários inscritos serão notificados.");
         message.getStyleClass().add("label-modal");
         message.setStyle("-fx-font-weight: normal; -fx-text-alignment: center; -fx-font-size: 16px;");
 

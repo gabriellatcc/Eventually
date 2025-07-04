@@ -1,21 +1,15 @@
 package com.eventually.service;
 
-import com.eventually.controller.RegisterController;
 import com.eventually.model.UsuarioModel;
 import com.sun.mail.util.MailSSLSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
 import javax.activation.DataHandler;
-import javax.imageio.ImageIO;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
@@ -26,13 +20,12 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import javax.activation.DataSource;
-import javax.swing.*;
 
 /**
  * Serviço responsável por gerar código para substituir uma senha esquecida e enviar e-mails aos usuários,
  * O e-mail inclui uma imagem inline (logo do sistema) e uma mensagem em HTML formatada.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e da estrutura da classe)
- * @version 1.01
+ * @version 1.05
  * @since 23-05-2025
  */
 public class EmailService {
@@ -41,68 +34,60 @@ public class EmailService {
     private UsuarioCadastroService usuarioCadastroService; //referencia
 
     private static final Logger sistemaDeLogger = LoggerFactory.getLogger(EmailService.class);
-    private AlertaService alertaService =new AlertaService();
+    private AlertaService alertaService = new AlertaService();
 
-    /**
-     * Construtor da classe que inicializa o código temporário gerado.
-     */
     public EmailService(String email) {
+        this.usuarioCadastroService = UsuarioCadastroService.getInstancia();
         this.emailRecebido = email;
     }
 
-    /**
-     * Valida o email inserido pelo usuário, se ele existe, gera um código e reseta a senha do usuário e, em caso de
-     * falha, uma mensagem é exibida no console.
-     */
-    private void validarEmail(){
-        sistemaDeLogger.info("Método validarEmail() chamado.");
-       try {
-           Optional<UsuarioModel> usuarioOptional = usuarioCadastroService.getAllUsuarios()
-                   .stream()
-                   .filter(usuario -> usuario.getEmail().equalsIgnoreCase(emailRecebido))
-                   .findFirst();
-           if (usuarioOptional.isPresent()) {
-               String codigo = gerarCodigo();
-               usuarioOptional.get().setSenha(codigo);
-               enviarEmail();
-               alertaService.alertarInfo("Realize a sessão com o código enviado pelo email, ele é a sua nova senha. \n Isso poderá ser alterado depois..");
-           } else {
-               alertaService.alertarErro("O email não está cadastrado no sistema");
-           }}catch (Exception e){
-           sistemaDeLogger.error("Erro ao validar o email no sistema: "+e.getMessage());
-           e.printStackTrace();
-       }
+    private void validarEmail() {
+        sistemaDeLogger.info("Método validarEmail() chamado para o e-mail: " + emailRecebido);
+        try {
+            Optional<UsuarioModel> usuarioOptional = usuarioCadastroService.getAllUsuarios()
+                    .stream()
+                    .filter(usuario -> usuario.getEmail().equalsIgnoreCase(emailRecebido))
+                    .findFirst();
+
+            if (usuarioOptional.isPresent()) {
+                this.codigoGerado = gerarCodigo();
+
+                if (this.codigoGerado != null) {
+                    UsuarioModel usuarioParaAtualizar = usuarioOptional.get();
+                    usuarioParaAtualizar.setSenha(this.codigoGerado);
+
+                    enviarEmail();
+                    alertaService.alertarInfo("Um código foi enviado para o seu e-mail. Ele é a sua nova senha temporária.\nUse-o para fazer login e altere-a nas configurações.");
+                } else {
+                    alertaService.alertarErro("Falha ao gerar o código de recuperação. Tente novamente.");
+                }
+            } else {
+                alertaService.alertarErro("O e-mail não está cadastrado no sistema");
+            }
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao validar o email no sistema: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    /**
-     * Gera um código numérico aleatório de 6 dígitos, formatado com zeros à esquerda e, em caso de
-     * falha, uma mensagem é exibida no console.
-     * @return código de verificação formatado como string de 6 dígitos.
-     */
     private String gerarCodigo() {
         try {
             Random rand = new Random();
-            int randomCode = rand.nextInt(999999);
-            return String.format("%06d", randomCode);
+            int randomCode = rand.nextInt(900000) + 100000;
+            return String.valueOf(randomCode);
         } catch (Exception e) {
-            sistemaDeLogger.error("Erro ao gerar codigo: "+e.getMessage());
+            sistemaDeLogger.error("Erro ao gerar codigo: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
     }
 
-    /**
-     * Envia um e-mail com o código para senha temporária para o endereço de e-mail fornecido e, em caso de
-     * falha no envio, uma mensagem é exibida no console.
-     * O conteúdo do e-mail é em HTML com um logo da aplicação embutido.
-     */
     private void enviarEmail() {
         try {
             String userHome = System.getProperty("user.home");
 
             System.setProperty("javax.net.ssl.keyStore", userHome + "\\meuKeystore.jks");
             System.setProperty("javax.net.ssl.trustStore", userHome + "\\meuKeystore.jks");
-
             System.setProperty("javax.net.ssl.keyStorePassword", "minhaSenha");
             System.setProperty("javax.net.ssl.trustStorePassword", "minhaSenha");
 
@@ -134,66 +119,65 @@ public class EmailService {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailUsuario));
             message.setSubject("Eventually: Sua nova senha temporária");
 
-            String html = """
-            <html>
-            <body style="font-family: Arial, sans-serif; text-align: center;">
-                <img src="cid:logoImage" style="width: 150px;"/>
-                <h2 style="color: #9a009a;">Recuperação de Senha</h2>
-                <p>Esta é sua nova senha temporária:</p>
-                <p style="font-size: 20px; font-weight: bold;">%s</p>
-                <p>Entre no sistema e altere sua senha nas configurações.</p>
-                <p style="margin-top: 30px;">— Equipe Eventually Application 🌟</p>
-            </body>
-            </html>
-        """.formatted(codigoGerado);
+            InputStream imageStream = getClass().getResourceAsStream("/images/logoEmail.jpg");
 
-            MimeMultipart multipart = new MimeMultipart("related");
+            if (imageStream != null) {
+                sistemaDeLogger.info("Imagem do logo encontrada. Montando e-mail com imagem.");
+                MimeMultipart multipart = new MimeMultipart("related");
 
-            MimeBodyPart htmlPart = new MimeBodyPart();
-            htmlPart.setContent(html, "text/html; charset=utf-8");
-            multipart.addBodyPart(htmlPart);
+                String htmlComImagem = """
+                <html>
+                <body style="font-family: Arial, sans-serif; text-align: center; padding: 20px; font-size: 17px; line-height: 1.6; color: #333;">
+                    <img src="cid:logoImage" style="width: 150px; margin-bottom: 20px;"/>
+                    <h2 style="color: #9a009a; font-size: 28px;">Recuperação de Senha</h2>
+                    <p>Esta é sua nova senha temporária:</p>
+                    <p style="font-size: 32px; font-weight: bold; color: #000; margin: 20px 0; letter-spacing: 2px;">%s</p>
+                    <p>Entre no sistema e altere sua senha nas configurações.</p>
+                    <p style="margin-top: 30px; font-size: 14px; color: #666;">— Equipe Eventually Application 🌟</p>
+                </body>
+                </html>
+                """.formatted(this.codigoGerado);
+                MimeBodyPart htmlPart = new MimeBodyPart();
+                htmlPart.setContent(htmlComImagem, "text/html; charset=utf-8");
+                multipart.addBodyPart(htmlPart);
 
-            MimeBodyPart imagePart = new MimeBodyPart();
+                MimeBodyPart imagePart = new MimeBodyPart();
+                DataSource fds = new ByteArrayDataSource(imageStream, "image/jpeg");
+                imagePart.setDataHandler(new DataHandler(fds));
+                imagePart.setHeader("Content-ID", "<logoImage>");
+                imagePart.setDisposition(MimeBodyPart.INLINE);
+                multipart.addBodyPart(imagePart);
 
-            ImageIcon icon = new ImageIcon(getClass().getResource("/images/logoEmail.jpg"));
-            Image image = icon.getImage();
-
-            BufferedImage bufferedImage = new BufferedImage(
-                    image.getWidth(null),
-                    image.getHeight(null),
-                    BufferedImage.TYPE_INT_ARGB
-            );
-            Graphics2D g2d = bufferedImage.createGraphics();
-            g2d.drawImage(image, 0, 0, null);
-            g2d.dispose();
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(bufferedImage, "jpg", baos);
-            InputStream is = new ByteArrayInputStream(baos.toByteArray());
-
-            DataSource fds = new ByteArrayDataSource(is, "image/jpg");
-            imagePart.setDataHandler(new DataHandler(fds));
-            imagePart.setHeader("Content-ID", "<logoImage>");
-            imagePart.setDisposition(MimeBodyPart.INLINE);
-            multipart.addBodyPart(imagePart);
-
-            message.setContent(multipart);
+                message.setContent(multipart);
+            } else {
+                sistemaDeLogger.error("RECURSO NÃO ENCONTRADO: Não foi possível encontrar 'logoEmail.jpg'. Enviando e-mail sem a imagem.");
+                String htmlSemImagem = """
+                <html>
+                <body style="font-family: Arial, sans-serif; text-align: center; padding: 20px; font-size: 17px; line-height: 1.6; color: #333;">
+                    <h2 style="color: #9a009a; font-size: 28px;">Recuperação de Senha</h2>
+                    <p>Esta é sua nova senha temporária:</p>
+                    <p style="font-size: 32px; font-weight: bold; color: #000; margin: 20px 0; letter-spacing: 2px;">%s</p>
+                    <p>Entre no sistema e altere sua senha nas configurações.</p>
+                    <p style="margin-top: 30px; font-size: 14px; color: #666;">— Equipe Eventually Application 🌟</p>
+                </body>
+                </html>
+                """.formatted(this.codigoGerado);
+                message.setContent(htmlSemImagem, "text/html; charset=utf-8");
+            }
 
             Transport.send(message);
+            sistemaDeLogger.info("E-mail de recuperação enviado com sucesso para " + emailUsuario);
         } catch (Exception e) {
-            sistemaDeLogger.error("Erro ao enviar e-mail: " + e.getMessage());
+            sistemaDeLogger.error("Erro CRÍTICO ao enviar e-mail: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    /**
-     * Inicia a operação de enviar o email da situação e, em caso de falha, é exibida uma mensagem no console.
-     */
     public void enviar() {
         try {
             validarEmail();
         } catch (Exception e) {
-            sistemaDeLogger.error("Erro ao enviar e-mail: " + e.getMessage());
+            sistemaDeLogger.error("Erro ao iniciar o processo de envio: " + e.getMessage());
             e.printStackTrace();
         }
     }

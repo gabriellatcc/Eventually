@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * com o backend.
  * Contém métodos privados para que os acesso sejam somente por esta classe.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.08
+ * @version 1.09
  * @since 2025-06-18
  */
 
@@ -87,6 +87,7 @@ public class MyEventsController {
         sistemaDeLogger.info("Carregando eventos criados pelo organizador...");
         List<EventoModel> eventosCriados = usuarioSessaoService.procurarEventosCriados(emailRecebido);
         List<EventoModel> eventosFuturos = eventosCriados.stream()
+                .filter(EventoModel::isEstado)
                 .filter(e -> e.getDataFinal().isAfter(LocalDate.now().minusDays(1)))
                 .collect(Collectors.toList());
         exibirListaDeEventos(eventosFuturos, this::carregarEventosParaOrganizador);
@@ -96,6 +97,7 @@ public class MyEventsController {
         sistemaDeLogger.info("Carregando eventos em que o usuário está inscrito...");
         List<EventoModel> eventosInscritos = usuarioSessaoService.procurarEventosInscritos(emailRecebido);
         List<EventoModel> eventosFuturos = eventosInscritos.stream()
+                .filter(EventoModel::isEstado)
                 .filter(e -> e.getDataFinal().isAfter(LocalDate.now().minusDays(1)))
                 .collect(Collectors.toList());
         exibirListaDeEventos(eventosFuturos, this::carregarEventosParaInscrito);
@@ -109,6 +111,7 @@ public class MyEventsController {
 
         List<EventoModel> eventosPassados = todosOsEventos.stream()
                 .distinct()
+                .filter(EventoModel::isEstado)
                 .filter(e -> e.getDataFinal().isBefore(LocalDate.now()))
                 .collect(Collectors.toList());
         exibirListaDeEventos(eventosPassados, this::carregarEventosFinalizados);
@@ -139,9 +142,18 @@ public class MyEventsController {
             configurarDataDoCartao(cartao, evento);
 
             Button botaoVer = cartao.getBtnVer();
+            Runnable callbackDeAtualizacao = () -> {
+                myEventsView.getListaEventos().getChildren().remove(cartao);
+                if (myEventsView.getListaEventos().getChildren().isEmpty()) {
+                    Label placeholder = new Label("Nenhum evento agendado para este dia.");
+                    placeholder.getStyleClass().add("placeholder-label");
+                    myEventsView.getListaEventos().getChildren().add(placeholder);
+                }
+            };
+
             botaoVer.setOnAction(e -> {
                 HomeView.EventoH eventoH = converterParaEventoH(evento);
-                navegacaoService.abrirModalVerEvento(this.emailRecebido, eventoH, refreshCallback);
+                navegacaoService.abrirModalVerEvento(this.emailRecebido, eventoH, callbackDeAtualizacao);
             });
 
             myEventsView.getListaEventos().getChildren().add(cartao);

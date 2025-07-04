@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * Classe controladora da tela de programação do usuário, é responsável pela comunicação
  * da tela de programação com o backend.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.10
+ * @version 1.11
  * @since 2025-04-25
  */
 public class UserScheduleController {
@@ -186,6 +186,7 @@ public class UserScheduleController {
         if (listaDeEventosInscritos != null) todosOsEventos.addAll(listaDeEventosInscritos);
 
         List<EventoModel> eventosFiltrados = todosOsEventos.stream()
+                .filter(EventoModel::isEstado)
                 .filter(evento -> {
                     if (evento.getDataInicial() == null || evento.getDataFinal() == null) { return false; }
                     boolean comecaNoDia = evento.getDataInicial().equals(dataAlvo);
@@ -215,10 +216,19 @@ public class UserScheduleController {
 
             Button botaoVer = cartao.getBtnVer();
 
+            Runnable callbackDeAtualizacao = () -> {
+                userScheduleView.getListaEventos().getChildren().remove(cartao);
+                if (userScheduleView.getListaEventos().getChildren().isEmpty()) {
+                    Label placeholder = new Label("Nenhum evento agendado para este dia.");
+                    placeholder.getStyleClass().add("placeholder-label");
+                    userScheduleView.getListaEventos().getChildren().add(placeholder);
+                }
+            };
+
             botaoVer.setOnAction(e -> {
                 HomeView.EventoH eventoH = converterParaEventoH(evento);
 
-                navegacaoService.abrirModalVerEvento(this.emailRecebido, eventoH, () -> carregarEventosParaData(dataAlvo));
+                navegacaoService.abrirModalVerEvento(this.emailRecebido, eventoH, callbackDeAtualizacao);
             });
 
             userScheduleView.getListaEventos().getChildren().add(cartao);

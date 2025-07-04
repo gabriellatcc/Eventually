@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.08
+ * @version 1.09
  * @since 2025-05-15
  */
 public final class UsuarioCadastroService {
@@ -71,6 +71,7 @@ public final class UsuarioCadastroService {
         this.adicionarUsuario(usuarioTesteModel);
 
         LocalDate dataDeHoje = LocalDate.now();
+        LocalDate antesOntem = dataDeHoje.plusDays(-2);
         LocalDate amanha = dataDeHoje.plusDays(1);
         LocalDate depoisAmanha = dataDeHoje.plusDays(2);
         LocalTime horaEspecificaTeste1 = LocalTime.of(10, 30);
@@ -100,7 +101,7 @@ public final class UsuarioCadastroService {
         EventoModel evento3 = new EventoModel(
                 usuarioTesteModel, "Festival de Música Indie", "Bandas independentes em um evento único.",
                 FormatoSelecionado.HIBRIDO, null, "Parque Ibirapuera, SP", null, 1000,
-                amanha, horaEspecificaTeste1, depoisAmanha, horaEspecificaTeste2,
+                antesOntem, horaEspecificaTeste1, antesOntem, horaEspecificaTeste2,
                 preferenciasEvento2, new ArrayList<>(), true, false,  new ArrayList<>()
         );
 
