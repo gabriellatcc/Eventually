@@ -1,5 +1,6 @@
 package com.eventually.view;
 
+import com.eventually.service.TelaService;
 import javafx.beans.property.ReadOnlyDoubleWrapper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,6 +26,13 @@ public class BarraBuilder {
     private Button btnSair;
     private Button btnProgramacao;
 
+    private final TelaService telaService;
+
+
+    public BarraBuilder() {
+        this.telaService = new TelaService();
+
+    }
     /**
      * Este método cria a classe do container da barra superior com o nome
      * do programa.
@@ -59,6 +67,7 @@ public class BarraBuilder {
         barraLateral.setPadding(new Insets(20));
         barraLateral.getStyleClass().add("sidebar");
         barraLateral.setPrefWidth(200);
+        barraLateral.setPrefHeight(telaService.medirHeight());
         barraLateral.setAlignment(Pos.TOP_CENTER);
 
         btnInicio = new Button("Página inicial");
