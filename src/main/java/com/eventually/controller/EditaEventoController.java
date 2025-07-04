@@ -1,6 +1,8 @@
 package com.eventually.controller;
 
+import com.eventually.dto.EventoEdicaoDto;
 import com.eventually.model.Comunidade;
+import com.eventually.model.FormatoSelecionado;
 import com.eventually.service.AlertaService;
 import com.eventually.service.EventoEdicaoService;
 import com.eventually.view.HomeView;
@@ -9,22 +11,28 @@ import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Controller para a view EditaEventoModal.
  * Responsável por popular os dados iniciais do evento no formulário e por
  * lidar com as ações do usuário, delegando a lógica de salvamento para o EventoEdicaoService.
- * @version 1.03
+ * @version 1.04
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação e revisão da parte lógica da estrutura)
  * @since 2025-07-01
  */
 public class EditaEventoController {
     private final EditaEventoModal view;
+    private Image novaImagemSelecionada = null;
+
     private final HomeView.EventoH eventoParaEditar;
     private final EventoEdicaoService eventoEdicaoService;
     private AlertaService alertaService = new AlertaService();
     private Runnable aoFecharCallback;
+
     /**
      * Construtor que estabelece as conexões entre a View, o Model e o Service.
      *
@@ -102,23 +110,73 @@ public class EditaEventoController {
         view.getBtnDecrement().setOnAction(e -> handleIncremento(false));
     }
 
+
     /**
-     * Lida com o clique no botão Salvar. Delega a lógica de atualização para o serviço,
-     * exibe uma confirmação e fecha o modal.
+     * Lida com o clique no botão Salvar. Coleta todos os dados da view,
+     * cria um DTO e delega a lógica de atualização para o serviço.
      */
     private void handleSalvar() {
         int idDoEvento = eventoParaEditar.id();
 
-        eventoEdicaoService.atualizarEvento(idDoEvento, view);
+        String nome = view.getFldNomeEvento().getText();
+        String descricao = view.getTaDescricao().getText();
+        String localizacao = view.getTaLocalizacao().getText();
+        String link = view.getFldLink().getText();
+        int capacidade = Integer.parseInt(view.getFldNParticipantes().getText());
 
-        alertaService.alertarInfo("Atualizado com sucesso!");
+        FormatoSelecionado formato = converterFormato();
+        Set<Comunidade> comunidades = converterComunidades();
+
+        LocalDate dataInicio = view.getDatePickerStart().getValue();
+        LocalDate dataFim = view.getDatePickerEnd().getValue();
+
+        String horaInicioStr = view.getFldHoraInicio().getText().isBlank() ? eventoParaEditar.horaI() : view.getFldHoraInicio().getText();
+        String horaFimStr = view.getFldHoraFinal().getText().isBlank() ? eventoParaEditar.horaF() : view.getFldHoraFinal().getText();
+        LocalTime horaInicio = LocalTime.parse(horaInicioStr);
+        LocalTime horaFim = LocalTime.parse(horaFimStr);
+
+        Image novaImagem = this.novaImagemSelecionada;
+
+        EventoEdicaoDto dto = new EventoEdicaoDto(
+                nome, descricao, localizacao, link, capacidade, formato, comunidades,
+                dataInicio, horaInicio, dataFim, horaFim, novaImagem
+        );
+
+        eventoEdicaoService.atualizarEvento(idDoEvento, dto);
+
+        alertaService.alertarInfo("Evento atualizado com sucesso!");
 
         if (aoFecharCallback != null) {
             aoFecharCallback.run();
         }
-
         view.close();
     }
+
+    /**
+     * Método auxiliar para converter o estado dos RadioButtons para o Enum FormatoSelecionado.
+     */
+    private FormatoSelecionado converterFormato() {
+        if (view.getRadioPresencial().isSelected()) return FormatoSelecionado.PRESENCIAL;
+        if (view.getRadioOnline().isSelected()) return FormatoSelecionado.ONLINE;
+        if (view.getRadioHibrido().isSelected()) return FormatoSelecionado.HIBRIDO;
+        return FormatoSelecionado.valueOf(eventoParaEditar.formato().toUpperCase());
+    }
+
+    /**
+     * Método auxiliar para converter o estado dos CheckBoxes para um Set de Enums Comunidade.
+     */
+    private Set<Comunidade> converterComunidades() {
+        Set<Comunidade> selecionadas = new HashSet<>();
+        if (view.getCbCorporativo().isSelected()) selecionadas.add(Comunidade.CORPORATIVO);
+        if (view.getCbBeneficente().isSelected()) selecionadas.add(Comunidade.BENEFICENTE);
+        if (view.getCbEducacional().isSelected()) selecionadas.add(Comunidade.EDUCACIONAL);
+        if (view.getCbCultural().isSelected()) selecionadas.add(Comunidade.CULTURAL);
+        if (view.getCbEsportivo().isSelected()) selecionadas.add(Comunidade.ESPORTIVO);
+        if (view.getCbReligioso().isSelected()) selecionadas.add(Comunidade.RELIGIOSO);
+        if (view.getCbSocial().isSelected()) selecionadas.add(Comunidade.SOCIAL);
+        return selecionadas;
+    }
+
 
     /**
      * Abre um FileChooser para que o usuário selecione uma nova imagem para o evento.
@@ -136,7 +194,9 @@ public class EditaEventoController {
         if (arquivo != null) {
             Image novaImagem = new Image(arquivo.toURI().toString());
             view.setPreviewImage(novaImagem);
-            view.setArquivoSelecionado(arquivo);
+
+            this.novaImagemSelecionada = novaImagem;
+
         }
     }
 

@@ -33,7 +33,7 @@ import com.eventually.controller.LoginController;
  * por inicializar e exibir a interface gráfica do usuário.
  *
  * @author Yuri Garcia Maia
- * @version 1.02
+ * @version 1.03
  * @since 2025-05-12
  * @author Gabriella Tavares Costa Corrêa (Documentação e revisão da classe)
  * @since 2025-05-14
@@ -182,7 +182,7 @@ public class LoginView extends BorderPane {
         passwordField = new PasswordField();
         passwordField.setPromptText("Senha");
         passwordField.setPrefHeight(40);
-        passwordField.getStyleClass().add("login-field");
+        passwordField.getStyleClass().add("pass-field");
 
         esqueceuSenhaLink = new Hyperlink("Esqueceu sua senha? Clique aqui");
         esqueceuSenhaLink.setTextFill(Color.WHITE);

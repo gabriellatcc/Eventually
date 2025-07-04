@@ -12,7 +12,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * @version 1.00
+ * @version 1.01
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
  * @since 2025-07-02
  */
@@ -44,6 +44,7 @@ public class FiltroModal extends Parent {
         lblTitulo.getStyleClass().add("title-label-modal");
 
         TitledPane paneComunidades = new TitledPane("Por Comunidade", criarAreaComunidades());
+        paneComunidades.getStyleClass().add("filtro-titled-pane");
         paneComunidades.setCollapsible(false);
 
         TitledPane paneFormatos = new TitledPane("Por Formato", criarAreaFormatos());

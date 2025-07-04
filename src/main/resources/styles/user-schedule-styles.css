@@ -76,6 +76,13 @@
     -fx-background-color: #9E339E;
 }
 
+
+.user-email-label {
+    -fx-font-family: 'Poppins';
+    -fx-text-fill: #777777;
+    -fx-font-size: 12px;
+}
+
 .user-display-box {
     -fx-background-color: #f0f0f0;
     -fx-background-radius: 25px;

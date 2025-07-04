@@ -27,7 +27,7 @@ import java.util.List;
  * 1. Usar os getters para popular os prompt texts com os dados atuais do evento.
  * 2. No botão "Salvar", ler os campos. Se um campo estiver vazio, manter o dado original (lógica de Optional).
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação e revisão da parte lógica da estrutura)
- * @version 1.01
+ * @version 1.02
  * @since 2025-07-01
  */
 public class EditaEventoModal extends Parent {
@@ -294,7 +294,7 @@ public class EditaEventoModal extends Parent {
         Label lbTags = new Label("Tags");
         lbTags.getStyleClass().add("subtitle-label-modal");
         vbox.getChildren().add(lbTags);
-        Label lbTagsNota = new Label("Selecione as comnidades que mais combinam com o evento");
+        Label lbTagsNota = new Label("Selecione as comunidades que mais combinam com o evento");
 
         lbTagsNota.setWrapText(true);
         lbTagsNota.setTextAlignment(TextAlignment.LEFT);

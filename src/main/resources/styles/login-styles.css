@@ -59,9 +59,38 @@
     -fx-font-family: 'Poppins';
     -fx-font-size: 0.9em;
 }
-
-.form-field {
+.pass-field {
+    -fx-font-family: 'Poppins';
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 0px;
+    -fx-font-size: 10px;
+    -fx-padding: 8px;
 }
 
-.submit-button {
+.pass-field .prompt-text {
+    -fx-font-size: 18px;
+}
+
+
+.pass-field:focused {
+    -fx-border-color: #7a2074;
+    -fx-border-width: 3px;
+    -fx-border-radius: 3px;
+}
+
+.pass-button {
+    -fx-font-family: 'Poppins Bold';
+    -fx-background-color: #7a2074;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+}
+
+.pass-button:hover {
+    -fx-background-color: #9a009a;
+    -fx-cursor: hand;
 }
