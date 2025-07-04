@@ -19,7 +19,7 @@ import java.util.Set;
  * Controller para o modal de Inscrição/Visualização de Evento.
  * Gerencia as interações do usuário com o modal.
  * @author Gabriella Tavares Costa Corrêa (Criação, revisão de documentação e parte lógica)
- * @version 1.08
+ * @version 1.09
  * @since 2025-06-27
  */
 public class EventoController {
@@ -101,20 +101,27 @@ public class EventoController {
             view.getFlowPaneTags().getChildren().add(tagLabel);
         }
         
-        configurarBotoesDeAcao();
+        atualizarVisualizacao();
+
         view.getBtnSair().setOnAction(e -> {
             if (aoFecharCallback != null) {
                 aoFecharCallback.run();
             }
             view.close();
         });
+
         view.getBtnVerParticipantes().setOnAction(e -> {processarVerParticipantes(eventoH);});
         int id = eventoH.id();
         view.getBtnComentarios().setOnAction(e -> {navegacaoService.abrirModalComentarios(id,email);});
         view.getBtnCompartilhar().setOnAction(e -> {navegacaoService.abrirModalDeCompartilhamento(eventoH);});
     }
 
-    private void configurarBotoesDeAcao() {
+
+    /**
+     * MÉTODO CENTRALIZADO: Atualiza a visualização do modal (botões e localização)
+     * com base no estado de inscrição do usuário e se ele é o criador do evento.
+     */
+    private void atualizarVisualizacao() {
         VBox containerDeBotoes = view.getVbBotoesAcao();
         containerDeBotoes.getChildren().clear();
 
@@ -129,18 +136,26 @@ public class EventoController {
             HBox hboxOrganizerButtons = new HBox(10, btnEditar, btnExcluir);
             hboxOrganizerButtons.setAlignment(Pos.CENTER);
             containerDeBotoes.getChildren().add(hboxOrganizerButtons);
-
         } else if (this.usuarioEstaInscrito) {
             Button btnCancelar = view.getBtnCancelarInscricao();
             btnCancelar.setOnAction(e -> processarCancelarInscricao());
             containerDeBotoes.getChildren().add(btnCancelar);
-
         } else {
             Button btnInscrever = view.getBtnInscrever();
             btnInscrever.setOnAction(e -> processarInscricao());
             HBox hboxInscrever = new HBox(btnInscrever);
             hboxInscrever.setAlignment(Pos.CENTER);
             containerDeBotoes.getChildren().add(hboxInscrever);
+        }
+
+        if (eventoH.formato().equalsIgnoreCase("Online")) {
+            if (usuarioEstaInscrito || ehCriador) {
+                view.getLblLocalizacao().setText(eventoH.linkAcesso());
+            } else {
+                view.getLblLocalizacao().setText("Evento Online");
+            }
+        } else {
+            view.getLblLocalizacao().setText(eventoH.local());
         }
     }
 
@@ -176,7 +191,6 @@ public class EventoController {
      */
     private void atualizarEstadoBotoes(boolean novoEstado) {
         this.usuarioEstaInscrito = novoEstado;
-        configurarBotoesDeAcao();
     }
 
     private void processarInscricao() {
@@ -186,9 +200,16 @@ public class EventoController {
 
         alertaService.alertarInfo("Você está inscrito com sucesso!");
 
+        this.usuarioLogado = usuarioSessaoService.procurarUsuario(email);
+        this.usuarioEstaInscrito = this.usuarioLogado.getEventosInscrito().stream()
+                .anyMatch(eventoModel -> eventoModel.getId() == eventoH.id());
+
         eventoLeituraService.procurarEventoPorId(eventoH.id()).ifPresent(this::atualizarContagemDeVagas);
 
+
         atualizarEstadoBotoes(true);
+        atualizarVisualizacao();
+
     }
 
     private void processarCancelarInscricao() {
@@ -197,12 +218,15 @@ public class EventoController {
         if (usuarioConfirmou) {
             usuarioAtualizacaoService.removerInscricao(email, eventoH);
             eventoEdicaoService.removerParticipante(eventoH, email);
-
             alertaService.alertarInfo("Sua inscrição foi cancelada.");
+
+            this.usuarioLogado = usuarioSessaoService.procurarUsuario(email);
+            this.usuarioEstaInscrito = this.usuarioLogado.getEventosInscrito().stream()
+                    .anyMatch(eventoModel -> eventoModel.getId() == eventoH.id());
 
             eventoLeituraService.procurarEventoPorId(eventoH.id()).ifPresent(this::atualizarContagemDeVagas);
 
-            atualizarEstadoBotoes(false);
+            atualizarVisualizacao();
         }
     }
 
@@ -213,7 +237,6 @@ public class EventoController {
     private void atualizarContagemDeVagas(EventoModel eventoAtualizado) {
         int capacidade = eventoAtualizado.getnParticipantes();
         int inscritosAtuais = eventoAtualizado.getParticipantes().size();
-
         int vagasRestantes = capacidade - inscritosAtuais;
 
         if (vagasRestantes < 0) {
