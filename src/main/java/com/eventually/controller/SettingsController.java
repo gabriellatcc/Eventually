@@ -3,6 +3,7 @@ package com.eventually.controller;
 import com.eventually.model.Comunidade;
 import com.eventually.service.*;
 import com.eventually.view.*;
+import com.eventually.view.modal.DeletarContaConfirmModal;
 import javafx.scene.control.CheckBox;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -12,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Set;
 
-/** PASSÍVEL DE ALTERAÇÕES
+/**
  * Classe controladora da tela de Configurações do usuário, é responsável pela comunicação da tela de de configurações
  * com o backend.
  * Contém todos os métodos como privados para que seu acesso seja somente por esta classe.
- * @version 1.07
+ * @version 1.08
  * @author Yuri Garcia Maia (Estrutura base)
  * @since 2025-05-22
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, estrutura e refatoração da parte lógica da classe)
@@ -243,18 +244,23 @@ public class SettingsController {
      * seja, inativo.
      */
     private void processarDeletarConta() {
-        try{
-            //chamar modal
-            //boolean respostaModal = getResposta
-            //if (getresposta) - > ovbiamente true:
-            int idEncontrado = usuarioSessaoService.procurarID(emailRecebido);
-            usuarioExclusaoService.alterarEstadoDoUsuario(idEncontrado, false);
-            //entao:
-            alertaService.alertarInfo("Conta removida com sucesso!");
-            navegacaoService.navegarParaLogin();
-        }
-        catch (Exception e) {
-            sistemaDeLogger.info("Erro ao deletar conta: "+e.getMessage());
+        try {
+            DeletarContaConfirmModal confirmModal = new DeletarContaConfirmModal();
+
+            boolean usuarioConfirmou = confirmModal.showAndWait(primaryStage);
+
+            if (usuarioConfirmou) {
+                int idEncontrado = usuarioSessaoService.procurarID(emailRecebido);;
+                usuarioExclusaoService.alterarEstadoDoUsuario(idEncontrado,false);
+
+                alertaService.alertarInfo("Sua conta foi removida com sucesso.");
+                navegacaoService.navegarParaLogin();
+            } else {
+                sistemaDeLogger.info("Usuário cancelou a exclusão da conta.");
+            }
+
+        } catch (Exception e) {
+            sistemaDeLogger.error("Erro ao processar a exclusão da conta: " + e.getMessage());
             e.printStackTrace();
         }
     }
