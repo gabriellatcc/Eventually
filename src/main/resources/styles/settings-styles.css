@@ -173,7 +173,7 @@
 .conteudo-central {
     -fx-padding: 25px;
     -fx-spacing: 5px;
-    -fx-alignment: top-left; /* MODIFICADO: De top-center para top-left */
+    -fx-alignment: top-left;
 }
 
 .purple-checkbox > .box {
@@ -292,7 +292,7 @@
 
 .user-preferences-container {
     -fx-spacing: 30px;
-    -fx-alignment: top-center; /* ADICIONADO: Alinha os filhos (grid e foto) ao topo */
+    -fx-alignment: top-center;
 }
 
 .user-details-grid {
@@ -333,8 +333,8 @@
     -fx-pref-width: 100px;
     -fx-pref-height: 100px;
     -fx-min-width: 100px;
-    -fx-min-height: 100px;  /* ADICIONADO */
-    -fx-max-width: 100px;   /* ADICIONADO */
+    -fx-min-height: 100px;
+    -fx-max-width: 100px;
     -fx-max-height: 100px;
     -fx-background-color: #C7C7C7;
     -fx-background-radius: 20px;
@@ -350,7 +350,6 @@
 
 .delete-button-container {
     -fx-alignment: center-right;
-    -fx-padding: -30px 18px 0px 0;
 }
 
 .delete-account-button {

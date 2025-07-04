@@ -17,7 +17,7 @@ import java.util.Map;
  * Exibe e permite a alteração das preferências do usuário e de conteúdo.
  * @author Yuri Garcia Maia (Criação)
  * @since 22-05-2025
- * @version 1.09
+ * @version 1.10
  * @author Gabriella Tavares Costa Corrêa (Revisão de documentação, lógica e da estrutura da classe)
  * @since 22-05-2025
  */
@@ -151,23 +151,25 @@ public class SettingsView extends BorderPane {
     }
 
     private VBox criarSessaoPreferenciasUsuario() {
-        VBox sessao = new VBox();
+        VBox sessao = new VBox(0);
         sessao.getStyleClass().add("settings-section");
+        GridPane gpDetalhesUsuario = new GridPane();
+        gpDetalhesUsuario.getStyleClass().add("user-details-grid");
 
         Label lbTitulo = new Label("Preferências de usuário");
         lbTitulo.getStyleClass().add("section-title");
+        gpDetalhesUsuario.add(lbTitulo, 0, 0);
+
         Label lbDescricaoTitulo = new Label("(Editar informações do usuário)");
         lbDescricaoTitulo.getStyleClass().add("description-label");
-
-        GridPane gpDetalhesUsuario = new GridPane();
-        gpDetalhesUsuario.getStyleClass().add("user-details-grid");
+        gpDetalhesUsuario.add(lbDescricaoTitulo, 0, 1);
 
         Label lbEmail = new Label("Email:");
         lbEmail.getStyleClass().add("user-detail-row-email");
         lbEmailUsuario = new Label();
         HBox hbEmail = new HBox(lbEmail, lbEmailUsuario);
         hbEmail.getStyleClass().add("user-detail-row-email");
-        gpDetalhesUsuario.add(hbEmail, 0, 1);
+        gpDetalhesUsuario.add(hbEmail, 0, 2);
 
         Label lbNome = new Label("Nome:");
         lbNomeUsuario = new Label();
@@ -176,7 +178,7 @@ public class SettingsView extends BorderPane {
         HBox.setHgrow(espacadorNome, Priority.ALWAYS);
         HBox hbNome = new HBox(lbNome, lbNomeUsuario, espacadorNome, hlAlterarNome);
         hbNome.getStyleClass().add("user-detail-row");
-        gpDetalhesUsuario.add(hbNome, 0, 0);
+        gpDetalhesUsuario.add(hbNome, 0, 3);
 
         Label lbSenha = new Label("Senha:");
         lbSenhaUsuario = new Label();
@@ -185,7 +187,7 @@ public class SettingsView extends BorderPane {
         HBox.setHgrow(espacadorSenha, Priority.ALWAYS);
         HBox hbSenha = new HBox(lbSenha, lbSenhaUsuario, espacadorSenha, hlAlterarSenha);
         hbSenha.getStyleClass().add("user-detail-row");
-        gpDetalhesUsuario.add(hbSenha, 0, 2);
+        gpDetalhesUsuario.add(hbSenha, 0, 4);
 
         Label lbCidade = new Label("Cidade:");
         lbCidadeUsuario = new Label();
@@ -194,7 +196,7 @@ public class SettingsView extends BorderPane {
         HBox.setHgrow(espacadorCidade, Priority.ALWAYS);
         HBox hbCidade = new HBox(lbCidade,lbCidadeUsuario, espacadorCidade, hlAlterarCidade);
         hbCidade.getStyleClass().add("user-detail-row");
-        gpDetalhesUsuario.add(hbCidade, 0, 3);
+        gpDetalhesUsuario.add(hbCidade, 0, 5);
 
         Label lbDataNascimento = new Label("Data de Nascimento:");
         lbDataNascUsuario = new Label();
@@ -203,7 +205,7 @@ public class SettingsView extends BorderPane {
         HBox.setHgrow(espacadorData, Priority.ALWAYS);
         HBox hbDataNasc = new HBox(lbDataNascimento,lbDataNascUsuario, espacadorData, hlAlterarDataNasc);
         hbDataNasc.getStyleClass().add("user-detail-row");
-        gpDetalhesUsuario.add(hbDataNasc, 0, 4);
+        gpDetalhesUsuario.add(hbDataNasc, 0, 6);
 
         for (Label l : List.of( lbEmail, lbEmailUsuario, lbNome, lbNomeUsuario, lbSenha, lbSenhaUsuario, lbCidade, lbCidadeUsuario, lbDataNascimento, lbDataNascUsuario)) {
             l.getStyleClass().add("greeting-label");
@@ -215,7 +217,7 @@ public class SettingsView extends BorderPane {
         hbPreferenciasUsuario.getStyleClass().add("user-preferences-container");
         HBox.setHgrow(gpDetalhesUsuario, Priority.ALWAYS);
 
-        sessao.getChildren().addAll(lbTitulo, lbDescricaoTitulo, hbPreferenciasUsuario);
+        sessao.getChildren().addAll(hbPreferenciasUsuario);
         return sessao;
     }
 
