@@ -16,7 +16,7 @@ import javafx.scene.layout.VBox;
 /**
  * Classe construtora de barra superior e lateral do sistema.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.02
+ * @version 1.03
  * @since 2025-06-24
  */
 public class BarraBuilder {
@@ -42,6 +42,7 @@ public class BarraBuilder {
         HBox barraSuperior = new HBox();
         barraSuperior.setPadding(new Insets(20));
         barraSuperior.setAlignment(Pos.CENTER);
+        barraSuperior.setPrefWidth(telaService.medirWidth());
         barraSuperior.getStyleClass().add("topbar");
 
         Image logoImagem = new Image(getClass().getResourceAsStream("/images/eventually-logo.png"));

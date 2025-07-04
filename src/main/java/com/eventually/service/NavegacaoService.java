@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  * inicialização de telas e controladores de telas para evitar a duplicação de código em diferentes classes
  * controladores.
  * @author Gabriella Tavares Costa Corrêa (Construção da documentação, da classe e revisão da parte lógica da estrutura)
- * @version 1.12
+ * @version 1.13
  * @since 2025-06-19
  */
 public class NavegacaoService {
@@ -48,6 +48,29 @@ public class NavegacaoService {
 
         this.primaryStage = primaryStage;
         this.telaService = new TelaService();
+
+        this.telaService.aplicarTamanhoRestaurar(primaryStage, 1280, 720);
+    }
+
+    /**
+     * Define uma nova cena no palco principal, garantindo que o tamanho da janela seja preservado.
+     * @param scene A nova cena a ser exibida.
+     * @param title O novo título para a janela.
+     */
+    private void setSceneAndPreserveSize(Scene scene, String title) {
+        double currentWidth = primaryStage.getWidth();
+        double currentHeight = primaryStage.getHeight();
+        boolean isMaximized = primaryStage.isMaximized();
+
+        primaryStage.setTitle(title);
+        primaryStage.setScene(scene);
+
+        if (isMaximized) {
+            primaryStage.setMaximized(true);
+        } else {
+            primaryStage.setWidth(currentWidth);
+            primaryStage.setHeight(currentHeight);
+        }
     }
 
     /**
@@ -60,12 +83,10 @@ public class NavegacaoService {
             LoginController loginController = new LoginController(loginView, primaryStage);
             loginView.setLoginController(loginController);
 
-            Scene loginScene = new Scene(loginView, telaService.medirWidth(), telaService.medirHeight());
+            Scene loginScene = new Scene(loginView);
             loginScene.getStylesheets().add(getClass().getResource("/styles/login-styles.css").toExternalForm());
 
-            primaryStage.setTitle("Eventually - Login");
-            primaryStage.setScene(loginScene);
-            primaryStage.setMaximized(true);
+            setSceneAndPreserveSize(loginScene, "Eventually - Login");
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao navegar para a tela de Login: " + e.getMessage());
             e.printStackTrace();
@@ -82,12 +103,10 @@ public class NavegacaoService {
             RegisterController registerController = new RegisterController(registerView, primaryStage);
             registerView.setRegisterController(registerController);
 
-            Scene sceneRegister = new Scene(registerView, telaService.medirWidth(), telaService.medirHeight());
+            Scene sceneRegister = new Scene(registerView);
             sceneRegister.getStylesheets().add(getClass().getResource("/styles/register-styles.css").toExternalForm());
 
-            primaryStage.setTitle("Eventually - Registro do Usuário");
-            primaryStage.setScene(sceneRegister);
-            primaryStage.setMaximized(true);
+            setSceneAndPreserveSize(sceneRegister, "Eventually - Registro do Usuário");
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao navegar para a tela de Registro: " + e.getMessage());
             e.printStackTrace();
@@ -105,12 +124,10 @@ public class NavegacaoService {
             HomeController homeController = new HomeController(usuarioAutenticado.getEmail(), homeView, primaryStage);
             homeView.setHomeController(homeController);
 
-            Scene sceneHomeView = new Scene(homeView, telaService.medirWidth(), telaService.medirHeight());
+            Scene sceneHomeView = new Scene(homeView);
             sceneHomeView.getStylesheets().add(getClass().getResource("/styles/home-styles.css").toExternalForm());
 
-            primaryStage.setTitle("Eventually - Início");
-            primaryStage.setScene(sceneHomeView);
-            primaryStage.setMaximized(true);
+            setSceneAndPreserveSize(sceneHomeView, "Eventually - Início");
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao navegar para a tela inicial (HomeView): " + e.getMessage());
             e.printStackTrace();
@@ -128,12 +145,10 @@ public class NavegacaoService {
             MyEventsController myEventsController = new MyEventsController(emailUsuario, myEventsView, primaryStage);
             myEventsView.setMyEventsViewController(myEventsController);
 
-            Scene myEventsScene = new Scene(myEventsView, telaService.medirWidth(), telaService.medirHeight());
+            Scene myEventsScene = new Scene(myEventsView);
             myEventsScene.getStylesheets().add(getClass().getResource("/styles/my-events-styles.css").toExternalForm());
 
-            primaryStage.setTitle("Eventually - Meus Eventos");
-            primaryStage.setScene(myEventsScene);
-            primaryStage.setMaximized(true);
+            setSceneAndPreserveSize(myEventsScene, "Eventually - Meus Eventos");
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao navegar para a tela de Meus Eventos: " + e.getMessage());
             e.printStackTrace();
@@ -151,12 +166,10 @@ public class NavegacaoService {
             SettingsController settingsController = new SettingsController(emailUsuario, settingsView, primaryStage);
             settingsView.setSettingsController(settingsController);
 
-            Scene settingsScene = new Scene(settingsView, telaService.medirWidth(), telaService.medirHeight());
+            Scene settingsScene = new Scene(settingsView);
             settingsScene.getStylesheets().add(getClass().getResource("/styles/settings-styles.css").toExternalForm());
 
-            primaryStage.setTitle("Eventually - Configurações");
-            primaryStage.setScene(settingsScene);
-            primaryStage.setMaximized(true);
+            setSceneAndPreserveSize(settingsScene, "Eventually - Configurações");
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao navegar para a tela de Configurações: " + e.getMessage());
             e.printStackTrace();
@@ -174,12 +187,10 @@ public class NavegacaoService {
             UserScheduleController userScheduleController = new UserScheduleController(emailUsuario, userScheduleView, primaryStage);
             userScheduleView.setUserScheduleController(userScheduleController);
 
-            Scene sceneUserSchedule = new Scene(userScheduleView, telaService.medirWidth(), telaService.medirHeight());
+            Scene sceneUserSchedule = new Scene(userScheduleView);
             sceneUserSchedule.getStylesheets().add(getClass().getResource("/styles/user-schedule-styles.css").toExternalForm());
 
-            primaryStage.setTitle("Eventually - Programação do Usuário");
-            primaryStage.setScene(sceneUserSchedule);
-            primaryStage.setMaximized(true);
+            setSceneAndPreserveSize(sceneUserSchedule, "Eventually - Programação do Usuário");
         } catch (Exception e) {
             sistemaDeLogger.error("Erro ao navegar para a tela de Programação: " + e.getMessage());
             e.printStackTrace();

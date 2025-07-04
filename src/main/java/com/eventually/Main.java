@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * Classe principal da aplicação Eventually.
  * Esta classe estende {@code javafx.application.Application} e é responsável
  * por inicializar e exibir a interface gráfica do usuário.
- * @version 1.05
+ * @version 1.06
  * @author Yuri Garcia Maia
  * @since 2025-04-06
  * @author Gabriella Tavares Costa Corrêa (Documentação, revisão da estrutura e lógica da classe)
@@ -48,6 +48,7 @@ public class Main extends Application {
             primaryStage.getIcons().add(new Image(getClass().getResource("/images/app-icon.png").toExternalForm()));
             primaryStage.setResizable(true);
             primaryStage.centerOnScreen();
+            primaryStage.setMaximized(true);
             primaryStage.show();
         }catch (Exception e) {
             sistemaDeLogger.error("O programa não foi iniciado deviado algum erro: "+e.getMessage());
