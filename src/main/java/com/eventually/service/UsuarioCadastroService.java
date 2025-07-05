@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * e-mail, senha, data de nascimento, localização e temas preferidos.
  * Além disso, possui o método CREATE do CRUD para usuário.
  * @author Gabriella Tavares Costa Corrêa (Criação, documentação, correção e revisão da parte lógica da estrutura da classe)
- * @version 1.09
+ * @version 1.10
  * @since 2025-05-15
  */
 public final class UsuarioCadastroService {
@@ -62,6 +62,11 @@ public final class UsuarioCadastroService {
         preferenciasDoUsuario.add(Comunidade.CORPORATIVO);
         preferenciasDoUsuario.add(Comunidade.CULTURAL);
         preferenciasDoUsuario.add(Comunidade.SOCIAL);
+        preferenciasDoUsuario.add(Comunidade.ESPORTIVO);
+        preferenciasDoUsuario.add(Comunidade.BENEFICENTE);
+        preferenciasDoUsuario.add(Comunidade.RELIGIOSO);
+        preferenciasDoUsuario.add(Comunidade.EDUCACIONAL);
+
 
         UsuarioModel usuarioTesteModel = new UsuarioModel(
                 "gab tav", "gab@gmail.com", "a1234$", "crz",
@@ -77,9 +82,10 @@ public final class UsuarioCadastroService {
         LocalTime horaEspecificaTeste1 = LocalTime.of(10, 30);
         LocalTime horaEspecificaTeste2 = LocalTime.of(12, 30);
         Set<Comunidade> preferenciasEvento = new HashSet<>();
-        preferenciasEvento.add(Comunidade.CORPORATIVO);
+        preferenciasEvento.add(Comunidade.SOCIAL);
+        preferenciasEvento.add(Comunidade.EDUCACIONAL);
         Set<Comunidade> preferenciasEvento1 = new HashSet<>();
-        preferenciasEvento1.add(Comunidade.ESPORTIVO);
+        preferenciasEvento1.add(Comunidade.EDUCACIONAL);
         Set<Comunidade> preferenciasEvento2 = new HashSet<>();
         preferenciasEvento2.add(Comunidade.EDUCACIONAL);
         preferenciasEvento2.add(Comunidade.CULTURAL);
@@ -105,6 +111,82 @@ public final class UsuarioCadastroService {
                 preferenciasEvento2, new ArrayList<>(), true, false,  new ArrayList<>()
         );
 
+        LocalTime horaEspecificaTeste3 = LocalTime.of(19, 0);
+        LocalTime horaEspecificaTeste4 = LocalTime.of(21, 0);
+
+// 1. Evento CORPORATIVO
+        Set<Comunidade> preferenciasEventoCorporativo = new HashSet<>();
+        preferenciasEventoCorporativo.add(Comunidade.CORPORATIVO);
+        preferenciasEventoCorporativo.add(Comunidade.EDUCACIONAL); // Um evento pode ter mais de uma comunidade
+
+        EventoModel eventoCorporativo = new EventoModel(
+                usuarioTesteModel,
+                "Workshop de Liderança Executiva",
+                "Desenvolva suas habilidades de liderança e gestão de equipes.",
+                FormatoSelecionado.HIBRIDO, // Formato Híbrido
+                "https://meet.google.com/seu-link-aqui", // Link para participantes online
+                "Centro de Convenções, Sala 5B", // Local para participantes presenciais
+                null, // foto
+                50, // nParticipantes
+                amanha, // dataInicial
+                horaEspecificaTeste1, // horaInicial
+                amanha, // dataFinal
+                horaEspecificaTeste2, // horaFinal
+                preferenciasEventoCorporativo, // comunidades
+                new ArrayList<>(), // participantes (lista vazia)
+                true, // estado (ativo)
+                false, // isFinalizado (ainda não ocorreu)
+                new ArrayList<>() // comentarios (lista vazia)
+        );
+
+// 2. Evento RELIGIOSO
+        Set<Comunidade> preferenciasEventoReligioso = new HashSet<>();
+        preferenciasEventoReligioso.add(Comunidade.RELIGIOSO);
+
+        EventoModel eventoReligioso = new EventoModel(
+                usuarioTesteModel,
+                "Celebração Ecumênica da Paz",
+                "Um momento de reflexão e oração pela paz entre os povos.",
+                FormatoSelecionado.ONLINE, // Formato Online
+                "https://youtube.com/live/celebracao-paz", // Link de acesso
+                null, // localizacao (não se aplica a eventos puramente online)
+                null, // foto
+                500, // nParticipantes
+                depoisAmanha, // dataInicial
+                horaEspecificaTeste3, // horaInicial
+                depoisAmanha, // dataFinal
+                horaEspecificaTeste4, // horaFinal
+                preferenciasEventoReligioso, // comunidades
+                new ArrayList<>(), // participantes
+                true, // estado
+                false, // isFinalizado
+                new ArrayList<>() // comentarios
+        );
+
+// 3. Evento BENEFICENTE
+        Set<Comunidade> preferenciasEventoBeneficente = new HashSet<>();
+        preferenciasEventoBeneficente.add(Comunidade.BENEFICENTE);
+
+        EventoModel eventoBeneficente = new EventoModel(
+                usuarioTesteModel,
+                "Feijoada Beneficente da Comunidade",
+                "Arrecadação de fundos para a caridade local. Toda a renda será revertida.",
+                FormatoSelecionado.PRESENCIAL, // Formato Presencial
+                null, // linkAcesso (não se aplica)
+                "Salão de Festas da Paróquia Central", // localizacao
+                null, // foto
+                300, // nParticipantes
+                antesOntem, // dataInicial (um evento que já passou)
+                horaEspecificaTeste2, // horaInicial
+                antesOntem, // dataFinal
+                horaEspecificaTeste3, // horaFinal
+                preferenciasEventoBeneficente, // comunidades
+                new ArrayList<>(), // participantes
+                true, // estado
+                true, // isFinalizado (marcado como finalizado pois a data já passou)
+                new ArrayList<>() // comentarios
+        );
+
         usuarioTesteModel.getEventosOrganizados().add(evento1);
         eventoCriacaoService.adicionarEvento(evento1);
 
@@ -113,6 +195,15 @@ public final class UsuarioCadastroService {
 
         usuarioTesteModel.getEventosOrganizados().add(evento3);
         eventoCriacaoService.adicionarEvento(evento3);
+
+        usuarioTesteModel.getEventosOrganizados().add(eventoCorporativo );
+        eventoCriacaoService.adicionarEvento(eventoCorporativo );
+
+        usuarioTesteModel.getEventosOrganizados().add(eventoReligioso  );
+        eventoCriacaoService.adicionarEvento(eventoReligioso  );
+
+        usuarioTesteModel.getEventosOrganizados().add(eventoBeneficente   );
+        eventoCriacaoService.adicionarEvento(eventoBeneficente   );
 
         sistemaDeLogger.info("Dados de teste criados com sucesso.");
     }
